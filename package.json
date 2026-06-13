@@ -1,0 +1,13 @@
+{
+  "name": "squared2",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "esbuild src/main.ts --bundle --outfile=dist/main.js --watch --servedir=.",
+    "build": "esbuild src/main.ts --bundle --outfile=dist/main.js --minify"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "typescript": "^5.4.0"
+  }
+}
