@@ -5,7 +5,7 @@ metadata:
   type: feedback
 ---
 
-Write all TypeScript and JavaScript code without semicolons.
+Write all TypeScript and JavaScript code without semicolons and use arrow functions throughout.
 
 **Why:** User explicitly requested this style preference.
 

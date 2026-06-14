@@ -1,38 +1,22 @@
-const canvas = document.getElementById("canvas") as HTMLCanvasElement
-const ctx = canvas.getContext("2d")!
+import { BackgroundGraphics } from "./background-graphics"
+import { StaticGraphics } from "./static-graphics"
+import { DynamicGraphics } from "./dynamic-graphics"
 
-function resize() {
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-}
+const backgroundGraphics = new BackgroundGraphics()
+const staticGraphics = new StaticGraphics()
+const dynamicGraphics = new DynamicGraphics()
 
-window.addEventListener("resize", resize)
-resize()
-
-function update(_dt: number) {
-  // game logic here
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-  ctx.fillStyle = "#1a1a2e"
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-  ctx.fillStyle = "#fff"
-  ctx.font = "24px monospace"
-  ctx.textAlign = "center"
-  ctx.fillText("squared2", canvas.width / 2, canvas.height / 2)
-}
+backgroundGraphics.draw()
+staticGraphics.draw()
 
 let lastTime = 0
 
-function loop(timestamp: number) {
+const loop = (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  update(dt)
-  draw()
+  dynamicGraphics.update(dt)
+  dynamicGraphics.draw()
 
   requestAnimationFrame(loop)
 }

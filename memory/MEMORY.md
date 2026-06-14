@@ -1,3 +1,3 @@
 # Memory Index
 
-- [No semicolons](feedback_no_semicolons.md) — User writes TypeScript/JS without semicolons; .prettierrc has `"semi": false`
+- [Code style](feedback_no_semicolons.md) — No semicolons, arrow functions throughout; .prettierrc has `"semi": false`

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
   <head>
     <meta charset="UTF-8" />
@@ -12,17 +12,18 @@
       }
       body {
         overflow: hidden;
-        background: #000;
+        background: #051e06;
       }
-      canvas {
-        display: block;
+      .canvas-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100vw;
         height: 100vh;
       }
     </style>
   </head>
   <body>
-    <canvas id="canvas"></canvas>
     <script src="/dist/main.js"></script>
   </body>
 </html>
