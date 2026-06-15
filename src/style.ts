@@ -1,8 +1,8 @@
 export class Style {
   constructor(
     public backgroundColor = "#ffffff",
-    public borderColor = "#ffffff",
-    public borderWidth = 1,
+    public borderColor = "",
+    public borderWidth = 0,
   ) {}
 
   apply = (ctx: CanvasRenderingContext2D) => {

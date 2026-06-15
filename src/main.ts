@@ -1,6 +1,6 @@
-import { BackgroundGraphics } from "./background-graphics"
-import { StaticGraphics } from "./static-graphics"
-import { DynamicGraphics } from "./dynamic-graphics"
+import { BackgroundGraphics } from "./layers/background-graphics"
+import { StaticGraphics } from "./layers/static-graphics"
+import { DynamicGraphics } from "./layers/dynamic-graphics"
 
 const backgroundGraphics = new BackgroundGraphics()
 const staticGraphics = new StaticGraphics()

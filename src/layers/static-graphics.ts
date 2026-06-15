@@ -1,4 +1,4 @@
-import { Canvas } from "./canvas"
+import { Canvas } from "../canvas"
 import { GraphicsLayer } from "./graphics-layer"
 
 export class StaticGraphics extends GraphicsLayer {

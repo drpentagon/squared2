@@ -25,6 +25,12 @@ export class Canvas {
     this.ctx.clearRect(0, 0, this.width, this.height)
   }
 
+  setClip = (x: number, y: number, width: number, height: number) => {
+    this.ctx.beginPath()
+    this.ctx.rect(x, y, width, height)
+    this.ctx.clip()
+  }
+
   drawSquare = (x: number, y: number, size: number, style = new Style()) => {
     style.apply(this.ctx)
     this.ctx.fillRect(x, y, size, size)
