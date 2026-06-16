@@ -2,8 +2,13 @@ import { Canvas } from "../canvas"
 import { GraphicsLayer } from "./graphics-layer"
 import { Style } from "../style"
 import { DOT_GRID_SIZE, DOT_SIZE, DOT_CC, TILES } from "../constants"
+import { gridOrigin } from "../grid"
 
-const dotStyle = new Style("rgba(255, 255, 255, 0.10)")
+const dotStyle = new Style(
+  "rgba(255, 255, 255, 0.10)",
+  "rgba(255, 255, 255, 0.10)",
+  1,
+)
 const patternStyle = new Style("rgba(255, 255, 255, 0.15)")
 
 const TILE_PATTERN = [
@@ -60,13 +65,11 @@ export class BackgroundGraphics extends GraphicsLayer {
     height: number,
     style: Style,
   ) => {
-    const startX = Math.floor((this.canvas.width - DOT_GRID_SIZE * DOT_CC) / 2)
-    const startY = Math.floor((this.canvas.height - DOT_GRID_SIZE * DOT_CC) / 2)
     for (let r = 0; r < height; r++) {
       for (let c = 0; c < width; c++) {
         this.canvas.drawSquare(
-          startX + (col + c) * DOT_CC,
-          startY + (row + r) * DOT_CC,
+          gridOrigin.x + (col + c) * DOT_CC,
+          gridOrigin.y + (row + r) * DOT_CC,
           DOT_SIZE,
           style,
         )

@@ -11,6 +11,7 @@ export class Canvas {
     el.style.zIndex = String(layerLevel)
     document.body.appendChild(el)
     this.ctx = el.getContext("2d")!
+    this.ctx.imageSmoothingEnabled = false
   }
 
   get width() {
@@ -33,7 +34,13 @@ export class Canvas {
 
   drawSquare = (x: number, y: number, size: number, style = new Style()) => {
     style.apply(this.ctx)
+    this.ctx.save()
+    this.ctx.beginPath()
+    this.ctx.rect(x, y, size, size)
+    this.ctx.clip()
     this.ctx.fillRect(x, y, size, size)
+    this.ctx.lineWidth *= 2
     this.ctx.strokeRect(x, y, size, size)
+    this.ctx.restore()
   }
 }
