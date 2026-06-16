@@ -1,20 +1,20 @@
 import { Canvas } from "../canvas"
-import { Wall } from "../wall"
+import { TileMap } from "../tile"
 import { GraphicsLayer } from "./graphics-layer"
-
-const walls = [new Wall(3, 3)]
 
 export class StaticGraphics extends GraphicsLayer {
   protected canvas: Canvas
+  private tiles: TileMap
 
-  constructor() {
+  constructor(tiles: TileMap) {
     super()
     this.canvas = new Canvas(1)
+    this.tiles = tiles
   }
 
   update = (_dt: number) => {}
 
   draw = () => {
-    walls.forEach((wall) => wall.draw(this.canvas))
+    this.tiles.forEach((tile) => tile.draw(this.canvas))
   }
 }

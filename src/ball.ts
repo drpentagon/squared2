@@ -2,6 +2,7 @@ import { Canvas } from "./canvas"
 import { DOT_CC, DOT_SIZE, GRID_SIZE, TILE_CC } from "./constants"
 import { gridOrigin } from "./grid"
 import { Style } from "./style"
+import { pixelToTile } from "./tile"
 
 const BALL_SIZE = DOT_SIZE + DOT_CC // 2 dots + 1 spacing = 15px
 
@@ -28,6 +29,8 @@ export class Ball {
 
     this.x = ((this.x % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
     this.y = ((this.y % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
+
+    this.tilePosition = { x: pixelToTile(this.x), y: pixelToTile(this.y) }
   }
 
   draw(canvas: Canvas) {
