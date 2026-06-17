@@ -12,7 +12,11 @@ tiles.set(new Wall(8, 5))
 tiles.set(new Wall(5, 9))
 tiles.set(new Wall(6, 9))
 
-const balls = [new Ball(6, 3, 0, 200), new Ball(6, 5, 300, 0)]
+const balls = [
+  new Ball(6, 3, 0, 200),
+  new Ball(6, 5, 300, 0),
+  new Ball(3, 2, 0, 400),
+]
 
 const backgroundGraphics = new BackgroundGraphics()
 const staticGraphics = new StaticGraphics(tiles)
