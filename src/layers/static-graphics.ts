@@ -1,5 +1,5 @@
 import { Canvas } from "../canvas"
-import { TileMap } from "../tile"
+import { TileMap } from "../tiles/tile"
 import { GraphicsLayer } from "./graphics-layer"
 
 export class StaticGraphics extends GraphicsLayer {

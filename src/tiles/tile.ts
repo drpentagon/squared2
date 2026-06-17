@@ -1,6 +1,6 @@
-import type { Ball } from "./ball"
-import { Canvas } from "./canvas"
-import { DOT_CC, TILE_CC } from "./constants"
+import type { Ball } from "../ball"
+import { Canvas } from "../canvas"
+import { DOT_CC, TILE_CC } from "../constants"
 
 export const TILE_SIZE = TILE_CC * DOT_CC
 

@@ -2,8 +2,8 @@ import { Ball } from "./ball"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
-import { TileMap, pixelToTile } from "./tile"
-import { Wall } from "./wall"
+import { TileMap, pixelToTile } from "./tiles/tile"
+import { Wall } from "./tiles/wall"
 
 const tiles = new TileMap()
 tiles.set(new Wall(3, 9))

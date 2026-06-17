@@ -2,7 +2,7 @@ import { Canvas } from "./canvas"
 import { DOT_CC, DOT_SIZE, GRID_SIZE, TILE_CC } from "./constants"
 import { gridOrigin } from "./grid"
 import { Style } from "./style"
-import { pixelToTile } from "./tile"
+import { pixelToTile } from "./tiles/tile"
 
 const BALL_SIZE = DOT_SIZE + DOT_CC // 2 dots + 1 spacing = 15px
 

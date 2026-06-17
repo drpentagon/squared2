@@ -1,9 +1,9 @@
-import { Ball } from "./ball"
-import { Canvas } from "./canvas"
-import { DOT_CC, DOT_SIZE, DOT_SPACING } from "./constants"
-import { gridOrigin } from "./grid"
-import { playBounce } from "./sound"
-import { Style } from "./style"
+import { Ball } from "../ball"
+import { Canvas } from "../canvas"
+import { DOT_CC, DOT_SIZE, DOT_SPACING } from "../constants"
+import { gridOrigin } from "../grid"
+import { playBounce } from "../sound"
+import { Style } from "../style"
 import { Tile } from "./tile"
 
 const SQUARE_SIZE = 2 * DOT_SIZE + DOT_SPACING
