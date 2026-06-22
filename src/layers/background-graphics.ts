@@ -4,11 +4,7 @@ import { Style } from "../style"
 import { DOT_GRID_SIZE, DOT_SIZE, DOT_CC, TILES } from "../constants"
 import { gridOrigin } from "../grid"
 
-const dotStyle = new Style(
-  "rgba(255, 255, 255, 0.10)",
-  "rgba(255, 255, 255, 0.10)",
-  1,
-)
+const dotStyle = new Style("rgba(255, 255, 255, 0.10)")
 const patternStyle = new Style("rgba(255, 255, 255, 0.15)")
 
 const TILE_PATTERN = [

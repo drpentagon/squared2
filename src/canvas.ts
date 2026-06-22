@@ -1,7 +1,7 @@
 import { Style } from "./style"
 
 export class Canvas {
-  private ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D
 
   constructor(layerLevel: number) {
     const el = document.createElement("canvas")
@@ -35,12 +35,12 @@ export class Canvas {
   drawSquare = (x: number, y: number, size: number, style = new Style()) => {
     style.apply(this.ctx)
     this.ctx.save()
-    this.ctx.beginPath()
-    this.ctx.rect(x, y, size, size)
-    this.ctx.clip()
     this.ctx.fillRect(x, y, size, size)
-    this.ctx.lineWidth *= 2
-    this.ctx.strokeRect(x, y, size, size)
-    this.ctx.restore()
+    this.ctx.strokeRect(
+      x + this.ctx.lineWidth / 2,
+      y + this.ctx.lineWidth / 2,
+      size - this.ctx.lineWidth,
+      size - this.ctx.lineWidth,
+    )
   }
 }

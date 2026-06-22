@@ -1,7 +1,7 @@
 export class Style {
   constructor(
     public backgroundColor = "#ffffff",
-    public borderColor = "",
+    public borderColor = "transparent",
     public borderWidth = 0,
   ) {}
 

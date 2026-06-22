@@ -10,22 +10,13 @@ const SQUARE_SIZE = 2 * DOT_SIZE + DOT_SPACING
 const SQUARE_STEP = 2 * DOT_CC
 const WALL_SIZE = 2 * SQUARE_STEP + SQUARE_SIZE
 
-const wallStyle = new Style("transparent", "rgba(255, 255, 255, 0.7)", 2)
+const wallStyle = new Style(
+  "rgba(255, 255, 255, 0.7)",
+  "rgba(255, 255, 255, 1)",
+  2,
+)
 
 export class Wall extends Tile {
-  draw = (canvas: Canvas) => {
-    for (let sy = 0; sy < 3; sy++) {
-      for (let sx = 0; sx < 3; sx++) {
-        canvas.drawSquare(
-          gridOrigin.x + this.x + sx * SQUARE_STEP,
-          gridOrigin.y + this.y + sy * SQUARE_STEP,
-          SQUARE_SIZE,
-          wallStyle,
-        )
-      }
-    }
-  }
-
   interact = (ball: Ball) => {
     const overlapX =
       Math.min(ball.x + ball.size, this.x + WALL_SIZE) -
@@ -41,5 +32,18 @@ export class Wall extends Tile {
     ball.vy = -ball.vy
 
     playBounce()
+  }
+
+  draw = (canvas: Canvas) => {
+    for (let sy = 0; sy < 3; sy++) {
+      for (let sx = 0; sx < 3; sx++) {
+        canvas.drawSquare(
+          gridOrigin.x + this.x + sx * SQUARE_STEP,
+          gridOrigin.y + this.y + sy * SQUARE_STEP,
+          SQUARE_SIZE,
+          wallStyle,
+        )
+      }
+    }
   }
 }
