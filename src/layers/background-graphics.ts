@@ -39,14 +39,7 @@ export class BackgroundGraphics extends GraphicsLayer {
         pattern.forEach((r, py) =>
           r.forEach(
             (c, px) =>
-              c &&
-              this.fillCells(
-                1 + x * 7 + px * 2,
-                1 + y * 7 + py * 2,
-                2,
-                2,
-                patternStyle,
-              ),
+              c && this.fillCells(1 + x * 7 + px * 2, 1 + y * 7 + py * 2, 2, 2, patternStyle),
           ),
         )
         odd = !odd
@@ -54,13 +47,7 @@ export class BackgroundGraphics extends GraphicsLayer {
     }
   }
 
-  private fillCells = (
-    col: number,
-    row: number,
-    width: number,
-    height: number,
-    style: Style,
-  ) => {
+  private fillCells = (col: number, row: number, width: number, height: number, style: Style) => {
     for (let r = 0; r < height; r++) {
       for (let c = 0; c < width; c++) {
         this.canvas.drawSquare(

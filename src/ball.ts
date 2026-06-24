@@ -34,11 +34,6 @@ export class Ball {
   }
 
   draw(canvas: Canvas) {
-    canvas.drawSquare(
-      gridOrigin.x + this.x,
-      gridOrigin.y + this.y,
-      this.size,
-      new Style(),
-    )
+    canvas.drawSquare(gridOrigin.x + this.x, gridOrigin.y + this.y, this.size, new Style())
   }
 }

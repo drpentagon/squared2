@@ -12,10 +12,7 @@ export const playBounce = () => {
 
   oscillator.type = "sine"
   oscillator.frequency.setValueAtTime(440, audioContext.currentTime)
-  oscillator.frequency.exponentialRampToValueAtTime(
-    220,
-    audioContext.currentTime + 0.5,
-  )
+  oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.5)
 
   gain.gain.setValueAtTime(0.2, audioContext.currentTime)
   gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1)
@@ -34,10 +31,7 @@ export const playPop = () => {
 
   oscillator.type = "triangle"
   oscillator.frequency.setValueAtTime(800, audioContext.currentTime)
-  oscillator.frequency.exponentialRampToValueAtTime(
-    200,
-    audioContext.currentTime + 0.08,
-  )
+  oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.08)
 
   gain.gain.setValueAtTime(0.4, audioContext.currentTime)
   gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.08)
@@ -79,10 +73,7 @@ export const playLaser = () => {
 
   oscillator.type = "sawtooth"
   oscillator.frequency.setValueAtTime(1200, audioContext.currentTime)
-  oscillator.frequency.exponentialRampToValueAtTime(
-    80,
-    audioContext.currentTime + 0.2,
-  )
+  oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.2)
 
   gain.gain.setValueAtTime(0.2, audioContext.currentTime)
   gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2)
@@ -119,10 +110,7 @@ export const playThud = () => {
 
   oscillator.type = "sine"
   oscillator.frequency.setValueAtTime(150, audioContext.currentTime)
-  oscillator.frequency.exponentialRampToValueAtTime(
-    30,
-    audioContext.currentTime + 0.15,
-  )
+  oscillator.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + 0.15)
 
   gain.gain.setValueAtTime(0.6, audioContext.currentTime)
   gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15)
@@ -137,11 +125,7 @@ export const playThud = () => {
 export const playExplosion = () => {
   resume()
   const bufferSize = audioContext.sampleRate * 0.3
-  const buffer = audioContext.createBuffer(
-    1,
-    bufferSize,
-    audioContext.sampleRate,
-  )
+  const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate)
   const data = buffer.getChannelData(0)
   for (let i = 0; i < bufferSize; i++) {
     data[i] = Math.random() * 2 - 1

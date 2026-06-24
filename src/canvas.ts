@@ -1,4 +1,7 @@
+import { DOT_SPACING, SQUARE_SIZE } from "./constants"
+import { gridOrigin } from "./grid"
 import { Style } from "./style"
+import { Tile } from "./tiles/tile"
 
 export class Canvas {
   ctx: CanvasRenderingContext2D
@@ -42,5 +45,31 @@ export class Canvas {
       size - this.ctx.lineWidth,
       size - this.ctx.lineWidth,
     )
+  }
+
+  drawPolygon = (tile: Tile, points: [number, number][], style = new Style()) => {
+    console.log(points)
+    if (points.length < 2) return
+    this.ctx.save()
+    style.apply(this.ctx)
+    this.ctx.lineWidth = style.borderWidth * 2
+    this.ctx.beginPath()
+    this.moveTo(tile, ...points[0])
+    for (let i = 1; i < points.length; i++) {
+      this.lineTo(tile, ...points[i])
+    }
+    this.ctx.closePath()
+    this.ctx.clip()
+    this.ctx.fill()
+    this.ctx.stroke()
+    this.ctx.restore()
+  }
+
+  lineTo = (tile: Tile, x: number = 0, y: number = 0) => {
+    this.ctx.lineTo(gridOrigin.x + tile.x + x, gridOrigin.y + tile.y + y)
+  }
+
+  moveTo = (tile: Tile, x: number = 0, y: number = 0) => {
+    this.ctx.moveTo(gridOrigin.x + tile.x + x, gridOrigin.y + tile.y + y)
   }
 }

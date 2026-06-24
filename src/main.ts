@@ -4,6 +4,7 @@ import { StaticGraphics } from "./layers/static-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
 import { TileMap, pixelToTile } from "./tiles/tile"
 import { Wall } from "./tiles/wall"
+import { Redirector } from "./tiles/redirector"
 
 const tiles = new TileMap()
 tiles.set(new Wall(3, 9))
@@ -11,12 +12,9 @@ tiles.set(new Wall(4, 5))
 tiles.set(new Wall(8, 5))
 tiles.set(new Wall(5, 9))
 tiles.set(new Wall(6, 9))
+tiles.set(new Redirector(3, 3))
 
-const balls = [
-  new Ball(6, 3, 0, 200),
-  new Ball(6, 5, 300, 0),
-  new Ball(3, 2, 0, 400),
-]
+const balls = [new Ball(6, 3, 0, 200), new Ball(6, 5, 300, 0), new Ball(3, 2, 0, 400)]
 
 const backgroundGraphics = new BackgroundGraphics()
 const staticGraphics = new StaticGraphics(tiles)
