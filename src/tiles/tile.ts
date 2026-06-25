@@ -1,11 +1,9 @@
 import type { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import { DOT_CC, TILE_CC } from "../constants"
+import { DOT_CC, TILE_CC, TILE_SIZE } from "../constants"
 import { Style } from "../style"
 
-export const TILE_SIZE = TILE_CC * DOT_CC
-
-export const pixelToTile = (pixel: number) => Math.floor((pixel - DOT_CC) / TILE_SIZE)
+export const pixelToTile = (pixel: number) => Math.floor((pixel - DOT_CC) / TILE_CC)
 
 export abstract class Tile {
   tileX: number
@@ -17,10 +15,16 @@ export abstract class Tile {
   constructor(tileX: number, tileY: number) {
     this.tileX = tileX
     this.tileY = tileY
-    this.x = (1 + tileX * TILE_CC) * DOT_CC
-    this.y = (1 + tileY * TILE_CC) * DOT_CC
+    this.x = DOT_CC + tileX * TILE_CC
+    this.y = DOT_CC + tileY * TILE_CC
 
     this.style = new Style("rgba(255, 255, 255, 0.7)", "rgba(255, 255, 255, 1)", 2)
+  }
+
+  overlap(ball: Ball) {
+    const overlapX = Math.min(ball.x + ball.size, this.x + TILE_SIZE) - Math.max(ball.x, this.x)
+    const overlapY = Math.min(ball.y + ball.size, this.y + TILE_SIZE) - Math.max(ball.y, this.y)
+    return { overlapX, overlapY }
   }
 
   abstract draw(canvas: Canvas): void

@@ -1,8 +1,10 @@
 import { Canvas } from "./canvas"
-import { DOT_CC, DOT_SIZE, GRID_SIZE, TILE_CC } from "./constants"
+import { DOT_CC, DOT_SIZE, GRID_SIZE, TILE_CC, directions } from "./constants"
 import { gridOrigin } from "./grid"
 import { Style } from "./style"
 import { pixelToTile } from "./tiles/tile"
+
+const { UP, DOWN, LEFT, RIGHT } = directions
 
 const BALL_SIZE = DOT_SIZE + DOT_CC // 2 dots + 1 spacing = 15px
 
@@ -19,8 +21,8 @@ export class Ball {
     this.vx = vx
     this.vy = vy
 
-    this.x = (1 + tileX * TILE_CC + 2) * DOT_CC
-    this.y = (1 + tileY * TILE_CC + 2) * DOT_CC
+    this.x = 3 * DOT_CC + tileX * TILE_CC
+    this.y = 3 * DOT_CC + tileY * TILE_CC
   }
 
   update(dt: number) {
@@ -31,6 +33,21 @@ export class Ball {
     this.y = ((this.y % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
 
     this.tilePosition = { x: pixelToTile(this.x), y: pixelToTile(this.y) }
+  }
+
+  perpendicularBounce(overlapX: number, overlapY: number) {
+    this.x -= Math.sign(this.vx) * overlapX
+    this.y -= Math.sign(this.vy) * overlapY
+
+    this.vx = -this.vx
+    this.vy = -this.vy
+  }
+
+  direction() {
+    if (this.vy < 0) return UP
+    if (this.vy > 0) return DOWN
+    if (this.vx > 0) return RIGHT
+    return LEFT
   }
 
   draw(canvas: Canvas) {

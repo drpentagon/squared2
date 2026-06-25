@@ -48,7 +48,6 @@ export class Canvas {
   }
 
   drawPolygon = (tile: Tile, points: [number, number][], style = new Style()) => {
-    console.log(points)
     if (points.length < 2) return
     this.ctx.save()
     style.apply(this.ctx)

@@ -5,19 +5,10 @@ import { gridOrigin } from "../grid"
 import { playBounce } from "../sound"
 import { Tile } from "./tile"
 
-const WALL_SIZE = 2 * SQUARE_STEP + SQUARE_SIZE
-
 export class Wall extends Tile {
   interact = (ball: Ball) => {
-    const overlapX = Math.min(ball.x + ball.size, this.x + WALL_SIZE) - Math.max(ball.x, this.x)
-    const overlapY = Math.min(ball.y + ball.size, this.y + WALL_SIZE) - Math.max(ball.y, this.y)
-
-    ball.x -= Math.sign(ball.vx) * overlapX
-    ball.y -= Math.sign(ball.vy) * overlapY
-
-    ball.vx = -ball.vx
-    ball.vy = -ball.vy
-
+    const { overlapX, overlapY } = this.overlap(ball)
+    ball.perpendicularBounce(overlapX, overlapY)
     playBounce()
   }
 
