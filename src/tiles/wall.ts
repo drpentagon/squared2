@@ -7,8 +7,8 @@ import { Tile } from "./tile"
 
 export class Wall extends Tile {
   interact = (ball: Ball) => {
-    const { overlapX, overlapY } = this.overlap(ball)
-    ball.perpendicularBounce(overlapX, overlapY)
+    if (!ball.isNewEntry) return
+    ball.perpendicularBounce(this.overlap(ball))
     playBounce()
   }
 

@@ -15,6 +15,7 @@ export class Ball {
   y: number
   vx: number
   vy: number
+  isNewEntry = false
 
   constructor(tileX: number, tileY: number, vx: number, vy: number) {
     this.tilePosition = { x: tileX, y: tileY }
@@ -35,9 +36,9 @@ export class Ball {
     this.tilePosition = { x: pixelToTile(this.x), y: pixelToTile(this.y) }
   }
 
-  perpendicularBounce(overlapX: number, overlapY: number) {
-    this.x -= Math.sign(this.vx) * overlapX
-    this.y -= Math.sign(this.vy) * overlapY
+  perpendicularBounce(overlap: number) {
+    this.x -= Math.sign(this.vx) * overlap
+    this.y -= Math.sign(this.vy) * overlap
 
     this.vx = -this.vx
     this.vy = -this.vy

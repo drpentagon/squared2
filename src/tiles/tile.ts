@@ -22,9 +22,10 @@ export abstract class Tile {
   }
 
   overlap(ball: Ball) {
-    const overlapX = Math.min(ball.x + ball.size, this.x + TILE_SIZE) - Math.max(ball.x, this.x)
-    const overlapY = Math.min(ball.y + ball.size, this.y + TILE_SIZE) - Math.max(ball.y, this.y)
-    return { overlapX, overlapY }
+    if (ball.vx > 0) return ball.x + ball.size - this.x
+    if (ball.vx < 0) return this.x + TILE_SIZE - ball.x
+    if (ball.vy > 0) return ball.y + ball.size - this.y
+    return this.y + TILE_SIZE - ball.y
   }
 
   abstract draw(canvas: Canvas): void
