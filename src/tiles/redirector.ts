@@ -57,25 +57,23 @@ export class Redirector extends Tile {
     const excess = overlap - 2 * SQUARE_STEP
     const speed = Math.abs(ball.vx) || Math.abs(ball.vy)
 
-    if (ball.vx !== 0) {
-      ball.x = this.x + TILE_SIZE / 2
-      ball.vx = 0
-    } else {
-      ball.y = this.y + TILE_SIZE / 2
-      ball.vy = 0
-    }
-
     const isPositive = nextDirection === RIGHT || nextDirection === DOWN
     const isHorizontal = nextDirection === RIGHT || nextDirection === LEFT
     const sign = isPositive ? 1 : -1
-    const pos = isPositive ? TILE_SIZE - BALL_RADIUS + excess : BALL_RADIUS - excess
+    const pos = isPositive
+      ? TILE_SIZE - (SQUARE_STEP + SQUARE_SIZE) + excess
+      : SQUARE_STEP + SQUARE_SIZE - excess
 
     if (isHorizontal) {
       ball.x = this.x + pos
       ball.vx = sign * speed
+      ball.y = this.y + TILE_SIZE / 2
+      ball.vy = 0
     } else {
       ball.y = this.y + pos
       ball.vy = sign * speed
+      ball.x = this.x + TILE_SIZE / 2
+      ball.vx = 0
     }
     if (!this.permanent) this.consumed = true
     playBounce()

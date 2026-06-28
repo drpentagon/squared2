@@ -21,7 +21,7 @@ dynamicTiles.set(new Redirector(4, 9, 2))
 dynamicTiles.set(new Redirector(4, 6, 0))
 dynamicTiles.set(new Redirector(8, 6, 1))
 
-const balls = [new Ball(3, 5, 0, -400)]
+const balls = [new Ball(3, 4, 0, -400)]
 
 const backgroundGraphics = new BackgroundGraphics()
 const staticGraphics = new StaticGraphics(staticTiles)
@@ -30,10 +30,13 @@ const dynamicGraphics = new DynamicGraphics(dynamicTiles, balls)
 backgroundGraphics.draw()
 staticGraphics.draw()
 
+const stepMode = false
+const STEP_DT = 1 / 60
+
 let lastTime = 0
 
 const loop = (timestamp: number) => {
-  const dt = (timestamp - lastTime) / 1000
+  const dt = stepMode ? STEP_DT : (timestamp - lastTime) / 1000
   lastTime = timestamp
 
   balls.forEach((ball) => {
@@ -44,7 +47,8 @@ const loop = (timestamp: number) => {
   dynamicGraphics.update(dt)
   dynamicGraphics.draw()
 
-  requestAnimationFrame(loop)
+  if (stepMode) setTimeout(() => requestAnimationFrame(loop), 2000)
+  else requestAnimationFrame(loop)
 }
 
 requestAnimationFrame(loop)
