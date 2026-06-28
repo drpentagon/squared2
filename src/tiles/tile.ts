@@ -1,6 +1,6 @@
 import type { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import { DOT_CC, TILE_CC, TILE_SIZE } from "../constants"
+import { DOT_CC, BALL_RADIUS, TILE_CC, TILE_SIZE } from "../constants"
 import { Style } from "../style"
 
 export const pixelToTile = (pixel: number) => Math.floor((pixel - DOT_CC) / TILE_CC)
@@ -22,10 +22,10 @@ export abstract class Tile {
   }
 
   overlap(ball: Ball) {
-    if (ball.vx > 0) return ball.x + ball.size - this.x
-    if (ball.vx < 0) return this.x + TILE_SIZE - ball.x
-    if (ball.vy > 0) return ball.y + ball.size - this.y
-    return this.y + TILE_SIZE - ball.y
+    if (ball.vx > 0) return ball.x + BALL_RADIUS - this.x
+    if (ball.vx < 0) return this.x + TILE_SIZE - ball.x + BALL_RADIUS
+    if (ball.vy > 0) return ball.y + BALL_RADIUS - this.y
+    return this.y + TILE_SIZE - ball.y + BALL_RADIUS
   }
 
   abstract draw(canvas: Canvas): void

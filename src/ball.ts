@@ -1,17 +1,14 @@
 import { Canvas } from "./canvas"
-import { DOT_CC, DOT_SIZE, GRID_SIZE, TILE_CC, directions } from "./constants"
+import { BALL_SIZE, DOT_CC, GRID_SIZE, BALL_RADIUS, TILE_CC, directions } from "./constants"
 import { gridOrigin } from "./grid"
 import { Style } from "./style"
 import { pixelToTile } from "./tiles/tile"
 
 const { UP, DOWN, LEFT, RIGHT } = directions
 
-const BALL_SIZE = DOT_SIZE + DOT_CC // 2 dots + 1 spacing = 15px
-
 export class Ball {
   tilePosition: { x: number; y: number }
   oldTilePosition: { x: number; y: number }
-  size = BALL_SIZE
   x: number
   y: number
   vx: number
@@ -23,8 +20,8 @@ export class Ball {
     this.vx = vx
     this.vy = vy
 
-    this.x = 3 * DOT_CC + tileX * TILE_CC
-    this.y = 3 * DOT_CC + tileY * TILE_CC
+    this.x = 3 * DOT_CC + tileX * TILE_CC + BALL_RADIUS
+    this.y = 3 * DOT_CC + tileY * TILE_CC + BALL_RADIUS
   }
 
   update(dt: number) {
@@ -34,8 +31,8 @@ export class Ball {
     this.x = ((this.x % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
     this.y = ((this.y % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
 
-    const leadingX = this.vx >= 0 ? this.x + this.size : this.x
-    const leadingY = this.vy >= 0 ? this.y + this.size : this.y
+    const leadingX = this.vx >= 0 ? this.x + BALL_RADIUS : this.x - BALL_RADIUS
+    const leadingY = this.vy >= 0 ? this.y + BALL_RADIUS : this.y - BALL_RADIUS
 
     this.oldTilePosition = { x: this.tilePosition.x, y: this.tilePosition.y }
     this.tilePosition = { x: pixelToTile(leadingX), y: pixelToTile(leadingY) }
@@ -64,6 +61,11 @@ export class Ball {
   }
 
   draw(canvas: Canvas) {
-    canvas.drawSquare(gridOrigin.x + this.x, gridOrigin.y + this.y, this.size, new Style())
+    canvas.drawSquare(
+      gridOrigin.x + this.x - BALL_RADIUS,
+      gridOrigin.y + this.y - BALL_RADIUS,
+      BALL_SIZE,
+      new Style(),
+    )
   }
 }

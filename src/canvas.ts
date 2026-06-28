@@ -1,4 +1,3 @@
-import { DOT_SPACING, SQUARE_SIZE } from "./constants"
 import { gridOrigin } from "./grid"
 import { Style } from "./style"
 import { Tile } from "./tiles/tile"
