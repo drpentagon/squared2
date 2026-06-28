@@ -5,17 +5,18 @@ import { DOT_GRID_SIZE, DOT_SIZE, DOT_CC, TILES } from "../constants"
 import { gridOrigin } from "../grid"
 
 const dotStyle = new Style("rgba(255, 255, 255, 0.10)")
-const patternStyle = new Style("rgba(255, 255, 255, 0.15)")
+const primaryStyle = new Style("rgba(255, 255, 255, 0.05)")
+const secondaryStyle = new Style("rgba(255, 255, 255, 0.10)")
 
-const TILE_PATTERN = [
-  [1, 1, 0],
+const PRIMARY_PATTERN = [
   [1, 0, 1],
-  [0, 1, 1],
+  [0, 0, 0],
+  [1, 0, 1],
 ]
-const ODD_TILE_PATTERN = [
-  [0, 1, 1],
+const SECONDARY_PATTERN = [
+  [0, 1, 0],
   [1, 0, 1],
-  [1, 1, 0],
+  [0, 1, 0],
 ]
 
 export class BackgroundGraphics extends GraphicsLayer {
@@ -31,20 +32,20 @@ export class BackgroundGraphics extends GraphicsLayer {
   draw = () => {
     this.fillCells(0, 0, DOT_GRID_SIZE, DOT_GRID_SIZE, dotStyle)
 
-    let odd = true
     for (let y = 0; y < TILES; y++) {
       for (let x = 0; x < TILES; x++) {
-        const pattern = odd ? ODD_TILE_PATTERN : TILE_PATTERN
-
-        pattern.forEach((r, py) =>
-          r.forEach(
-            (c, px) =>
-              c && this.fillCells(1 + x * 7 + px * 2, 1 + y * 7 + py * 2, 2, 2, patternStyle),
-          ),
-        )
-        odd = !odd
+        this.drawPattern(x, y, PRIMARY_PATTERN, primaryStyle)
+        this.drawPattern(x, y, SECONDARY_PATTERN, secondaryStyle)
       }
     }
+  }
+
+  private drawPattern = (x: number, y: number, pattern: number[][], style: Style) => {
+    pattern.forEach((r, py) =>
+      r.forEach(
+        (c, px) => c && this.fillCells(1 + x * 7 + px * 2, 1 + y * 7 + py * 2, 2, 2, style),
+      ),
+    )
   }
 
   private fillCells = (col: number, row: number, width: number, height: number, style: Style) => {
