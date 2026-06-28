@@ -33,10 +33,12 @@ const VARIANTS = [BASE, rotatePolygon(BASE, 1), rotatePolygon(BASE, 2), rotatePo
 
 export class Redirector extends Tile {
   variant: number
+  permanent: boolean
 
-  constructor(tileX: number, tileY: number, variant: number) {
+  constructor(tileX: number, tileY: number, variant: number, permanent = true) {
     super(tileX, tileY)
     this.variant = variant
+    this.permanent = permanent
   }
 
   interact = (ball: Ball) => {
@@ -45,6 +47,7 @@ export class Redirector extends Tile {
 
     if (!nextDirection) {
       if (ball.inNewTile()) ball.perpendicularBounce(overlap)
+      if (!this.permanent) this.consumed = true
       playBounce()
       return
     }
@@ -74,6 +77,7 @@ export class Redirector extends Tile {
       ball.y = this.y + pos
       ball.vy = sign * speed
     }
+    if (!this.permanent) this.consumed = true
     playBounce()
   }
 

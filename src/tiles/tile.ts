@@ -11,6 +11,7 @@ export abstract class Tile {
   x: number
   y: number
   style: Style
+  consumed: boolean
 
   constructor(tileX: number, tileY: number) {
     this.tileX = tileX
@@ -19,6 +20,7 @@ export abstract class Tile {
     this.y = DOT_CC + tileY * TILE_CC
 
     this.style = new Style("rgba(255, 255, 255, 0.7)", "rgba(255, 255, 255, 1)", 2)
+    this.consumed = false
   }
 
   overlap(ball: Ball) {
@@ -41,6 +43,10 @@ export class TileMap {
   }
 
   get = (tileX: number, tileY: number) => this.tiles.get(tileX)?.get(tileY)
+
+  delete = (tileX: number, tileY: number) => {
+    this.tiles.get(tileX)?.delete(tileY)
+  }
 
   forEach = (callback: (tile: Tile) => void) => {
     this.tiles.forEach((column) => column.forEach(callback))
