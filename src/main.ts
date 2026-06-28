@@ -2,7 +2,7 @@ import { Ball } from "./ball"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
-import { TileMap, pixelToTile } from "./tiles/tile"
+import { TileMap } from "./tiles/tile"
 import { Wall } from "./tiles/wall"
 import { Redirector } from "./tiles/redirector"
 
@@ -29,7 +29,6 @@ backgroundGraphics.draw()
 staticGraphics.draw()
 
 let lastTime = 0
-const prevTile = new WeakMap<Ball, { x: number; y: number }>()
 
 const loop = (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
@@ -38,16 +37,7 @@ const loop = (timestamp: number) => {
   dynamicGraphics.update(dt)
 
   balls.forEach((ball) => {
-    const leadingX = ball.vx >= 0 ? ball.x + ball.size : ball.x
-    const leadingY = ball.vy >= 0 ? ball.y + ball.size : ball.y
-    const tileX = pixelToTile(leadingX)
-    const tileY = pixelToTile(leadingY)
-    const prev = prevTile.get(ball)
-
-    ball.isNewEntry = !prev || prev.x !== tileX || prev.y !== tileY
-    prevTile.set(ball, { x: tileX, y: tileY })
-
-    tiles.get(tileX, tileY)?.interact(ball)
+    tiles.get(ball.tilePosition.x, ball.tilePosition.y)?.interact(ball)
   })
 
   dynamicGraphics.draw()

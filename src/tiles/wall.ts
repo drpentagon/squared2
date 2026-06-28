@@ -7,7 +7,6 @@ import { Tile } from "./tile"
 
 export class Wall extends Tile {
   interact = (ball: Ball) => {
-    if (!ball.isNewEntry) return
     ball.perpendicularBounce(this.overlap(ball))
     playBounce()
   }

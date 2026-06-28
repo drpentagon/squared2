@@ -37,7 +37,7 @@ export class Redirector extends Tile {
     const nextDirection = REDIRECTS[this.variant][ball.direction()]
 
     if (!nextDirection) {
-      if (ball.isNewEntry) ball.perpendicularBounce(overlap)
+      if (ball.inNewTile()) ball.perpendicularBounce(overlap)
       playBounce()
       return
     }

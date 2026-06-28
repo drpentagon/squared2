@@ -10,15 +10,16 @@ const BALL_SIZE = DOT_SIZE + DOT_CC // 2 dots + 1 spacing = 15px
 
 export class Ball {
   tilePosition: { x: number; y: number }
+  oldTilePosition: { x: number; y: number }
   size = BALL_SIZE
   x: number
   y: number
   vx: number
   vy: number
-  isNewEntry = false
 
   constructor(tileX: number, tileY: number, vx: number, vy: number) {
     this.tilePosition = { x: tileX, y: tileY }
+    this.oldTilePosition = { x: -1, y: -1 }
     this.vx = vx
     this.vy = vy
 
@@ -33,7 +34,11 @@ export class Ball {
     this.x = ((this.x % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
     this.y = ((this.y % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
 
-    this.tilePosition = { x: pixelToTile(this.x), y: pixelToTile(this.y) }
+    const leadingX = this.vx >= 0 ? this.x + this.size : this.x
+    const leadingY = this.vy >= 0 ? this.y + this.size : this.y
+
+    this.oldTilePosition = { x: this.tilePosition.x, y: this.tilePosition.y }
+    this.tilePosition = { x: pixelToTile(leadingX), y: pixelToTile(leadingY) }
   }
 
   perpendicularBounce(overlap: number) {
@@ -42,6 +47,13 @@ export class Ball {
 
     this.vx = -this.vx
     this.vy = -this.vy
+  }
+
+  inNewTile() {
+    return (
+      this.oldTilePosition.x !== this.tilePosition.x ||
+      this.oldTilePosition.y !== this.tilePosition.y
+    )
   }
 
   direction() {
