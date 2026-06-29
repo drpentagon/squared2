@@ -1,6 +1,7 @@
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
 import { SQUARE_SIZE, SQUARE_STEP } from "../constants"
+import { ROCK } from "../styles"
 import { gridOrigin } from "../grid"
 import { playBounce } from "../sound"
 import { Tile } from "./tile"
@@ -18,7 +19,7 @@ export class Wall extends Tile {
           gridOrigin.x + this.x + sx * SQUARE_STEP,
           gridOrigin.y + this.y + sy * SQUARE_STEP,
           SQUARE_SIZE,
-          this.style,
+          ROCK,
         )
       }
     }

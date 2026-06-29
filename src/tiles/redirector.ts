@@ -1,15 +1,9 @@
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import {
-  DOT_SPACING,
-  BALL_RADIUS,
-  SQUARE_SIZE,
-  SQUARE_STEP,
-  TILE_SIZE,
-  directions,
-} from "../constants"
+import { DOT_SPACING, SQUARE_SIZE, SQUARE_STEP, TILE_SIZE, directions } from "../constants"
 import { rotatePolygon } from "../lib/geometry"
 import { playBounce } from "../sound"
+import { FRAGILE, ROCK } from "../styles"
 import { Tile } from "./tile"
 const { UP, DOWN, LEFT, RIGHT } = directions
 
@@ -35,7 +29,7 @@ export class Redirector extends Tile {
   variant: number
   permanent: boolean
 
-  constructor(tileX: number, tileY: number, variant: number, permanent = true) {
+  constructor(tileX: number, tileY: number, variant: number, permanent = false) {
     super(tileX, tileY)
     this.variant = variant
     this.permanent = permanent
@@ -80,6 +74,6 @@ export class Redirector extends Tile {
   }
 
   draw = (canvas: Canvas) => {
-    canvas.drawPolygon(this, VARIANTS[this.variant], this.style)
+    canvas.drawPolygon(this, VARIANTS[this.variant], this.permanent ? ROCK : FRAGILE)
   }
 }

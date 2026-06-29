@@ -1,7 +1,6 @@
 import type { Ball } from "../ball"
 import { Canvas } from "../canvas"
 import { DOT_CC, BALL_RADIUS, TILE_CC, TILE_SIZE } from "../constants"
-import { Style } from "../style"
 
 export const pixelToTile = (pixel: number) => Math.floor((pixel - DOT_CC) / TILE_CC)
 
@@ -10,7 +9,6 @@ export abstract class Tile {
   tileY: number
   x: number
   y: number
-  style: Style
   consumed: boolean
 
   constructor(tileX: number, tileY: number) {
@@ -18,8 +16,6 @@ export abstract class Tile {
     this.tileY = tileY
     this.x = DOT_CC + tileX * TILE_CC
     this.y = DOT_CC + tileY * TILE_CC
-
-    this.style = new Style("rgba(255, 255, 255, 0.7)", "rgba(255, 255, 255, 1)", 2)
     this.consumed = false
   }
 
