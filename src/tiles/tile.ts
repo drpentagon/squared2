@@ -26,6 +26,8 @@ export abstract class Tile {
     return this.y + TILE_SIZE - ball.y + BALL_RADIUS
   }
 
+  onClick(): void {}
+
   abstract draw(canvas: Canvas): void
   abstract interact(ball: Ball): void
 }

@@ -2,7 +2,9 @@ import { Ball } from "./ball"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
-import { TileMap } from "./tiles/tile"
+import { DOT_CC, TILE_CC, TILE_SIZE } from "./constants"
+import { gridOrigin } from "./grid"
+import { TileMap, pixelToTile } from "./tiles/tile"
 import { Wall } from "./tiles/wall"
 import { Redirector } from "./tiles/redirector"
 
@@ -14,12 +16,12 @@ staticTiles.set(new Wall(5, 9))
 staticTiles.set(new Wall(6, 9))
 
 const dynamicTiles = new TileMap()
-dynamicTiles.set(new Redirector(3, 3, 1))
-dynamicTiles.set(new Redirector(7, 3, 0))
-dynamicTiles.set(new Redirector(7, 9, 3))
-dynamicTiles.set(new Redirector(4, 9, 2))
-dynamicTiles.set(new Redirector(4, 6, 0))
-dynamicTiles.set(new Redirector(8, 6, 1))
+// dynamicTiles.set(new Redirector(3, 3, 1))
+// dynamicTiles.set(new Redirector(7, 3, 0))
+// dynamicTiles.set(new Redirector(7, 9, 3))
+// dynamicTiles.set(new Redirector(4, 9, 2))
+// dynamicTiles.set(new Redirector(4, 6, 0))
+// dynamicTiles.set(new Redirector(8, 6, 1))
 
 const balls = [new Ball(3, 4, 0, -400)]
 
@@ -52,3 +54,31 @@ const loop = (timestamp: number) => {
 }
 
 requestAnimationFrame(loop)
+
+const VARIANT_BY_QUADRANT = [
+  [0, 1],
+  [3, 2],
+] as const
+
+document.addEventListener("click", (e) => {
+  const localX = e.clientX - gridOrigin.x
+  const localY = e.clientY - gridOrigin.y
+  const tileX = pixelToTile(localX)
+  const tileY = pixelToTile(localY)
+
+  const existing = staticTiles.get(tileX, tileY) ?? dynamicTiles.get(tileX, tileY)
+  if (existing) {
+    existing.onClick()
+    return
+  }
+
+  if (balls.some((ball) => ball.tilePosition.x === tileX && ball.tilePosition.y === tileY)) return
+
+  const tileOriginX = DOT_CC + tileX * TILE_CC
+  const tileOriginY = DOT_CC + tileY * TILE_CC
+  const col = localX - tileOriginX >= TILE_SIZE / 2 ? 1 : 0
+  const row = localY - tileOriginY >= TILE_SIZE / 2 ? 1 : 0
+  const variant = VARIANT_BY_QUADRANT[row][col]
+
+  dynamicTiles.set(new Redirector(tileX, tileY, variant))
+})

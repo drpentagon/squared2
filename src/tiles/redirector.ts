@@ -35,6 +35,10 @@ export class Redirector extends Tile {
     this.permanent = permanent
   }
 
+  onClick() {
+    if (!this.permanent) this.variant = (this.variant + 1) % 4
+  }
+
   interact = (ball: Ball) => {
     const overlap = this.overlap(ball)
     const nextDirection = REDIRECTS[this.variant][ball.direction()]
