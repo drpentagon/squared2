@@ -9,19 +9,12 @@ import { Wall } from "./tiles/wall"
 import { Redirector } from "./tiles/redirector"
 
 const staticTiles = new TileMap()
-// staticTiles.set(new Wall(3, 9))
 staticTiles.set(new Wall(4, 5))
 staticTiles.set(new Wall(8, 5))
 staticTiles.set(new Wall(5, 9))
 staticTiles.set(new Wall(6, 9))
 
 const dynamicTiles = new TileMap()
-// dynamicTiles.set(new Redirector(3, 3, 1))
-// dynamicTiles.set(new Redirector(7, 3, 0))
-// dynamicTiles.set(new Redirector(7, 9, 3))
-// dynamicTiles.set(new Redirector(4, 9, 2))
-// dynamicTiles.set(new Redirector(4, 6, 0))
-// dynamicTiles.set(new Redirector(8, 6, 1))
 
 const balls = [new Ball(3, 4, 0, -400)]
 

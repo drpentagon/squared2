@@ -65,6 +65,33 @@ export const playCoin = () => {
   playTone(900, audioContext.currentTime + 0.1)
 }
 
+// Square buzz drops to silence fast — fluorescent light turning off
+export const playFragileBounce = () => {
+  resume()
+  const buzz = audioContext.createOscillator()
+  const laser = audioContext.createOscillator()
+  const gain = audioContext.createGain()
+
+  buzz.type = "square"
+  buzz.frequency.setValueAtTime(180, audioContext.currentTime)
+  buzz.frequency.exponentialRampToValueAtTime(60, audioContext.currentTime + 0.15)
+
+  laser.type = "sawtooth"
+  laser.frequency.setValueAtTime(1400, audioContext.currentTime)
+  laser.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.15)
+
+  gain.gain.setValueAtTime(0.15, audioContext.currentTime)
+  gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15)
+
+  buzz.connect(gain)
+  laser.connect(gain)
+  gain.connect(audioContext.destination)
+  buzz.start()
+  laser.start()
+  buzz.stop(audioContext.currentTime + 0.15)
+  laser.stop(audioContext.currentTime + 0.15)
+}
+
 // Sawtooth wave, frequency sweeps down fast — laser shot
 export const playLaser = () => {
   resume()

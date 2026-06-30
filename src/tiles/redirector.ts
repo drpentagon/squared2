@@ -1,8 +1,15 @@
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import { DOT_SPACING, SQUARE_SIZE, SQUARE_STEP, TILE_SIZE, directions } from "../constants"
+import {
+  BALL_RADIUS,
+  DOT_SPACING,
+  SQUARE_SIZE,
+  SQUARE_STEP,
+  TILE_SIZE,
+  directions,
+} from "../constants"
 import { rotatePolygon } from "../lib/geometry"
-import { playBounce } from "../sound"
+import { playBounce, playFragileBounce } from "../sound"
 import { FRAGILE, ROCK } from "../styles"
 import { Tile } from "./tile"
 const { UP, DOWN, LEFT, RIGHT } = directions
@@ -43,14 +50,14 @@ export class Redirector extends Tile {
     const overlap = this.overlap(ball)
     const nextDirection = REDIRECTS[this.variant][ball.direction()]
 
-    if (!nextDirection) {
-      if (ball.inNewTile()) ball.perpendicularBounce(overlap)
+    if (ball.inNewTile() && !nextDirection) {
+      ball.perpendicularBounce(overlap)
       if (!this.permanent) this.consumed = true
-      playBounce()
+      this.permanent ? playBounce() : playFragileBounce()
       return
     }
 
-    if (overlap <= 2 * SQUARE_STEP) return
+    if (overlap <= 2 * SQUARE_STEP || !nextDirection) return
 
     const excess = overlap - 2 * SQUARE_STEP
     const speed = Math.abs(ball.vx) || Math.abs(ball.vy)
@@ -59,8 +66,8 @@ export class Redirector extends Tile {
     const isHorizontal = nextDirection === RIGHT || nextDirection === LEFT
     const sign = isPositive ? 1 : -1
     const pos = isPositive
-      ? TILE_SIZE - (SQUARE_STEP + SQUARE_SIZE) + excess
-      : SQUARE_STEP + SQUARE_SIZE - excess
+      ? TILE_SIZE - (SQUARE_STEP + SQUARE_SIZE) + excess + BALL_RADIUS
+      : SQUARE_STEP + SQUARE_SIZE - excess - BALL_RADIUS
 
     if (isHorizontal) {
       ball.x = this.x + pos
@@ -74,7 +81,7 @@ export class Redirector extends Tile {
       ball.vx = 0
     }
     if (!this.permanent) this.consumed = true
-    playBounce()
+    this.permanent ? playBounce() : playFragileBounce()
   }
 
   draw = (canvas: Canvas) => {
