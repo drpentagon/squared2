@@ -1,5 +1,5 @@
 import { gridOrigin } from "./grid"
-import { Style } from "./style"
+import { Style } from "./lib/style"
 import { Tile } from "./tiles/tile"
 
 export class Canvas {

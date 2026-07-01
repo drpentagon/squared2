@@ -1,6 +1,6 @@
 import type { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import { DOT_CC, BALL_RADIUS, TILE_CC, TILE_SIZE } from "../constants"
+import { DOT_CC, BALL_RADIUS, TILE_CC, TILE_SIZE } from "../lib/constants"
 
 export const pixelToTile = (pixel: number) => Math.floor((pixel - DOT_CC) / TILE_CC)
 

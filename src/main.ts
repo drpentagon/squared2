@@ -2,11 +2,12 @@ import { Ball } from "./ball"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
-import { DOT_CC, TILE_CC, TILE_SIZE } from "./constants"
+import { DOT_CC, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { gridOrigin } from "./grid"
 import { TileMap, pixelToTile } from "./tiles/tile"
 import { Wall } from "./tiles/wall"
 import { Redirector } from "./tiles/redirector"
+import { Goal } from "./tiles/goal"
 
 const staticTiles = new TileMap()
 staticTiles.set(new Wall(4, 5))
@@ -15,6 +16,7 @@ staticTiles.set(new Wall(5, 9))
 staticTiles.set(new Wall(6, 9))
 
 const dynamicTiles = new TileMap()
+dynamicTiles.set(new Goal(6, 6, 0))
 
 const balls = [new Ball(3, 4, 0, -400)]
 

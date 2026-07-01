@@ -1,4 +1,4 @@
-import { GRID_SIZE } from "./constants"
+import { GRID_SIZE } from "./lib/constants"
 
 export const gridOrigin = { x: 0, y: 0 }
 

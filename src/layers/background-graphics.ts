@@ -1,7 +1,7 @@
 import { Canvas } from "../canvas"
 import { GraphicsLayer } from "./graphics-layer"
-import { Style } from "../style"
-import { DOT_GRID_SIZE, DOT_SIZE, DOT_CC, TILES } from "../constants"
+import { Style } from "../lib/style"
+import { DOT_GRID_SIZE, DOT_SIZE, DOT_CC, TILES } from "../lib/constants"
 import { gridOrigin } from "../grid"
 
 const dotStyle = new Style("rgba(255, 255, 255, 0.10)")

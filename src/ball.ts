@@ -1,7 +1,7 @@
 import { Canvas } from "./canvas"
-import { BALL_SIZE, DOT_CC, GRID_SIZE, BALL_RADIUS, TILE_CC, directions } from "./constants"
+import { BALL_SIZE, DOT_CC, GRID_SIZE, BALL_RADIUS, TILE_CC, directions } from "./lib/constants"
 import { gridOrigin } from "./grid"
-import { BALL_STYLE } from "./styles"
+import { BALL_STYLE } from "./lib/styles"
 import { pixelToTile } from "./tiles/tile"
 
 const { UP, DOWN, LEFT, RIGHT } = directions
@@ -13,12 +13,14 @@ export class Ball {
   y: number
   vx: number
   vy: number
+  consumed: boolean
 
   constructor(tileX: number, tileY: number, vx: number, vy: number) {
     this.tilePosition = { x: tileX, y: tileY }
     this.oldTilePosition = { x: -1, y: -1 }
     this.vx = vx
     this.vy = vy
+    this.consumed = false
 
     this.x = 3 * DOT_CC + tileX * TILE_CC + BALL_RADIUS
     this.y = 3 * DOT_CC + tileY * TILE_CC + BALL_RADIUS

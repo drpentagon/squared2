@@ -7,10 +7,10 @@ import {
   SQUARE_STEP,
   TILE_SIZE,
   directions,
-} from "../constants"
+} from "../lib/constants"
 import { rotatePolygon } from "../lib/geometry"
-import { playBounce, playFragileBounce } from "../sound"
-import { FRAGILE, ROCK } from "../styles"
+import { playBounce, playFragileBounce } from "../lib/sound"
+import { FRAGILE, ROCK } from "../lib/styles"
 import { Tile } from "./tile"
 const { UP, DOWN, LEFT, RIGHT } = directions
 
