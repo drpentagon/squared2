@@ -21,10 +21,12 @@ const SHAPES = [0, 1, 2, 3].map((n) => rotatePolygon(BASE, n))
 
 export class Goal extends Tile {
   direction: number
+  rotates: boolean
 
-  constructor(tileX: number, tileY: number, direction: number) {
+  constructor(tileX: number, tileY: number, direction: number, rotates = false) {
     super(tileX, tileY)
     this.direction = direction
+    this.rotates = rotates
   }
 
   interact = (ball: Ball) => {
@@ -37,6 +39,7 @@ export class Goal extends Tile {
     if (this.overlap(ball) >= TILE_SIZE / 2) {
       ball.consumed = true
       playBell()
+      if (this.rotates) this.direction = (this.direction + 1) % 4
     }
   }
 

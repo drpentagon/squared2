@@ -16,9 +16,9 @@ staticTiles.set(new Wall(5, 9))
 staticTiles.set(new Wall(6, 9))
 
 const dynamicTiles = new TileMap()
-dynamicTiles.set(new Goal(6, 6, 0))
+dynamicTiles.set(new Goal(6, 6, 0, true))
 
-const balls = [new Ball(3, 4, 0, -400)]
+const balls = [new Ball(3, 4, 0, -400), new Ball(8, 9, 0, 400)]
 
 const backgroundGraphics = new BackgroundGraphics()
 const staticGraphics = new StaticGraphics(staticTiles)
