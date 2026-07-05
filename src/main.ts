@@ -1,24 +1,19 @@
-import { Ball } from "./ball"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
 import { DOT_CC, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { gridOrigin } from "./grid"
-import { TileMap, pixelToTile } from "./tiles/tile"
-import { Wall } from "./tiles/wall"
+import { Level } from "./level"
+import { Tile, pixelToTile } from "./tiles/tile"
 import { Redirector } from "./tiles/redirector"
-import { Goal } from "./tiles/goal"
+import { optionsPanel, setEditing, toolsPanel } from "./ui/panels"
+import level1 from "./levels/level1.json"
 
-const staticTiles = new TileMap()
-staticTiles.set(new Wall(4, 5))
-staticTiles.set(new Wall(8, 5))
-staticTiles.set(new Wall(5, 9))
-staticTiles.set(new Wall(6, 9))
+const level = new Level(level1)
 
-const dynamicTiles = new TileMap()
-dynamicTiles.set(new Goal(6, 6, 0, true))
-
-const balls = [new Ball(3, 4, 0, -400), new Ball(8, 9, 0, 400)]
+const balls = level.balls
+const staticTiles = level.staticTiles
+const dynamicTiles = level.dynamicTiles
 
 const backgroundGraphics = new BackgroundGraphics()
 const staticGraphics = new StaticGraphics(staticTiles)
@@ -31,17 +26,35 @@ const stepMode = false
 const STEP_DT = 1 / 60
 
 let lastTime = 0
+let isEditing = false
+
+const resetToInitialState = () => {
+  const fresh = new Level(level1)
+
+  balls.splice(0, balls.length, ...fresh.balls)
+
+  const freshDynamicTiles: Tile[] = []
+  fresh.dynamicTiles.forEach((tile) => freshDynamicTiles.push(tile))
+  dynamicTiles.clear()
+  dynamicTiles.addArray(freshDynamicTiles)
+}
 
 const loop = (timestamp: number) => {
   const dt = stepMode ? STEP_DT : (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  balls.forEach((ball) => {
-    staticTiles.get(ball.tilePosition.x, ball.tilePosition.y)?.interact(ball)
-    dynamicTiles.get(ball.tilePosition.x, ball.tilePosition.y)?.interact(ball)
-  })
+  if (!isEditing) {
+    balls.forEach((ball) => {
+      staticTiles.get(ball.tilePosition.x, ball.tilePosition.y)?.interact(ball)
+      dynamicTiles.get(ball.tilePosition.x, ball.tilePosition.y)?.interact(ball)
+    })
 
-  dynamicGraphics.update(dt)
+    dynamicGraphics.update(dt)
+  } else {
+    toolsPanel.render()
+    optionsPanel.render()
+  }
+
   dynamicGraphics.draw()
 
   if (stepMode) setTimeout(() => requestAnimationFrame(loop), 2000)
@@ -49,6 +62,13 @@ const loop = (timestamp: number) => {
 }
 
 requestAnimationFrame(loop)
+
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "e") return
+  isEditing = !isEditing
+  setEditing(isEditing)
+  if (isEditing) resetToInitialState()
+})
 
 const VARIANT_BY_QUADRANT = [
   [0, 1],

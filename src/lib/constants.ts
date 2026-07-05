@@ -10,6 +10,7 @@ export const SQUARE_STEP = 2 * DOT_CC
 export const TILE_SIZE = 3 * SQUARE_SIZE + 2 * DOT_SPACING
 export const BALL_SIZE = DOT_SIZE + DOT_CC
 export const BALL_RADIUS = BALL_SIZE / 2
+export const PANEL_WIDTH = 8 * DOT_CC - DOT_SPACING
 
 console.log(TILE_SIZE)
 

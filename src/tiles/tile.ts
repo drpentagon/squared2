@@ -40,10 +40,18 @@ export class TileMap {
     this.tiles.get(tile.tileX)!.set(tile.tileY, tile)
   }
 
+  addArray = (tiles: Tile[]) => {
+    tiles.forEach(this.set)
+  }
+
   get = (tileX: number, tileY: number) => this.tiles.get(tileX)?.get(tileY)
 
   delete = (tileX: number, tileY: number) => {
     this.tiles.get(tileX)?.delete(tileY)
+  }
+
+  clear = () => {
+    this.tiles.clear()
   }
 
   forEach = (callback: (tile: Tile) => void) => {

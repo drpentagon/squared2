@@ -22,6 +22,48 @@
         height: 100vh;
         image-rendering: pixelated;
       }
+      .edit-panel {
+        position: absolute;
+        display: none;
+        box-sizing: border-box;
+        background: transparent;
+        z-index: 3;
+      }
+      .edit-panel canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+      }
+      body.editing .edit-panel {
+        display: block;
+      }
+      #tools-panel {
+        left: calc((var(--grid-origin-x) - var(--dot-spacing) - var(--panel-width)) * 1px);
+        top: calc(var(--grid-origin-y) * 1px);
+        width: calc(var(--panel-width) * 1px);
+        height: calc(var(--grid-size) * 1px);
+      }
+      #options-panel {
+        left: calc((var(--grid-origin-x) + var(--grid-size) + var(--dot-spacing)) * 1px);
+        top: calc(var(--grid-origin-y) * 1px);
+        width: calc(var(--panel-width) * 1px);
+        height: calc(var(--grid-size) * 1px);
+      }
+      @media (max-width: 700px) {
+        #tools-panel {
+          left: calc(var(--grid-origin-x) * 1px);
+          top: calc((var(--grid-origin-y) - var(--dot-spacing) - var(--panel-width)) * 1px);
+          width: calc(var(--grid-size) * 1px);
+          height: calc(var(--panel-width) * 1px);
+        }
+        #options-panel {
+          left: calc(var(--grid-origin-x) * 1px);
+          top: calc((var(--grid-origin-y) + var(--grid-size) + var(--dot-spacing)) * 1px);
+          width: calc(var(--grid-size) * 1px);
+          height: calc(var(--panel-width) * 1px);
+        }
+      }
     </style>
   </head>
   <body>
