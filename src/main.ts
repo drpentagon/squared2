@@ -6,10 +6,8 @@ import { optionsPanel, setEditing, toolsPanel } from "./ui/panels"
 import level1 from "./levels/level1.json"
 
 const level = new Level(level1)
-// level.reset()
 
 let lastTime = 0
-let isEditing = false
 
 let EDITOR_STATE = false
 
@@ -17,7 +15,7 @@ const loop = (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  if (!isEditing) {
+  if (!EDITOR_STATE) {
     level.update(dt)
   } else {
     toolsPanel.render()

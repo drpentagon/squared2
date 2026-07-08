@@ -1,4 +1,3 @@
-import { Canvas } from "../canvas"
 import { GraphicsLayer } from "./graphics-layer"
 import { Style } from "../lib/style"
 import { DOT_GRID_SIZE, DOT_SIZE, DOT_CC, TILES } from "../lib/constants"
@@ -20,11 +19,8 @@ const SECONDARY_PATTERN = [
 ]
 
 export class BackgroundGraphics extends GraphicsLayer {
-  protected canvas: Canvas
-
   constructor() {
-    super()
-    this.canvas = new Canvas(0)
+    super(0)
   }
 
   update = (_dt: number) => {}

@@ -38,23 +38,13 @@ export class Level {
     this.dynamicTiles = new TileMap()
     this.balls = []
 
-    this.initiateLevelData()
     this.backgroundGraphics = new BackgroundGraphics()
     this.staticGraphics = new StaticGraphics(this.staticTiles)
+    this.reset()
     this.dynamicGraphics = new DynamicGraphics(this.dynamicTiles, this.balls)
-
-    this.backgroundGraphics.draw()
-    this.staticGraphics.draw()
   }
 
   reset = () => {
-    this.initiateLevelData()
-
-    this.backgroundGraphics.draw()
-    this.staticGraphics.draw()
-  }
-
-  initiateLevelData = () => {
     this.staticTiles.clear()
     this.staticTiles.addArray(this.data.walls.map((t) => new Wall(t.x, t.y)))
     this.staticTiles.addArray(this.data.wallRanges.flatMap(wallsInRange))
@@ -70,7 +60,16 @@ export class Level {
       this.data.goals.map((t) => new Goal(t.x, t.y, t.direction, t.rotates)),
     )
 
-    this.balls = this.data.balls.map((b) => new Ball(b.x, b.y, b.vx, b.vy))
+    this.balls.splice(
+      0,
+      this.balls.length,
+      ...this.data.balls.map((b) => new Ball(b.x, b.y, b.vx, b.vy)),
+    )
+
+    this.backgroundGraphics.clear()
+    this.backgroundGraphics.draw()
+    this.staticGraphics.clear()
+    this.staticGraphics.draw()
   }
 
   update = (dt: number) => {
