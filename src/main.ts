@@ -2,7 +2,7 @@ import { DOT_CC, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { gridOrigin } from "./grid"
 import { Level } from "./level"
 import { pixelToTile } from "./tiles/tile"
-import { optionsPanel, setEditing, toolsPanel } from "./ui/panels"
+import { setEditing, toolsPanel } from "./ui/tools-panel"
 import level1 from "./levels/level1.json"
 
 const level = new Level(level1)
@@ -19,7 +19,6 @@ const loop = (timestamp: number) => {
     level.update(dt)
   } else {
     toolsPanel.render()
-    optionsPanel.render()
   }
 
   level.render()
@@ -52,5 +51,19 @@ document.addEventListener("click", (e) => {
   const row = localY - tileOriginY >= TILE_SIZE / 2 ? 1 : 0
   const variant = VARIANT_BY_QUADRANT[row][col]
 
-  level.handlnteraction(tileX, tileY, variant)
+  if (!EDITOR_STATE) {
+    level.handlnteraction(tileX, tileY, variant)
+  } else {
+    const existingTile = level.getTile(tileX, tileY)
+    const newTile = toolsPanel.executeSelectedTool(tileX, tileY, variant, existingTile)
+    switch (true) {
+      case existingTile?.type === toolsPanel.selectedTool?.type && !newTile:
+        level.removeTile(tileX, tileY)
+        break
+      case !newTile:
+        return
+      default:
+        level.addTile(tileX, tileY, newTile)
+    }
+  }
 })

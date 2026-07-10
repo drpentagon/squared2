@@ -1,5 +1,6 @@
 import { Ball } from "./ball"
-import { TileMap } from "./tiles/tile"
+import { Tile, TileMap } from "./tiles/tile"
+import { tileTypes } from "./lib/constants"
 import { Wall } from "./tiles/wall"
 import { Redirector } from "./tiles/redirector"
 import { Goal } from "./tiles/goal"
@@ -79,6 +80,59 @@ export class Level {
     })
 
     this.dynamicGraphics.update(dt)
+  }
+
+  getTile = (tileX: number, tileY: number): Tile | undefined => {
+    return this.staticTiles.get(tileX, tileY) ?? this.dynamicTiles.get(tileX, tileY)
+  }
+
+  addWall = (tileX: number, tileY: number) => {
+    this.staticTiles.set(new Wall(tileX, tileY))
+    this.staticGraphics.clear()
+    this.staticGraphics.draw()
+  }
+
+  addTile = (tileX: number, tileY: number, tile: Ball | Tile) => {
+    if (!tile) return
+
+    const existingBall = this.balls.find(
+      (ball) => ball.tilePosition.x === tileX && ball.tilePosition.y === tileY,
+    )
+    const existingTile = this.staticTiles.get(tileX, tileY) ?? this.dynamicTiles.get(tileX, tileY)
+    const existing = existingBall ?? existingTile
+
+    if (existing && existing.type !== tile.type) return
+
+    this.removeTile(tileX, tileY)
+
+    switch (tile.type) {
+      case tileTypes.BALL:
+        this.balls.push(tile as Ball)
+        break
+      case tileTypes.WALL:
+      case tileTypes.REDIRECTOR:
+        this.staticTiles.set(tile as Tile)
+        break
+      case tileTypes.GOAL:
+      case tileTypes.FRAGILE_REDIRECTOR:
+        this.dynamicTiles.set(tile as Tile)
+        break
+    }
+
+    this.staticGraphics.clear()
+    this.staticGraphics.draw()
+  }
+
+  removeTile = (tileX: number, tileY: number) => {
+    const existingBall = this.balls.find(
+      (ball) => ball.tilePosition.x === tileX && ball.tilePosition.y === tileY,
+    )
+    if (existingBall) this.balls.splice(this.balls.indexOf(existingBall), 1)
+    this.staticTiles.delete(tileX, tileY)
+    this.dynamicTiles.delete(tileX, tileY)
+
+    this.staticGraphics.clear()
+    this.staticGraphics.draw()
   }
 
   handlnteraction = (tileX: number, tileY: number, variant: number) => {

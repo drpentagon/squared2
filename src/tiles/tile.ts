@@ -28,6 +28,7 @@ export abstract class Tile {
 
   onClick(): void {}
 
+  abstract get type(): string
   abstract draw(canvas: Canvas): void
   abstract interact(ball: Ball): void
 }

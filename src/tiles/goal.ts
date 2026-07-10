@@ -1,6 +1,6 @@
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import { TILE_SIZE, SQUARE_SIZE } from "../lib/constants"
+import { TILE_SIZE, SQUARE_SIZE, tileTypes } from "../lib/constants"
 import { rotatePolygon, DIRECTION_STEPS } from "../lib/geometry"
 import { GOAL } from "../lib/styles"
 import { playBounce, playBell } from "../lib/sound"
@@ -27,6 +27,10 @@ export class Goal extends Tile {
     super(tileX, tileY)
     this.direction = direction
     this.rotates = rotates
+  }
+
+  get type() {
+    return tileTypes.GOAL
   }
 
   interact = (ball: Ball) => {

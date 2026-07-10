@@ -1,19 +1,20 @@
 import { gridOrigin } from "./grid"
+import { DOT_CC, DOT_SIZE } from "./lib/constants"
 import { Style } from "./lib/style"
 import { Tile } from "./tiles/tile"
 
 export class Canvas {
+  el: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
 
-  constructor(layerLevel: number) {
-    const el = document.createElement("canvas")
-    el.width = window.innerWidth
-    el.height = window.innerHeight
-    el.className = "canvas-layer"
-    el.style.zIndex = String(layerLevel)
-    document.body.appendChild(el)
-    this.ctx = el.getContext("2d")!
+  constructor(layerLevel: number, container: HTMLElement = document.body) {
+    this.el = document.createElement("canvas")
+    this.el.className = "canvas-layer"
+    this.el.style.zIndex = String(layerLevel)
+    container.appendChild(this.el)
+    this.ctx = this.el.getContext("2d")!
     this.ctx.imageSmoothingEnabled = false
+    this.resize()
   }
 
   get width() {
@@ -24,6 +25,12 @@ export class Canvas {
     return this.ctx.canvas.height
   }
 
+  resize = () => {
+    const { width, height } = this.el.getBoundingClientRect()
+    this.el.width = width
+    this.el.height = height
+  }
+
   clear = () => {
     this.ctx.clearRect(0, 0, this.width, this.height)
   }
@@ -32,6 +39,14 @@ export class Canvas {
     this.ctx.beginPath()
     this.ctx.rect(x, y, width, height)
     this.ctx.clip()
+  }
+
+  fillDots = (x: number, y: number, cols: number, rows: number, style = new Style()) => {
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        this.drawSquare(x + c * DOT_CC, y + r * DOT_CC, DOT_SIZE, style)
+      }
+    }
   }
 
   drawSquare = (x: number, y: number, size: number, style = new Style()) => {

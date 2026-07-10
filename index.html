@@ -39,13 +39,9 @@
         display: block;
       }
       #tools-panel {
-        left: calc((var(--grid-origin-x) - var(--dot-spacing) - var(--panel-width)) * 1px);
-        top: calc(var(--grid-origin-y) * 1px);
-        width: calc(var(--panel-width) * 1px);
-        height: calc(var(--grid-size) * 1px);
-      }
-      #options-panel {
-        left: calc((var(--grid-origin-x) + var(--grid-size) + var(--dot-spacing)) * 1px);
+        left: calc(
+          (var(--grid-origin-x) - var(--dot-spacing) - var(--panel-width) - var(--dot-cc)) * 1px
+        );
         top: calc(var(--grid-origin-y) * 1px);
         width: calc(var(--panel-width) * 1px);
         height: calc(var(--grid-size) * 1px);
@@ -54,12 +50,6 @@
         #tools-panel {
           left: calc(var(--grid-origin-x) * 1px);
           top: calc((var(--grid-origin-y) - var(--dot-spacing) - var(--panel-width)) * 1px);
-          width: calc(var(--grid-size) * 1px);
-          height: calc(var(--panel-width) * 1px);
-        }
-        #options-panel {
-          left: calc(var(--grid-origin-x) * 1px);
-          top: calc((var(--grid-origin-y) + var(--grid-size) + var(--dot-spacing)) * 1px);
           width: calc(var(--grid-size) * 1px);
           height: calc(var(--panel-width) * 1px);
         }

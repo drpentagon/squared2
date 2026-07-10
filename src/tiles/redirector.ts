@@ -7,6 +7,7 @@ import {
   SQUARE_STEP,
   TILE_SIZE,
   directions,
+  tileTypes,
 } from "../lib/constants"
 import { rotatePolygon } from "../lib/geometry"
 import { playBounce, playFragileBounce } from "../lib/sound"
@@ -40,6 +41,10 @@ export class Redirector extends Tile {
     super(tileX, tileY)
     this.variant = variant
     this.permanent = permanent
+  }
+
+  get type() {
+    return this.permanent ? tileTypes.REDIRECTOR : tileTypes.FRAGILE_REDIRECTOR
   }
 
   onClick() {

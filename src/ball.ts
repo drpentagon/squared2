@@ -1,5 +1,13 @@
 import { Canvas } from "./canvas"
-import { BALL_SIZE, DOT_CC, GRID_SIZE, BALL_RADIUS, TILE_CC, directions } from "./lib/constants"
+import {
+  BALL_SIZE,
+  DOT_CC,
+  GRID_SIZE,
+  BALL_RADIUS,
+  TILE_CC,
+  directions,
+  tileTypes,
+} from "./lib/constants"
 import { gridOrigin } from "./grid"
 import { BALL_STYLE } from "./lib/styles"
 import { pixelToTile } from "./tiles/tile"
@@ -24,6 +32,10 @@ export class Ball {
 
     this.x = 3 * DOT_CC + tileX * TILE_CC + BALL_RADIUS
     this.y = 3 * DOT_CC + tileY * TILE_CC + BALL_RADIUS
+  }
+
+  get type() {
+    return tileTypes.BALL
   }
 
   update(dt: number) {

@@ -1,4 +1,4 @@
-import { DOT_SPACING, GRID_SIZE, PANEL_WIDTH } from "./lib/constants"
+import { DOT_CC, DOT_SPACING, GRID_SIZE, PANEL_WIDTH } from "./lib/constants"
 
 export const gridOrigin = { x: 0, y: 0 }
 
@@ -12,6 +12,7 @@ const updateOrigin = () => {
   root.setProperty("--grid-size", String(GRID_SIZE))
   root.setProperty("--panel-width", String(PANEL_WIDTH))
   root.setProperty("--dot-spacing", String(DOT_SPACING))
+  root.setProperty("--dot-cc", String(DOT_CC))
 }
 
 updateOrigin()
