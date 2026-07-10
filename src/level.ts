@@ -86,12 +86,6 @@ export class Level {
     return this.staticTiles.get(tileX, tileY) ?? this.dynamicTiles.get(tileX, tileY)
   }
 
-  addWall = (tileX: number, tileY: number) => {
-    this.staticTiles.set(new Wall(tileX, tileY))
-    this.staticGraphics.clear()
-    this.staticGraphics.draw()
-  }
-
   addTile = (tileX: number, tileY: number, tile: Ball | Tile) => {
     if (!tile) return
 

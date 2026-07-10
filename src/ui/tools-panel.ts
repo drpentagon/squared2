@@ -1,11 +1,8 @@
 import { Canvas } from "../canvas"
 import { DOT_CC, DOT_SIZE, TOOL_INNER_OFFSET, TOOL_INNER_SIZE, TOOL_STEP } from "../lib/constants"
 import { PANEL_DOT } from "../lib/styles"
-import { DefaultTool } from "./default-tool"
 import { MaybeTile, Tool } from "./tool"
 import { WallTool } from "./wall-tool"
-
-const DEFAULT_TOOL_COUNT = 8
 
 export class ToolsPanel {
   private canvas: Canvas
@@ -21,10 +18,7 @@ export class ToolsPanel {
     this.canvas = new Canvas(0, container)
     this.canvas.el.addEventListener("click", this.handleClick)
 
-    this.tools = [
-      new WallTool(this.canvas),
-      ...Array.from({ length: DEFAULT_TOOL_COUNT }, () => new DefaultTool(this.canvas)),
-    ]
+    this.tools = [new WallTool(this.canvas)]
   }
 
   get selectedTool() {
