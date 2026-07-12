@@ -1,5 +1,5 @@
-import { TileMap } from "../tiles/tile"
 import { GraphicsLayer } from "./graphics-layer"
+import { TileMap } from "../tiles/tile"
 
 export class StaticGraphics extends GraphicsLayer {
   private tiles: TileMap

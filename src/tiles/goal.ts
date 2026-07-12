@@ -1,11 +1,12 @@
+import { Tile } from "./tile"
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import { gridOrigin } from "../grid"
+import { origin } from "../grid"
 import { TILE_SIZE, SQUARE_SIZE, tileTypes } from "../lib/constants"
 import { rotatePolygon, DIRECTION_STEPS } from "../lib/geometry"
-import { GOAL } from "../lib/styles"
+import { Point } from "../lib/point"
 import { playBounce, playBell } from "../lib/sound"
-import { Tile } from "./tile"
+import { GOAL } from "../lib/styles"
 
 const BASE: [number, number][] = [
   [0, 0],
@@ -25,8 +26,8 @@ export class Goal extends Tile {
   direction: number
   rotates: boolean
 
-  constructor(tileX: number, tileY: number, direction: number, rotates = false) {
-    super(tileX, tileY)
+  constructor(tilePos: Point, direction: number, rotates = false) {
+    super(tilePos)
     this.direction = direction
     this.rotates = rotates
   }
@@ -45,7 +46,7 @@ export class Goal extends Tile {
     }
   }
 
-  draw = (canvas: Canvas, x = gridOrigin.x + this.x, y = gridOrigin.y + this.y) => {
-    canvas.drawPolygon(x, y, SHAPES[this.direction], GOAL)
+  draw = (canvas: Canvas, pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y }) => {
+    canvas.drawPolygon(pos, SHAPES[this.direction], GOAL)
   }
 }

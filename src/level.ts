@@ -1,19 +1,20 @@
 import { Ball } from "./ball"
-import { Tile, TileMap } from "./tiles/tile"
+import { BackgroundGraphics } from "./layers/background-graphics"
+import { DynamicGraphics } from "./layers/dynamic-graphics"
+import { StaticGraphics } from "./layers/static-graphics"
 import { tileTypes } from "./lib/constants"
-import { Wall } from "./tiles/wall"
-import { Redirector } from "./tiles/redirector"
+import { Point } from "./lib/point"
 import { FragileRedirector } from "./tiles/fragile-redirector"
 import { Goal } from "./tiles/goal"
-import { BackgroundGraphics } from "./layers/background-graphics"
-import { StaticGraphics } from "./layers/static-graphics"
-import { DynamicGraphics } from "./layers/dynamic-graphics"
+import { Redirector } from "./tiles/redirector"
+import { Tile, TileMap } from "./tiles/tile"
+import { Wall } from "./tiles/wall"
 
-export type WallData = { x: number; y: number }
-export type WallRangeData = { from: { x: number; y: number }; to: { x: number; y: number } }
-export type RedirectorData = { x: number; y: number; variant: number }
-export type GoalData = { x: number; y: number; direction: number; rotates?: boolean }
-export type BallData = { x: number; y: number; vx: number; vy: number }
+export type WallData = Point
+export type WallRangeData = { from: Point; to: Point }
+export type RedirectorData = Point & { variant: number }
+export type GoalData = Point & { direction: number; rotates?: boolean }
+export type BallData = Point & { vx: number; vy: number }
 
 export type LevelData = {
   walls: WallData[]
@@ -48,25 +49,17 @@ export class Level {
 
   reset = () => {
     this.staticTiles.clear()
-    this.staticTiles.addArray(this.data.walls.map((t) => new Wall(t.x, t.y)))
+    this.staticTiles.addArray(this.data.walls.map((t) => new Wall(t)))
     this.staticTiles.addArray(this.data.wallRanges.flatMap(wallsInRange))
-    this.staticTiles.addArray(
-      this.data.permanentRedirects.map((t) => new Redirector(t.x, t.y, t.variant)),
-    )
+    this.staticTiles.addArray(this.data.permanentRedirects.map((t) => new Redirector(t, t.variant)))
 
     this.dynamicTiles.clear()
     this.dynamicTiles.addArray(
-      this.data.fragileRedirects.map((t) => new FragileRedirector(t.x, t.y, t.variant)),
+      this.data.fragileRedirects.map((t) => new FragileRedirector(t, t.variant)),
     )
-    this.dynamicTiles.addArray(
-      this.data.goals.map((t) => new Goal(t.x, t.y, t.direction, t.rotates)),
-    )
+    this.dynamicTiles.addArray(this.data.goals.map((t) => new Goal(t, t.direction, t.rotates)))
 
-    this.balls.splice(
-      0,
-      this.balls.length,
-      ...this.data.balls.map((b) => new Ball(b.x, b.y, b.vx, b.vy)),
-    )
+    this.balls.splice(0, this.balls.length, ...this.data.balls.map((b) => new Ball(b, b.vx, b.vy)))
 
     this.backgroundGraphics.clear()
     this.backgroundGraphics.draw()
@@ -76,29 +69,29 @@ export class Level {
 
   update = (dt: number) => {
     this.balls.forEach((ball) => {
-      this.staticTiles.get(ball.tilePosition.x, ball.tilePosition.y)?.interact(ball)
-      this.dynamicTiles.get(ball.tilePosition.x, ball.tilePosition.y)?.interact(ball)
+      this.staticTiles.get(ball.tilePos)?.interact(ball)
+      this.dynamicTiles.get(ball.tilePos)?.interact(ball)
     })
 
     this.dynamicGraphics.update(dt)
   }
 
-  getTile = (tileX: number, tileY: number): Tile | undefined => {
-    return this.staticTiles.get(tileX, tileY) ?? this.dynamicTiles.get(tileX, tileY)
+  getTile = (tilePos: Point): Tile | undefined => {
+    return this.staticTiles.get(tilePos) ?? this.dynamicTiles.get(tilePos)
   }
 
-  addTile = (tileX: number, tileY: number, tile: Ball | Tile) => {
+  addTile = (tilePos: Point, tile: Ball | Tile) => {
     if (!tile) return
 
     const existingBall = this.balls.find(
-      (ball) => ball.tilePosition.x === tileX && ball.tilePosition.y === tileY,
+      (ball) => ball.tilePos.x === tilePos.x && ball.tilePos.y === tilePos.y,
     )
-    const existingTile = this.staticTiles.get(tileX, tileY) ?? this.dynamicTiles.get(tileX, tileY)
+    const existingTile = this.staticTiles.get(tilePos) ?? this.dynamicTiles.get(tilePos)
     const existing = existingBall ?? existingTile
 
     if (existing && existing.type !== tile.type) return
 
-    this.removeTile(tileX, tileY)
+    this.removeTile(tilePos)
 
     switch (tile.type) {
       case tileTypes.BALL:
@@ -118,29 +111,29 @@ export class Level {
     this.staticGraphics.draw()
   }
 
-  removeTile = (tileX: number, tileY: number) => {
+  removeTile = (tilePos: Point) => {
     const existingBall = this.balls.find(
-      (ball) => ball.tilePosition.x === tileX && ball.tilePosition.y === tileY,
+      (ball) => ball.tilePos.x === tilePos.x && ball.tilePos.y === tilePos.y,
     )
     if (existingBall) this.balls.splice(this.balls.indexOf(existingBall), 1)
-    this.staticTiles.delete(tileX, tileY)
-    this.dynamicTiles.delete(tileX, tileY)
+    this.staticTiles.delete(tilePos)
+    this.dynamicTiles.delete(tilePos)
 
     this.staticGraphics.clear()
     this.staticGraphics.draw()
   }
 
-  handlnteraction = (tileX: number, tileY: number, variant: number) => {
-    const existing = this.staticTiles.get(tileX, tileY) ?? this.dynamicTiles.get(tileX, tileY)
+  handlnteraction = (tilePos: Point, variant: number) => {
+    const existing = this.staticTiles.get(tilePos) ?? this.dynamicTiles.get(tilePos)
     if (existing) {
       existing.onClick()
       return
     }
 
-    if (this.balls.some((ball) => ball.tilePosition.x === tileX && ball.tilePosition.y === tileY))
+    if (this.balls.some((ball) => ball.tilePos.x === tilePos.x && ball.tilePos.y === tilePos.y))
       return
 
-    this.dynamicTiles.set(new FragileRedirector(tileX, tileY, variant))
+    this.dynamicTiles.set(new FragileRedirector(tilePos, variant))
   }
 
   render = () => {
@@ -157,7 +150,7 @@ const wallsInRange = (range: WallRangeData): Wall[] => {
   const walls: Wall[] = []
   for (let x = minX; x <= maxX; x++) {
     for (let y = minY; y <= maxY; y++) {
-      walls.push(new Wall(x, y))
+      walls.push(new Wall({ x, y }))
     }
   }
   return walls

@@ -1,5 +1,6 @@
 import { Canvas } from "../canvas"
-import { TILE_SIZE, TOOL_DOTS, TOOL_SIZE } from "../lib/constants"
+import { TILE_SIZE, TOOL_SIZE } from "../lib/constants"
+import { Point } from "../lib/point"
 import { TOOL_SELECTED } from "../lib/styles"
 import { Tile } from "../tiles/tile"
 
@@ -13,19 +14,10 @@ export abstract class Tool {
 
   constructor(protected canvas: Canvas) {}
 
-  abstract execute(
-    tileX: number,
-    tileY: number,
-    variant: number,
-    existingTile: MaybeTile,
-  ): MaybeTile
+  abstract execute(pos: Point, variant: number, existingTile: MaybeTile): MaybeTile
 
-  render = (x: number, y: number) => {
-    if (this.selected) this.drawSelection(x, y)
-    this.symbol.draw(this.canvas, x + this.offset, y + this.offset)
-  }
-
-  private drawSelection = (x: number, y: number) => {
-    this.canvas.fillDots(x, y, TOOL_DOTS, TOOL_DOTS, TOOL_SELECTED)
+  render = (pos: Point) => {
+    if (this.selected) this.canvas.drawSquare(pos, TOOL_SIZE, TOOL_SELECTED)
+    this.symbol.draw(this.canvas, { x: pos.x + this.offset, y: pos.y + this.offset })
   }
 }

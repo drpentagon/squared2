@@ -12,12 +12,8 @@ export const BALL_SIZE = DOT_SIZE + DOT_CC
 export const BALL_RADIUS = BALL_SIZE / 2
 
 export const PANEL_WIDTH = 8 * DOT_CC - DOT_SPACING
-export const TOOL_DOTS = 8
 export const TOOL_SIZE = PANEL_WIDTH
-export const TOOL_STEP = (TOOL_DOTS - 1) * DOT_CC
-export const TOOL_INNER_DOTS = 6
-export const TOOL_INNER_OFFSET = DOT_CC
-export const TOOL_INNER_SIZE = TOOL_INNER_DOTS * DOT_CC - DOT_SPACING
+export const TOOL_STEP = TOOL_SIZE + DOT_SPACING
 
 console.log(TILE_SIZE)
 

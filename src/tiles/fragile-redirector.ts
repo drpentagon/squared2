@@ -1,8 +1,8 @@
+import { Redirector } from "./redirector"
 import { tileTypes } from "../lib/constants"
 import { playFragileBounce } from "../lib/sound"
 import { Style } from "../lib/style"
 import { FRAGILE } from "../lib/styles"
-import { Redirector } from "./redirector"
 
 export class FragileRedirector extends Redirector {
   readonly type = tileTypes.FRAGILE_REDIRECTOR

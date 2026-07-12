@@ -1,4 +1,5 @@
 import { DOT_CC, DOT_SIZE } from "./lib/constants"
+import { Point } from "./lib/point"
 import { Style } from "./lib/style"
 
 export class Canvas {
@@ -33,47 +34,42 @@ export class Canvas {
     this.ctx.clearRect(0, 0, this.width, this.height)
   }
 
-  setClip = (x: number, y: number, width: number, height: number) => {
+  setClip = (origin: Point, width: number, height: number) => {
     this.ctx.beginPath()
-    this.ctx.rect(x, y, width, height)
+    this.ctx.rect(origin.x, origin.y, width, height)
     this.ctx.clip()
   }
 
-  fillDots = (x: number, y: number, cols: number, rows: number, style = new Style()) => {
+  fillDots = (origin: Point, cols: number, rows: number, style = new Style()) => {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        this.drawSquare(x + c * DOT_CC, y + r * DOT_CC, DOT_SIZE, style)
+        this.drawSquare({ x: origin.x + c * DOT_CC, y: origin.y + r * DOT_CC }, DOT_SIZE, style)
       }
     }
   }
 
-  drawSquare = (x: number, y: number, size: number, style = new Style()) => {
+  drawSquare = (origin: Point, size: number, style = new Style()) => {
     this.ctx.save()
     style.apply(this.ctx)
-    this.ctx.fillRect(x, y, size, size)
+    this.ctx.fillRect(origin.x, origin.y, size, size)
     this.ctx.strokeRect(
-      x + this.ctx.lineWidth / 2,
-      y + this.ctx.lineWidth / 2,
+      origin.x + this.ctx.lineWidth / 2,
+      origin.y + this.ctx.lineWidth / 2,
       size - this.ctx.lineWidth,
       size - this.ctx.lineWidth,
     )
     this.ctx.restore()
   }
 
-  drawPolygon = (
-    originX: number,
-    originY: number,
-    points: [number, number][],
-    style = new Style(),
-  ) => {
+  drawPolygon = (origin: Point, points: [number, number][], style = new Style()) => {
     if (points.length < 2) return
     this.ctx.save()
     style.apply(this.ctx)
     this.ctx.lineWidth = style.borderWidth * 2
     this.ctx.beginPath()
-    this.moveTo(originX, originY, ...points[0])
+    this.moveTo(origin, { x: points[0][0], y: points[0][1] })
     for (let i = 1; i < points.length; i++) {
-      this.lineTo(originX, originY, ...points[i])
+      this.lineTo(origin, { x: points[i][0], y: points[i][1] })
     }
     this.ctx.closePath()
     this.ctx.clip()
@@ -82,11 +78,11 @@ export class Canvas {
     this.ctx.restore()
   }
 
-  lineTo = (originX: number, originY: number, x: number = 0, y: number = 0) => {
-    this.ctx.lineTo(originX + x, originY + y)
+  lineTo = (origin: Point, offset: Point = { x: 0, y: 0 }) => {
+    this.ctx.lineTo(origin.x + offset.x, origin.y + offset.y)
   }
 
-  moveTo = (originX: number, originY: number, x: number = 0, y: number = 0) => {
-    this.ctx.moveTo(originX + x, originY + y)
+  moveTo = (origin: Point, offset: Point = { x: 0, y: 0 }) => {
+    this.ctx.moveTo(origin.x + offset.x, origin.y + offset.y)
   }
 }

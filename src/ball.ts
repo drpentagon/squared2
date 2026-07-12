@@ -1,4 +1,5 @@
 import { Canvas } from "./canvas"
+import { origin } from "./grid"
 import {
   BALL_SIZE,
   DOT_CC,
@@ -8,30 +9,31 @@ import {
   directions,
   tileTypes,
 } from "./lib/constants"
-import { gridOrigin } from "./grid"
+import { Point } from "./lib/point"
 import { BALL_STYLE } from "./lib/styles"
 import { pixelToTile } from "./tiles/tile"
 
 const { UP, DOWN, LEFT, RIGHT } = directions
 
 export class Ball {
-  tilePosition: { x: number; y: number }
-  oldTilePosition: { x: number; y: number }
-  x: number
-  y: number
+  tilePos: Point
+  oldTilePos: Point
+  pos: Point
   vx: number
   vy: number
   consumed: boolean
 
-  constructor(tileX: number, tileY: number, vx: number, vy: number) {
-    this.tilePosition = { x: tileX, y: tileY }
-    this.oldTilePosition = { x: -1, y: -1 }
+  constructor(tilePos: Point, vx: number, vy: number) {
+    this.tilePos = tilePos
+    this.oldTilePos = { x: -1, y: -1 }
     this.vx = vx
     this.vy = vy
     this.consumed = false
 
-    this.x = 3 * DOT_CC + tileX * TILE_CC + BALL_RADIUS
-    this.y = 3 * DOT_CC + tileY * TILE_CC + BALL_RADIUS
+    this.pos = {
+      x: 3 * DOT_CC + tilePos.x * TILE_CC + BALL_RADIUS,
+      y: 3 * DOT_CC + tilePos.y * TILE_CC + BALL_RADIUS,
+    }
   }
 
   get type() {
@@ -39,32 +41,31 @@ export class Ball {
   }
 
   update(dt: number) {
-    this.x += this.vx * dt
-    this.y += this.vy * dt
+    this.pos.x += this.vx * dt
+    this.pos.y += this.vy * dt
 
-    this.x = ((this.x % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-    this.y = ((this.y % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
+    this.pos.x = ((this.pos.x % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
+    this.pos.y = ((this.pos.y % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
 
-    const leadingX = this.vx >= 0 ? this.x + BALL_RADIUS : this.x - BALL_RADIUS
-    const leadingY = this.vy >= 0 ? this.y + BALL_RADIUS : this.y - BALL_RADIUS
+    const leading: Point = {
+      x: this.vx >= 0 ? this.pos.x + BALL_RADIUS : this.pos.x - BALL_RADIUS,
+      y: this.vy >= 0 ? this.pos.y + BALL_RADIUS : this.pos.y - BALL_RADIUS,
+    }
 
-    this.oldTilePosition = { x: this.tilePosition.x, y: this.tilePosition.y }
-    this.tilePosition = { x: pixelToTile(leadingX), y: pixelToTile(leadingY) }
+    this.oldTilePos = { x: this.tilePos.x, y: this.tilePos.y }
+    this.tilePos = pixelToTile(leading)
   }
 
   perpendicularBounce(overlap: number) {
-    this.x -= Math.sign(this.vx) * overlap
-    this.y -= Math.sign(this.vy) * overlap
+    this.pos.x -= Math.sign(this.vx) * overlap
+    this.pos.y -= Math.sign(this.vy) * overlap
 
     this.vx = -this.vx
     this.vy = -this.vy
   }
 
   inNewTile() {
-    return (
-      this.oldTilePosition.x !== this.tilePosition.x ||
-      this.oldTilePosition.y !== this.tilePosition.y
-    )
+    return this.oldTilePos.x !== this.tilePos.x || this.oldTilePos.y !== this.tilePos.y
   }
 
   direction() {
@@ -76,8 +77,10 @@ export class Ball {
 
   draw(canvas: Canvas) {
     canvas.drawSquare(
-      gridOrigin.x + this.x - BALL_RADIUS,
-      gridOrigin.y + this.y - BALL_RADIUS,
+      {
+        x: origin.x + this.pos.x - BALL_RADIUS,
+        y: origin.y + this.pos.y - BALL_RADIUS,
+      },
       BALL_SIZE,
       BALL_STYLE,
     )

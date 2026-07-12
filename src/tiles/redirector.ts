@@ -1,5 +1,7 @@
+import { Tile } from "./tile"
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
+import { origin } from "../grid"
 import {
   BALL_RADIUS,
   DOT_SPACING,
@@ -9,12 +11,11 @@ import {
   directions,
   tileTypes,
 } from "../lib/constants"
-import { gridOrigin } from "../grid"
 import { rotatePolygon } from "../lib/geometry"
+import { Point } from "../lib/point"
 import { playBounce } from "../lib/sound"
 import { Style } from "../lib/style"
 import { ROCK } from "../lib/styles"
-import { Tile } from "./tile"
 const { UP, DOWN, LEFT, RIGHT } = directions
 
 const BASE: [number, number][] = [
@@ -40,8 +41,8 @@ export class Redirector extends Tile {
   protected readonly style: Style = ROCK
   variant: number
 
-  constructor(tileX: number, tileY: number, variant: number) {
-    super(tileX, tileY)
+  constructor(tilePos: Point, variant: number) {
+    super(tilePos)
     this.variant = variant
   }
 
@@ -72,20 +73,20 @@ export class Redirector extends Tile {
       : SQUARE_STEP + SQUARE_SIZE - excess - BALL_RADIUS
 
     if (isHorizontal) {
-      ball.x = this.x + pos
+      ball.pos.x = this.pos.x + pos
       ball.vx = sign * speed
-      ball.y = this.y + TILE_SIZE / 2
+      ball.pos.y = this.pos.y + TILE_SIZE / 2
       ball.vy = 0
     } else {
-      ball.y = this.y + pos
+      ball.pos.y = this.pos.y + pos
       ball.vy = sign * speed
-      ball.x = this.x + TILE_SIZE / 2
+      ball.pos.x = this.pos.x + TILE_SIZE / 2
       ball.vx = 0
     }
     this.onBounce()
   }
 
-  draw = (canvas: Canvas, x = gridOrigin.x + this.x, y = gridOrigin.y + this.y) => {
-    canvas.drawPolygon(x, y, VARIANTS[this.variant], this.style)
+  draw = (canvas: Canvas, pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y }) => {
+    canvas.drawPolygon(pos, VARIANTS[this.variant], this.style)
   }
 }

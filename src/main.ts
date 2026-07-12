@@ -1,9 +1,10 @@
-import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
-import { gridOrigin } from "./grid"
+import { origin } from "./grid"
 import { Level } from "./level"
+import level1 from "./levels/level1.json"
+import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
+import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
-import level1 from "./levels/level1.json"
 
 const level = new Level(level1)
 
@@ -40,32 +41,32 @@ const VARIANT_BY_QUADRANT = [
 ] as const
 
 document.addEventListener("click", (e) => {
-  const localX = e.clientX - gridOrigin.x
-  const localY = e.clientY - gridOrigin.y
-  if (localX < 0 || localX >= GRID_SIZE || localY < 0 || localY >= GRID_SIZE) return
+  const local: Point = { x: e.clientX - origin.x, y: e.clientY - origin.y }
+  if (local.x < 0 || local.x >= GRID_SIZE || local.y < 0 || local.y >= GRID_SIZE) return
 
-  const tileX = pixelToTile(localX)
-  const tileY = pixelToTile(localY)
+  const tilePos = pixelToTile(local)
 
-  const tileOriginX = DOT_CC + tileX * TILE_CC
-  const tileOriginY = DOT_CC + tileY * TILE_CC
-  const col = localX - tileOriginX >= TILE_SIZE / 2 ? 1 : 0
-  const row = localY - tileOriginY >= TILE_SIZE / 2 ? 1 : 0
+  const tileOrigin: Point = {
+    x: DOT_CC + tilePos.x * TILE_CC,
+    y: DOT_CC + tilePos.y * TILE_CC,
+  }
+  const col = local.x - tileOrigin.x >= TILE_SIZE / 2 ? 1 : 0
+  const row = local.y - tileOrigin.y >= TILE_SIZE / 2 ? 1 : 0
   const variant = VARIANT_BY_QUADRANT[row][col]
 
   if (!EDITOR_STATE) {
-    level.handlnteraction(tileX, tileY, variant)
+    level.handlnteraction(tilePos, variant)
   } else {
-    const existingTile = level.getTile(tileX, tileY)
-    const newTile = toolsPanel.executeSelectedTool(tileX, tileY, variant, existingTile)
+    const existingTile = level.getTile(tilePos)
+    const newTile = toolsPanel.executeSelectedTool(tilePos, variant, existingTile)
     switch (true) {
       case existingTile?.type === toolsPanel.selectedTool?.type && !newTile:
-        level.removeTile(tileX, tileY)
+        level.removeTile(tilePos)
         break
       case !newTile:
         return
       default:
-        level.addTile(tileX, tileY, newTile)
+        level.addTile(tilePos, newTile)
     }
   }
 })
