@@ -1,5 +1,6 @@
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
+import { gridOrigin } from "../grid"
 import { TILE_SIZE, SQUARE_SIZE, tileTypes } from "../lib/constants"
 import { rotatePolygon, DIRECTION_STEPS } from "../lib/geometry"
 import { GOAL } from "../lib/styles"
@@ -20,6 +21,7 @@ const BASE: [number, number][] = [
 const SHAPES = [0, 1, 2, 3].map((n) => rotatePolygon(BASE, n))
 
 export class Goal extends Tile {
+  readonly type = tileTypes.GOAL
   direction: number
   rotates: boolean
 
@@ -27,10 +29,6 @@ export class Goal extends Tile {
     super(tileX, tileY)
     this.direction = direction
     this.rotates = rotates
-  }
-
-  get type() {
-    return tileTypes.GOAL
   }
 
   interact = (ball: Ball) => {
@@ -47,7 +45,7 @@ export class Goal extends Tile {
     }
   }
 
-  draw = (canvas: Canvas) => {
-    canvas.drawPolygon(this, SHAPES[this.direction], GOAL)
+  draw = (canvas: Canvas, x = gridOrigin.x + this.x, y = gridOrigin.y + this.y) => {
+    canvas.drawPolygon(x, y, SHAPES[this.direction], GOAL)
   }
 }

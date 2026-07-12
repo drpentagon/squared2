@@ -1,4 +1,4 @@
-import { DOT_CC, TILE_CC, TILE_SIZE } from "./lib/constants"
+import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { gridOrigin } from "./grid"
 import { Level } from "./level"
 import { pixelToTile } from "./tiles/tile"
@@ -42,6 +42,8 @@ const VARIANT_BY_QUADRANT = [
 document.addEventListener("click", (e) => {
   const localX = e.clientX - gridOrigin.x
   const localY = e.clientY - gridOrigin.y
+  if (localX < 0 || localX >= GRID_SIZE || localY < 0 || localY >= GRID_SIZE) return
+
   const tileX = pixelToTile(localX)
   const tileY = pixelToTile(localY)
 

@@ -3,6 +3,7 @@ import { Tile, TileMap } from "./tiles/tile"
 import { tileTypes } from "./lib/constants"
 import { Wall } from "./tiles/wall"
 import { Redirector } from "./tiles/redirector"
+import { FragileRedirector } from "./tiles/fragile-redirector"
 import { Goal } from "./tiles/goal"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
@@ -50,12 +51,12 @@ export class Level {
     this.staticTiles.addArray(this.data.walls.map((t) => new Wall(t.x, t.y)))
     this.staticTiles.addArray(this.data.wallRanges.flatMap(wallsInRange))
     this.staticTiles.addArray(
-      this.data.permanentRedirects.map((t) => new Redirector(t.x, t.y, t.variant, true)),
+      this.data.permanentRedirects.map((t) => new Redirector(t.x, t.y, t.variant)),
     )
 
     this.dynamicTiles.clear()
     this.dynamicTiles.addArray(
-      this.data.fragileRedirects.map((t) => new Redirector(t.x, t.y, t.variant, false)),
+      this.data.fragileRedirects.map((t) => new FragileRedirector(t.x, t.y, t.variant)),
     )
     this.dynamicTiles.addArray(
       this.data.goals.map((t) => new Goal(t.x, t.y, t.direction, t.rotates)),
@@ -139,7 +140,7 @@ export class Level {
     if (this.balls.some((ball) => ball.tilePosition.x === tileX && ball.tilePosition.y === tileY))
       return
 
-    this.dynamicTiles.set(new Redirector(tileX, tileY, variant))
+    this.dynamicTiles.set(new FragileRedirector(tileX, tileY, variant))
   }
 
   render = () => {

@@ -1,21 +1,17 @@
 import { Canvas } from "../canvas"
-import { TOOL_DOTS } from "../lib/constants"
+import { TILE_SIZE, TOOL_DOTS, TOOL_SIZE } from "../lib/constants"
 import { TOOL_SELECTED } from "../lib/styles"
 import { Tile } from "../tiles/tile"
 
 export type MaybeTile = Tile | undefined
 
 export abstract class Tool {
+  abstract readonly type: string
+  protected abstract readonly symbol: Tile
+  protected offset = (TOOL_SIZE - TILE_SIZE) / 2
   selected = false
 
-  constructor(
-    protected canvas: Canvas,
-    private toolType: string,
-  ) {}
-
-  get type() {
-    return this.toolType
-  }
+  constructor(protected canvas: Canvas) {}
 
   abstract execute(
     tileX: number,
@@ -24,11 +20,9 @@ export abstract class Tool {
     existingTile: MaybeTile,
   ): MaybeTile
 
-  abstract draw(x: number, y: number): void
-
   render = (x: number, y: number) => {
     if (this.selected) this.drawSelection(x, y)
-    this.draw(x, y)
+    this.symbol.draw(this.canvas, x + this.offset, y + this.offset)
   }
 
   private drawSelection = (x: number, y: number) => {

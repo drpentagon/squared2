@@ -28,8 +28,8 @@ export abstract class Tile {
 
   onClick(): void {}
 
-  abstract get type(): string
-  abstract draw(canvas: Canvas): void
+  abstract readonly type: string
+  abstract draw(canvas: Canvas, x?: number, y?: number): void
   abstract interact(ball: Ball): void
 }
 

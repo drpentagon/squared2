@@ -1,6 +1,9 @@
 import { Canvas } from "../canvas"
 import { DOT_CC, DOT_SIZE, TOOL_INNER_OFFSET, TOOL_INNER_SIZE, TOOL_STEP } from "../lib/constants"
 import { PANEL_DOT } from "../lib/styles"
+import { FragileRedirectorTool } from "./fragile-redirector-tool"
+import { GoalTool } from "./goal-tool"
+import { RedirectorTool } from "./redirector-tool"
 import { MaybeTile, Tool } from "./tool"
 import { WallTool } from "./wall-tool"
 
@@ -18,7 +21,12 @@ export class ToolsPanel {
     this.canvas = new Canvas(0, container)
     this.canvas.el.addEventListener("click", this.handleClick)
 
-    this.tools = [new WallTool(this.canvas)]
+    this.tools = [
+      new WallTool(this.canvas),
+      new RedirectorTool(this.canvas),
+      new FragileRedirectorTool(this.canvas),
+      new GoalTool(this.canvas),
+    ]
   }
 
   get selectedTool() {

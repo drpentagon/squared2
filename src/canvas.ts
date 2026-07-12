@@ -1,7 +1,5 @@
-import { gridOrigin } from "./grid"
 import { DOT_CC, DOT_SIZE } from "./lib/constants"
 import { Style } from "./lib/style"
-import { Tile } from "./tiles/tile"
 
 export class Canvas {
   el: HTMLCanvasElement
@@ -62,15 +60,20 @@ export class Canvas {
     this.ctx.restore()
   }
 
-  drawPolygon = (tile: Tile, points: [number, number][], style = new Style()) => {
+  drawPolygon = (
+    originX: number,
+    originY: number,
+    points: [number, number][],
+    style = new Style(),
+  ) => {
     if (points.length < 2) return
     this.ctx.save()
     style.apply(this.ctx)
     this.ctx.lineWidth = style.borderWidth * 2
     this.ctx.beginPath()
-    this.moveTo(tile, ...points[0])
+    this.moveTo(originX, originY, ...points[0])
     for (let i = 1; i < points.length; i++) {
-      this.lineTo(tile, ...points[i])
+      this.lineTo(originX, originY, ...points[i])
     }
     this.ctx.closePath()
     this.ctx.clip()
@@ -79,11 +82,11 @@ export class Canvas {
     this.ctx.restore()
   }
 
-  lineTo = (tile: Tile, x: number = 0, y: number = 0) => {
-    this.ctx.lineTo(gridOrigin.x + tile.x + x, gridOrigin.y + tile.y + y)
+  lineTo = (originX: number, originY: number, x: number = 0, y: number = 0) => {
+    this.ctx.lineTo(originX + x, originY + y)
   }
 
-  moveTo = (tile: Tile, x: number = 0, y: number = 0) => {
-    this.ctx.moveTo(gridOrigin.x + tile.x + x, gridOrigin.y + tile.y + y)
+  moveTo = (originX: number, originY: number, x: number = 0, y: number = 0) => {
+    this.ctx.moveTo(originX + x, originY + y)
   }
 }

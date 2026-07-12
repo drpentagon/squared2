@@ -9,9 +9,11 @@ import {
   directions,
   tileTypes,
 } from "../lib/constants"
+import { gridOrigin } from "../grid"
 import { rotatePolygon } from "../lib/geometry"
-import { playBounce, playFragileBounce } from "../lib/sound"
-import { FRAGILE, ROCK } from "../lib/styles"
+import { playBounce } from "../lib/sound"
+import { Style } from "../lib/style"
+import { ROCK } from "../lib/styles"
 import { Tile } from "./tile"
 const { UP, DOWN, LEFT, RIGHT } = directions
 
@@ -34,21 +36,17 @@ const REDIRECTS = [
 const VARIANTS = [BASE, rotatePolygon(BASE, 1), rotatePolygon(BASE, 2), rotatePolygon(BASE, 3)]
 
 export class Redirector extends Tile {
+  readonly type = tileTypes.REDIRECTOR
+  protected readonly style: Style = ROCK
   variant: number
-  permanent: boolean
 
-  constructor(tileX: number, tileY: number, variant: number, permanent = false) {
+  constructor(tileX: number, tileY: number, variant: number) {
     super(tileX, tileY)
     this.variant = variant
-    this.permanent = permanent
   }
 
-  get type() {
-    return this.permanent ? tileTypes.REDIRECTOR : tileTypes.FRAGILE_REDIRECTOR
-  }
-
-  onClick() {
-    if (!this.permanent) this.variant = (this.variant + 1) % 4
+  protected onBounce() {
+    playBounce()
   }
 
   interact = (ball: Ball) => {
@@ -57,8 +55,7 @@ export class Redirector extends Tile {
 
     if (ball.inNewTile() && !nextDirection) {
       ball.perpendicularBounce(overlap)
-      if (!this.permanent) this.consumed = true
-      this.permanent ? playBounce() : playFragileBounce()
+      this.onBounce()
       return
     }
 
@@ -85,11 +82,10 @@ export class Redirector extends Tile {
       ball.x = this.x + TILE_SIZE / 2
       ball.vx = 0
     }
-    if (!this.permanent) this.consumed = true
-    this.permanent ? playBounce() : playFragileBounce()
+    this.onBounce()
   }
 
-  draw = (canvas: Canvas) => {
-    canvas.drawPolygon(this, VARIANTS[this.variant], this.permanent ? ROCK : FRAGILE)
+  draw = (canvas: Canvas, x = gridOrigin.x + this.x, y = gridOrigin.y + this.y) => {
+    canvas.drawPolygon(x, y, VARIANTS[this.variant], this.style)
   }
 }
