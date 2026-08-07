@@ -1,5 +1,6 @@
 import { origin } from "./grid"
 import { Level } from "./level"
+import { DialogueLayer } from "./layers/dialogue-layer"
 import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
@@ -11,6 +12,8 @@ let level: Level
 let lastTime = 0
 let EDITOR_STATE = false
 
+const dialogueLayer = new DialogueLayer()
+
 const loop = async (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
@@ -18,7 +21,7 @@ const loop = async (timestamp: number) => {
   if (!EDITOR_STATE) {
     level.update(dt)
     if (level.finished) {
-      alert("Level finished")
+      await dialogueLayer.levelClear()
       await loadNextLevel()
       lastTime = performance.now()
     }

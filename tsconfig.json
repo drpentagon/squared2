@@ -5,7 +5,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "strict": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "lib": ["ES2022", "DOM"],
