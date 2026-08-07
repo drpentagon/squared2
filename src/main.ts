@@ -1,5 +1,5 @@
 import { origin } from "./grid"
-import { Level, LevelData } from "./level"
+import { Level } from "./level"
 import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
@@ -37,6 +37,13 @@ const loadNextLevel = async () => {
 }
 
 loadNextLevel().then(() => requestAnimationFrame(loop))
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) lastTime = performance.now()
+})
+window.addEventListener("focus", () => {
+  lastTime = performance.now()
+})
 
 const VARIANT_BY_QUADRANT = [
   [0, 1],
