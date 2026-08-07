@@ -1,3 +1,4 @@
+import { ClearLevelTool } from "./clear-level-tool"
 import { FragileRedirectorTool } from "./fragile-redirector-tool"
 import { GoalTool } from "./goal-tool"
 import { RedirectorTool } from "./redirector-tool"
@@ -10,6 +11,7 @@ import { Point } from "../lib/point"
 export class ToolsPanel {
   private canvas: Canvas
   private tools: Tool[]
+  readonly clearLevelTool: ClearLevelTool
   selectedTool: Tool | null = null
 
   constructor() {
@@ -21,11 +23,13 @@ export class ToolsPanel {
     this.canvas = new Canvas(0, container)
     this.canvas.el.addEventListener("click", this.handleClick)
 
+    this.clearLevelTool = new ClearLevelTool(this.canvas)
     this.tools = [
       new WallTool(this.canvas),
       new RedirectorTool(this.canvas),
       new FragileRedirectorTool(this.canvas),
       new GoalTool(this.canvas),
+      this.clearLevelTool,
     ]
   }
 

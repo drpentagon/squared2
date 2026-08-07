@@ -30,6 +30,7 @@ export class Level {
   staticTiles: TileMap
   dynamicTiles: TileMap
   balls: Ball[]
+  finished: boolean
 
   backgroundGraphics: BackgroundGraphics
   staticGraphics: StaticGraphics
@@ -40,6 +41,7 @@ export class Level {
     this.staticTiles = new TileMap()
     this.dynamicTiles = new TileMap()
     this.balls = []
+    this.finished = false
 
     this.backgroundGraphics = new BackgroundGraphics()
     this.staticGraphics = new StaticGraphics(this.staticTiles)
@@ -73,6 +75,7 @@ export class Level {
       this.dynamicTiles.get(ball.tilePos)?.interact(ball)
     })
 
+    this.finished = this.dynamicGraphics.purge()
     this.dynamicGraphics.update(dt)
   }
 
@@ -123,6 +126,15 @@ export class Level {
     this.staticGraphics.draw()
   }
 
+  clear = () => {
+    this.staticTiles.clear()
+    this.dynamicTiles.clear()
+    this.balls.splice(0, this.balls.length)
+
+    this.staticGraphics.clear()
+    this.staticGraphics.draw()
+  }
+
   handlnteraction = (tilePos: Point, variant: number) => {
     const existing = this.staticTiles.get(tilePos) ?? this.dynamicTiles.get(tilePos)
     if (existing) {
@@ -139,6 +151,92 @@ export class Level {
   render = () => {
     this.dynamicGraphics.draw()
   }
+
+  serialize = (): LevelData => {
+    const wallPositions: Point[] = []
+    const permanentRedirects: RedirectorData[] = []
+    this.staticTiles.forEach((tile) => {
+      if (tile.type === tileTypes.WALL) {
+        wallPositions.push({ x: tile.tilePos.x, y: tile.tilePos.y })
+      } else if (tile.type === tileTypes.REDIRECTOR) {
+        const redirector = tile as Redirector
+        permanentRedirects.push({
+          x: tile.tilePos.x,
+          y: tile.tilePos.y,
+          variant: redirector.variant,
+        })
+      }
+    })
+
+    const fragileRedirects: RedirectorData[] = []
+    const goals: GoalData[] = []
+    this.dynamicTiles.forEach((tile) => {
+      if (tile.type === tileTypes.FRAGILE_REDIRECTOR) {
+        const redirector = tile as FragileRedirector
+        fragileRedirects.push({ x: tile.tilePos.x, y: tile.tilePos.y, variant: redirector.variant })
+      } else if (tile.type === tileTypes.GOAL) {
+        const goal = tile as Goal
+        goals.push({
+          x: tile.tilePos.x,
+          y: tile.tilePos.y,
+          direction: goal.direction,
+          rotates: goal.rotates,
+        })
+      }
+    })
+
+    const balls: BallData[] = this.balls.map((ball) => ({
+      x: ball.tilePos.x,
+      y: ball.tilePos.y,
+      vx: ball.vx,
+      vy: ball.vy,
+    }))
+
+    const { walls, wallRanges } = groupWallsIntoRanges(wallPositions)
+
+    return { walls, wallRanges, fragileRedirects, permanentRedirects, goals, balls }
+  }
+}
+
+const groupWallsIntoRanges = (
+  positions: Point[],
+): { walls: WallData[]; wallRanges: WallRangeData[] } => {
+  const key = (x: number, y: number) => `${x},${y}`
+  const remaining = new Set(positions.map((p) => key(p.x, p.y)))
+
+  const walls: WallData[] = []
+  const wallRanges: WallRangeData[] = []
+
+  const sorted = [...positions].sort((a, b) => a.y - b.y || a.x - b.x)
+
+  for (const { x, y } of sorted) {
+    if (!remaining.has(key(x, y))) continue
+
+    let width = 1
+    while (remaining.has(key(x + width, y))) width++
+
+    let height = 1
+    heightLoop: while (true) {
+      for (let dx = 0; dx < width; dx++) {
+        if (!remaining.has(key(x + dx, y + height))) break heightLoop
+      }
+      height++
+    }
+
+    for (let dy = 0; dy < height; dy++) {
+      for (let dx = 0; dx < width; dx++) {
+        remaining.delete(key(x + dx, y + dy))
+      }
+    }
+
+    if (width === 1 && height === 1) {
+      walls.push({ x, y })
+    } else {
+      wallRanges.push({ from: { x, y }, to: { x: x + width - 1, y: y + height - 1 } })
+    }
+  }
+
+  return { walls, wallRanges }
 }
 
 const wallsInRange = (range: WallRangeData): Wall[] => {

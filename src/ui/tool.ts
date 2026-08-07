@@ -8,7 +8,7 @@ export type MaybeTile = Tile | undefined
 
 export abstract class Tool {
   abstract readonly type: string
-  protected abstract readonly symbol: Tile
+  protected abstract readonly symbol?: Tile
   protected offset = (TOOL_SIZE - TILE_SIZE) / 2
   selected = false
 
@@ -18,6 +18,6 @@ export abstract class Tool {
 
   render = (pos: Point) => {
     if (this.selected) this.canvas.drawSquare(pos, TOOL_SIZE, TOOL_SELECTED)
-    this.symbol.draw(this.canvas, { x: pos.x + this.offset, y: pos.y + this.offset })
+    this.symbol?.draw(this.canvas, { x: pos.x + this.offset, y: pos.y + this.offset })
   }
 }

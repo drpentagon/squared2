@@ -1,16 +1,31 @@
 import { origin } from "./grid"
 import { Level } from "./level"
-import level1 from "./levels/level1.json"
+import level0 from "./levels/level0.json"
 import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
 
-const level = new Level(level1)
+const level = new Level(level0)
+toolsPanel.clearLevelTool.onClear = () => level.clear()
 
 let lastTime = 0
 
 let EDITOR_STATE = false
+
+const copyButton = document.createElement("button")
+copyButton.id = "copy-button"
+copyButton.textContent = "Kopiera bana"
+document.body.appendChild(copyButton)
+
+copyButton.addEventListener("click", async () => {
+  await navigator.clipboard.writeText(JSON.stringify(level.serialize(), null, 2))
+  const originalText = copyButton.textContent
+  copyButton.textContent = "Kopierad!"
+  setTimeout(() => {
+    copyButton.textContent = originalText
+  }, 1500)
+})
 
 const loop = (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
@@ -18,6 +33,7 @@ const loop = (timestamp: number) => {
 
   if (!EDITOR_STATE) {
     level.update(dt)
+    if (level.finished) alert("Level finished")
   } else {
     toolsPanel.render()
   }
