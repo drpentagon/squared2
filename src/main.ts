@@ -1,39 +1,27 @@
 import { origin } from "./grid"
-import { Level } from "./level"
-import level0 from "./levels/level0.json"
+import { Level, LevelData } from "./level"
 import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
 
-const level = new Level(level0)
-toolsPanel.clearLevelTool.onClear = () => level.clear()
-
+const levels = ["level0", "level1", "level2"]
+let currentLevelIndex: number | null = null
+let level: Level
 let lastTime = 0
-
 let EDITOR_STATE = false
 
-const copyButton = document.createElement("button")
-copyButton.id = "copy-button"
-copyButton.textContent = "Kopiera bana"
-document.body.appendChild(copyButton)
-
-copyButton.addEventListener("click", async () => {
-  await navigator.clipboard.writeText(JSON.stringify(level.serialize(), null, 2))
-  const originalText = copyButton.textContent
-  copyButton.textContent = "Kopierad!"
-  setTimeout(() => {
-    copyButton.textContent = originalText
-  }, 1500)
-})
-
-const loop = (timestamp: number) => {
+const loop = async (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
   if (!EDITOR_STATE) {
     level.update(dt)
-    if (level.finished) alert("Level finished")
+    if (level.finished) {
+      alert("Level finished")
+      await loadNextLevel()
+      lastTime = performance.now()
+    }
   } else {
     toolsPanel.render()
   }
@@ -42,14 +30,13 @@ const loop = (timestamp: number) => {
   requestAnimationFrame(loop)
 }
 
-requestAnimationFrame(loop)
+const loadNextLevel = async () => {
+  level?.destroy()
+  currentLevelIndex = currentLevelIndex === null ? 0 : currentLevelIndex + 1
+  level = new Level(await import(`./levels/${levels[currentLevelIndex]}.json`))
+}
 
-document.addEventListener("keydown", (e) => {
-  if (e.key !== "e") return
-  EDITOR_STATE = !EDITOR_STATE
-  setEditing(EDITOR_STATE)
-  if (EDITOR_STATE) level.reset()
-})
+loadNextLevel().then(() => requestAnimationFrame(loop))
 
 const VARIANT_BY_QUADRANT = [
   [0, 1],
@@ -85,4 +72,27 @@ document.addEventListener("click", (e) => {
         level.addTile(tilePos, newTile)
     }
   }
+})
+
+toolsPanel.clearLevelTool.onClear = () => level.clear()
+
+const copyButton = document.createElement("button")
+copyButton.id = "copy-button"
+copyButton.textContent = "Kopiera bana"
+document.body.appendChild(copyButton)
+
+copyButton.addEventListener("click", async () => {
+  await navigator.clipboard.writeText(JSON.stringify(level.serialize(), null, 2))
+  const originalText = copyButton.textContent
+  copyButton.textContent = "Kopierad!"
+  setTimeout(() => {
+    copyButton.textContent = originalText
+  }, 1500)
+})
+
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "e") return
+  EDITOR_STATE = !EDITOR_STATE
+  setEditing(EDITOR_STATE)
+  if (EDITOR_STATE) level.reset()
 })

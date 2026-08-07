@@ -152,6 +152,12 @@ export class Level {
     this.dynamicGraphics.draw()
   }
 
+  destroy = () => {
+    this.backgroundGraphics.destroy()
+    this.staticGraphics.destroy()
+    this.dynamicGraphics.destroy()
+  }
+
   serialize = (): LevelData => {
     const wallPositions: Point[] = []
     const permanentRedirects: RedirectorData[] = []

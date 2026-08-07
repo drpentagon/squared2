@@ -11,4 +11,7 @@ export class GraphicsLayer {
   clear = () => {
     this.canvas.clear()
   }
+  destroy = () => {
+    this.canvas.remove()
+  }
 }

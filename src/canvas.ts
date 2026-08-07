@@ -34,6 +34,10 @@ export class Canvas {
     this.ctx.clearRect(0, 0, this.width, this.height)
   }
 
+  remove = () => {
+    this.el.remove()
+  }
+
   setClip = (origin: Point, width: number, height: number) => {
     this.ctx.beginPath()
     this.ctx.rect(origin.x, origin.y, width, height)
