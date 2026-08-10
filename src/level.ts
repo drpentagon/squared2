@@ -31,6 +31,9 @@ export class Level {
   dynamicTiles: TileMap
   balls: Ball[]
   finished: boolean
+  bounces: number
+  elapsedTime: number
+  redirectsPlaced: number
 
   backgroundGraphics: BackgroundGraphics
   staticGraphics: StaticGraphics
@@ -42,6 +45,9 @@ export class Level {
     this.dynamicTiles = new TileMap()
     this.balls = []
     this.finished = false
+    this.bounces = 0
+    this.elapsedTime = 0
+    this.redirectsPlaced = 0
 
     this.backgroundGraphics = new BackgroundGraphics()
     this.staticGraphics = new StaticGraphics(this.staticTiles)
@@ -70,9 +76,13 @@ export class Level {
   }
 
   update = (dt: number) => {
+    this.elapsedTime += dt
+
     this.balls.forEach((ball) => {
+      const directionBefore = ball.direction()
       this.staticTiles.get(ball.tilePos)?.interact(ball)
       this.dynamicTiles.get(ball.tilePos)?.interact(ball)
+      if (ball.direction() !== directionBefore) this.bounces++
     })
 
     this.finished = this.dynamicGraphics.purge()
@@ -146,6 +156,7 @@ export class Level {
       return
 
     this.dynamicTiles.set(new FragileRedirector(tilePos, variant))
+    this.redirectsPlaced++
   }
 
   render = () => {

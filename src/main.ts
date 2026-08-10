@@ -21,7 +21,7 @@ const loop = async (timestamp: number) => {
   if (!EDITOR_STATE) {
     level.update(dt)
     if (level.finished) {
-      await dialogueLayer.levelClear()
+      await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
       await loadNextLevel()
       lastTime = performance.now()
     }
@@ -39,7 +39,7 @@ const loadNextLevel = async () => {
   level = new Level(await import(`./levels/${levels[currentLevelIndex]}.json`))
 }
 
-loadNextLevel().then(() => requestAnimationFrame(loop))
+dialogueLayer.title().then(() => loadNextLevel().then(() => requestAnimationFrame(loop)))
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) lastTime = performance.now()

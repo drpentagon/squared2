@@ -52,16 +52,6 @@ export class Canvas {
     }
   }
 
-  drawText = (text: string, center: Point, style = new Style()) => {
-    this.ctx.save()
-    style.apply(this.ctx)
-    this.ctx.font = "32px sans-serif"
-    this.ctx.textAlign = "center"
-    this.ctx.textBaseline = "middle"
-    this.ctx.fillText(text, center.x, center.y)
-    this.ctx.restore()
-  }
-
   drawSquare = (origin: Point, size: number, style = new Style()) => {
     this.ctx.save()
     style.apply(this.ctx)

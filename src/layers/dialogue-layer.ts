@@ -3,12 +3,13 @@ import { drawBackgroundPattern } from "./background-pattern"
 import { origin } from "../grid"
 import { GRID_SIZE } from "../lib/constants"
 import { Style } from "../lib/style"
+import { write, writeHeadline, writeHuge } from "../lib/text"
 
 const BACKDROP_STYLE = new Style("#051e06")
 const TEXT_STYLE = new Style("#ffffff")
 
 export class DialogueLayer extends GraphicsLayer {
-  private text: string | null = null
+  private open: boolean = false
   private onClose: (() => void) | null = null
 
   constructor() {
@@ -19,40 +20,62 @@ export class DialogueLayer extends GraphicsLayer {
 
   update = (_dt: number) => {}
 
-  show = (text: string): Promise<void> => {
-    this.text = text
-    this.draw()
+  show = (): Promise<void> => {
+    this.open = true
     return new Promise((resolve) => {
       this.onClose = resolve
     })
   }
 
   hide = () => {
-    this.text = null
+    this.open = false
     this.clear()
   }
 
   private handleClick = () => {
-    if (!this.text) return
+    if (!this.open) return
     this.hide()
     this.onClose?.()
     this.onClose = null
   }
 
-  gameOver = () => this.show("Game Over")
-  levelClear = () => this.show("Level Clear")
-  levelIntroduction = (title: string) => this.show(title)
+  title = (): Promise<void> => {
+    this.draw()
+    writeHuge(this.canvas, "squ", 8, 8)
+    writeHuge(this.canvas, "are", 8, 36)
+    writeHuge(this.canvas, "d", 8, 64)
+    return this.show()
+  }
+
+  levelClear = (
+    elapsedTime: number,
+    bounces: number,
+    redirects: number,
+    score: number,
+  ): Promise<void> => {
+    this.draw()
+    writeHeadline(this.canvas, "Level Clear", 8, 22)
+    write(this.canvas, "time", 8, 36)
+    write(this.canvas, `${Math.round(elapsedTime)}`, 50, 36)
+    write(this.canvas, "Bounces", 8, 43)
+    write(this.canvas, `${bounces}`, 50, 43)
+    write(this.canvas, "Redirects", 8, 50)
+    write(this.canvas, `${redirects}`, 50, 50)
+    write(this.canvas, "score", 8, 57)
+    write(this.canvas, `${score}`, 50, 57)
+    return this.show()
+  }
+
+  gameOver = (): Promise<void> => {
+    this.draw()
+    writeHeadline(this.canvas, "Game over", 8, 22)
+    return this.show()
+  }
+
+  levelIntroduction = () => this.show()
 
   draw = () => {
-    if (!this.text) return
-
-    this.canvas.clear()
     this.canvas.drawSquare(origin, GRID_SIZE, BACKDROP_STYLE)
     drawBackgroundPattern(this.canvas)
-    this.canvas.drawText(
-      this.text,
-      { x: origin.x + GRID_SIZE / 2, y: origin.y + GRID_SIZE / 2 },
-      TEXT_STYLE,
-    )
   }
 }
