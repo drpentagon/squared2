@@ -15,6 +15,7 @@ export class DialogueLayer extends GraphicsLayer {
   constructor() {
     super(3)
     this.canvas.setClip(origin, GRID_SIZE, GRID_SIZE)
+    this.canvas.el.style.pointerEvents = "none"
     this.canvas.el.addEventListener("click", this.handleClick)
   }
 
@@ -22,6 +23,7 @@ export class DialogueLayer extends GraphicsLayer {
 
   show = (): Promise<void> => {
     this.open = true
+    this.canvas.el.style.pointerEvents = "auto"
     return new Promise((resolve) => {
       this.onClose = resolve
     })
@@ -29,11 +31,13 @@ export class DialogueLayer extends GraphicsLayer {
 
   hide = () => {
     this.open = false
+    this.canvas.el.style.pointerEvents = "none"
     this.clear()
   }
 
-  private handleClick = () => {
+  private handleClick = (e: MouseEvent) => {
     if (!this.open) return
+    e.stopPropagation()
     this.hide()
     this.onClose?.()
     this.onClose = null

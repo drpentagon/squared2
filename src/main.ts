@@ -6,7 +6,7 @@ import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
 
-const levels = ["level0", "level1", "level2"]
+const levels = ["level_h", "level0", "level1", "level2"]
 let currentLevelIndex: number | null = null
 let level: Level
 let lastTime = 0
