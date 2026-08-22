@@ -1,3 +1,4 @@
+import { BallTool } from "./ball-tool"
 import { ClearLevelTool } from "./clear-level-tool"
 import { FragileRedirectorTool } from "./fragile-redirector-tool"
 import { GoalTool } from "./goal-tool"
@@ -28,6 +29,7 @@ export class ToolsPanel {
       new WallTool(this.canvas),
       new RedirectorTool(this.canvas),
       new FragileRedirectorTool(this.canvas),
+      new BallTool(this.canvas),
       new GoalTool(this.canvas),
       this.clearLevelTool,
     ]
@@ -67,6 +69,11 @@ export class ToolsPanel {
   executeSelectedTool = (pos: Point, variant: number, existingTile: MaybeTile) => {
     if (this.selectedTool) return this.selectedTool.execute(pos, variant, existingTile)
     return
+  }
+
+  selectToolForType = (type: string) => {
+    const tool = this.tools.find((t) => t.type === type)
+    if (tool) this.selectTool(tool)
   }
 
   render = () => {

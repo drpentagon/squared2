@@ -6,7 +6,7 @@ import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
 
-const levels = ["level_h", "level0", "level1", "level2"]
+const levels = ["level0", "level1", "level2"]
 let currentLevelIndex: number | null = null
 let level: Level
 let lastTime = 0
@@ -29,7 +29,7 @@ const loop = async (timestamp: number) => {
     toolsPanel.render()
   }
 
-  level.render()
+  level.render(EDITOR_STATE)
   requestAnimationFrame(loop)
 }
 
@@ -71,6 +71,12 @@ document.addEventListener("click", (e) => {
     level.handlnteraction(tilePos, variant)
   } else {
     const existingTile = level.getTile(tilePos)
+    if (existingTile && existingTile.type !== toolsPanel.selectedTool?.type) {
+      toolsPanel.selectToolForType(existingTile.type)
+      level.markTile(tilePos)
+      return
+    }
+
     const newTile = toolsPanel.executeSelectedTool(tilePos, variant, existingTile)
     switch (true) {
       case existingTile?.type === toolsPanel.selectedTool?.type && !newTile:
@@ -80,6 +86,7 @@ document.addEventListener("click", (e) => {
         return
       default:
         level.addTile(tilePos, newTile)
+        level.markTile(tilePos)
     }
   }
 })

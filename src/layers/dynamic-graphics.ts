@@ -30,9 +30,9 @@ export class DynamicGraphics extends GraphicsLayer {
     return this.balls.length === 0
   }
 
-  draw = () => {
+  draw = (editing = false) => {
     this.canvas.clear()
     this.tiles.forEach((tile) => tile.draw(this.canvas))
-    this.balls.forEach((ball) => ball.draw(this.canvas))
+    this.balls.forEach((ball) => ball.draw(this.canvas, undefined, editing))
   }
 }

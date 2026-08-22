@@ -3,17 +3,31 @@ import { origin } from "./grid"
 import {
   BALL_SIZE,
   DOT_CC,
+  DOT_SIZE,
+  DOT_SPACING,
   GRID_SIZE,
   BALL_RADIUS,
   TILE_CC,
   directions,
   tileTypes,
 } from "./lib/constants"
+import { rotatePolygon } from "./lib/geometry"
 import { Point } from "./lib/point"
 import { BALL_STYLE } from "./lib/styles"
 import { pixelToTile } from "./tiles/tile"
 
 const { UP, DOWN, LEFT, RIGHT } = directions
+
+const DIRECTION_MARKER_OFFSET = BALL_RADIUS + DOT_SPACING
+
+const DIRECTION_MARKER: [number, number][] = [
+  [-BALL_RADIUS, -DIRECTION_MARKER_OFFSET],
+  [BALL_RADIUS, -DIRECTION_MARKER_OFFSET],
+  [BALL_RADIUS, -DIRECTION_MARKER_OFFSET - DOT_SIZE],
+  [-BALL_RADIUS, -DIRECTION_MARKER_OFFSET - DOT_SIZE],
+]
+
+const BALL_CENTER: Point = { x: 0, y: 0 }
 
 export class Ball {
   tilePos: Point
@@ -75,14 +89,19 @@ export class Ball {
     return LEFT
   }
 
-  draw(canvas: Canvas) {
-    canvas.drawSquare(
-      {
-        x: origin.x + this.pos.x - BALL_RADIUS,
-        y: origin.y + this.pos.y - BALL_RADIUS,
-      },
-      BALL_SIZE,
-      BALL_STYLE,
-    )
+  draw(
+    canvas: Canvas,
+    pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y },
+    editing = false,
+  ) {
+    canvas.drawSquare({ x: pos.x - BALL_RADIUS, y: pos.y - BALL_RADIUS }, BALL_SIZE, BALL_STYLE)
+
+    if (editing) {
+      canvas.drawPolygon(
+        pos,
+        rotatePolygon(DIRECTION_MARKER, this.direction(), BALL_CENTER),
+        BALL_STYLE,
+      )
+    }
   }
 }

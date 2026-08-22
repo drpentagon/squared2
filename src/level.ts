@@ -1,6 +1,7 @@
 import { Ball } from "./ball"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
+import { SelectionGraphics } from "./layers/selection-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
 import { tileTypes } from "./lib/constants"
 import { Point } from "./lib/point"
@@ -34,8 +35,10 @@ export class Level {
   bounces: number
   elapsedTime: number
   redirectsPlaced: number
+  markedTilePos: Point | null
 
   backgroundGraphics: BackgroundGraphics
+  selectionGraphics: SelectionGraphics
   staticGraphics: StaticGraphics
   dynamicGraphics: DynamicGraphics
 
@@ -48,8 +51,10 @@ export class Level {
     this.bounces = 0
     this.elapsedTime = 0
     this.redirectsPlaced = 0
+    this.markedTilePos = null
 
     this.backgroundGraphics = new BackgroundGraphics()
+    this.selectionGraphics = new SelectionGraphics()
     this.staticGraphics = new StaticGraphics(this.staticTiles)
     this.reset()
     this.dynamicGraphics = new DynamicGraphics(this.dynamicTiles, this.balls)
@@ -68,6 +73,8 @@ export class Level {
     this.dynamicTiles.addArray(this.data.goals.map((t) => new Goal(t, t.direction, t.rotates)))
 
     this.balls.splice(0, this.balls.length, ...this.data.balls.map((b) => new Ball(b, b.vx, b.vy)))
+
+    this.markedTilePos = null
 
     this.backgroundGraphics.clear()
     this.backgroundGraphics.draw()
@@ -89,8 +96,12 @@ export class Level {
     this.dynamicGraphics.update(dt)
   }
 
-  getTile = (tilePos: Point): Tile | undefined => {
-    return this.staticTiles.get(tilePos) ?? this.dynamicTiles.get(tilePos)
+  getTile = (tilePos: Point): Tile | Ball | undefined => {
+    return (
+      this.staticTiles.get(tilePos) ??
+      this.dynamicTiles.get(tilePos) ??
+      this.balls.find((ball) => ball.tilePos.x === tilePos.x && ball.tilePos.y === tilePos.y)
+    )
   }
 
   addTile = (tilePos: Point, tile: Ball | Tile) => {
@@ -132,8 +143,14 @@ export class Level {
     this.staticTiles.delete(tilePos)
     this.dynamicTiles.delete(tilePos)
 
+    this.markedTilePos = null
+
     this.staticGraphics.clear()
     this.staticGraphics.draw()
+  }
+
+  markTile = (tilePos: Point | null) => {
+    this.markedTilePos = tilePos
   }
 
   clear = () => {
@@ -159,12 +176,14 @@ export class Level {
     this.redirectsPlaced++
   }
 
-  render = () => {
-    this.dynamicGraphics.draw()
+  render = (editing = false) => {
+    this.selectionGraphics.draw(editing ? this.markedTilePos : null)
+    this.dynamicGraphics.draw(editing)
   }
 
   destroy = () => {
     this.backgroundGraphics.destroy()
+    this.selectionGraphics.destroy()
     this.staticGraphics.destroy()
     this.dynamicGraphics.destroy()
   }

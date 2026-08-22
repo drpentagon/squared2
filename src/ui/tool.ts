@@ -1,14 +1,16 @@
+import type { Ball } from "../ball"
 import { Canvas } from "../canvas"
 import { TILE_SIZE, TOOL_SIZE } from "../lib/constants"
 import { Point } from "../lib/point"
 import { TOOL_SELECTED } from "../lib/styles"
 import { Tile } from "../tiles/tile"
 
-export type MaybeTile = Tile | undefined
+export type AnyTile = Tile | Ball
+export type MaybeTile = AnyTile | undefined
 
 export abstract class Tool {
   abstract readonly type: string
-  protected abstract readonly symbol?: Tile
+  protected abstract readonly symbol?: AnyTile
   protected offset = (TOOL_SIZE - TILE_SIZE) / 2
   selected = false
 

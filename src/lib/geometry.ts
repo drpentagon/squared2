@@ -1,19 +1,23 @@
 import { TILE_SIZE, directions } from "./constants"
+import { Point } from "./point"
 
-const ROTATIONS: ((x: number, y: number) => [number, number])[] = [
+const ROTATIONS: ((x: number, y: number, center: Point) => [number, number])[] = [
   (x, y) => [x, y],
-  (x, y) => [TILE_SIZE - y, x],
-  (x, y) => [TILE_SIZE - x, TILE_SIZE - y],
-  (x, y) => [y, TILE_SIZE - x],
+  (x, y, c) => [c.x + c.y - y, x - c.x + c.y],
+  (x, y, c) => [2 * c.x - x, 2 * c.y - y],
+  (x, y, c) => [c.x - c.y + y, c.x + c.y - x],
 ]
 
 export const DIRECTION_STEPS = [directions.UP, directions.RIGHT, directions.DOWN, directions.LEFT]
 
+const TILE_CENTER: Point = { x: TILE_SIZE / 2, y: TILE_SIZE / 2 }
+
 export const rotatePolygon = (
   points: [number, number][],
   steps: number | string,
+  center: Point = TILE_CENTER,
 ): [number, number][] => {
   const n = typeof steps === "string" ? DIRECTION_STEPS.indexOf(steps) : steps
-  const rotate = ROTATIONS[n % 4]
-  return points.map(([x, y]) => rotate(x, y))
+  const rotate = ROTATIONS[((n % 4) + 4) % 4]
+  return points.map(([x, y]) => rotate(x, y, center))
 }
