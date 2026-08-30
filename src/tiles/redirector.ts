@@ -2,15 +2,7 @@ import { Tile } from "./tile"
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
 import { origin } from "../grid"
-import {
-  BALL_RADIUS,
-  DOT_SPACING,
-  SQUARE_SIZE,
-  SQUARE_STEP,
-  TILE_SIZE,
-  directions,
-  tileTypes,
-} from "../lib/constants"
+import { BALL, DOT, SQUARE, TILE, directions, tileTypes } from "../lib/constants"
 import { rotatePolygon } from "../lib/geometry"
 import { Point } from "../lib/point"
 import { playBounce } from "../lib/sound"
@@ -20,11 +12,11 @@ const { UP, DOWN, LEFT, RIGHT } = directions
 
 const BASE: [number, number][] = [
   [0, 0],
-  [2 * SQUARE_SIZE + DOT_SPACING, 0],
-  [2 * SQUARE_SIZE + DOT_SPACING, SQUARE_SIZE],
-  [SQUARE_SIZE, SQUARE_SIZE],
-  [SQUARE_SIZE, 2 * SQUARE_SIZE + DOT_SPACING],
-  [0, 2 * SQUARE_SIZE + DOT_SPACING],
+  [2 * SQUARE.SIZE + DOT.SPACING, 0],
+  [2 * SQUARE.SIZE + DOT.SPACING, SQUARE.SIZE],
+  [SQUARE.SIZE, SQUARE.SIZE],
+  [SQUARE.SIZE, 2 * SQUARE.SIZE + DOT.SPACING],
+  [0, 2 * SQUARE.SIZE + DOT.SPACING],
 ]
 
 const REDIRECTS = [
@@ -60,27 +52,27 @@ export class Redirector extends Tile {
       return
     }
 
-    if (overlap <= 2 * SQUARE_STEP || !nextDirection) return
+    if (overlap <= 2 * SQUARE.STEP || !nextDirection) return
 
-    const excess = overlap - 2 * SQUARE_STEP
+    const excess = overlap - 2 * SQUARE.STEP
     const speed = Math.abs(ball.vx) || Math.abs(ball.vy)
 
     const isPositive = nextDirection === RIGHT || nextDirection === DOWN
     const isHorizontal = nextDirection === RIGHT || nextDirection === LEFT
     const sign = isPositive ? 1 : -1
     const pos = isPositive
-      ? TILE_SIZE - (SQUARE_STEP + SQUARE_SIZE) + excess + BALL_RADIUS
-      : SQUARE_STEP + SQUARE_SIZE - excess - BALL_RADIUS
+      ? TILE.SIZE - (SQUARE.STEP + SQUARE.SIZE) + excess + BALL.RADIUS
+      : SQUARE.STEP + SQUARE.SIZE - excess - BALL.RADIUS
 
     if (isHorizontal) {
       ball.pos.x = this.pos.x + pos
       ball.vx = sign * speed
-      ball.pos.y = this.pos.y + TILE_SIZE / 2
+      ball.pos.y = this.pos.y + TILE.SIZE / 2
       ball.vy = 0
     } else {
       ball.pos.y = this.pos.y + pos
       ball.vy = sign * speed
-      ball.pos.x = this.pos.x + TILE_SIZE / 2
+      ball.pos.x = this.pos.x + TILE.SIZE / 2
       ball.vx = 0
     }
     this.onBounce()

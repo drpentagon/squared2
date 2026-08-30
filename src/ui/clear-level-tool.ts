@@ -1,5 +1,5 @@
 import { MaybeTile, Tool } from "./tool"
-import { SQUARE_SIZE, SQUARE_STEP, TOOL_SIZE } from "../lib/constants"
+import { SQUARE, TOOL } from "../lib/constants"
 import { Point } from "../lib/point"
 import { CLEAR, TOOL_SELECTED } from "../lib/styles"
 
@@ -15,17 +15,17 @@ export class ClearLevelTool extends Tool {
   }
 
   render = (pos: Point) => {
-    if (this.selected) this.canvas.drawSquare(pos, TOOL_SIZE, TOOL_SELECTED)
+    if (this.selected) this.canvas.drawSquare(pos, TOOL.SIZE, TOOL_SELECTED)
     const origin = { x: pos.x + this.offset, y: pos.y + this.offset }
     for (let i = 0; i < 3; i++) {
       this.canvas.drawSquare(
-        { x: origin.x + i * SQUARE_STEP, y: origin.y + i * SQUARE_STEP },
-        SQUARE_SIZE,
+        { x: origin.x + i * SQUARE.STEP, y: origin.y + i * SQUARE.STEP },
+        SQUARE.SIZE,
         CLEAR,
       )
       this.canvas.drawSquare(
-        { x: origin.x + (2 - i) * SQUARE_STEP, y: origin.y + i * SQUARE_STEP },
-        SQUARE_SIZE,
+        { x: origin.x + (2 - i) * SQUARE.STEP, y: origin.y + i * SQUARE.STEP },
+        SQUARE.SIZE,
         CLEAR,
       )
     }

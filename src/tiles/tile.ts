@@ -1,11 +1,11 @@
 import type { Ball } from "../ball"
 import { Canvas } from "../canvas"
-import { DOT_CC, BALL_RADIUS, TILE_CC, TILE_SIZE } from "../lib/constants"
+import { BALL, DOT, TILE } from "../lib/constants"
 import { Point } from "../lib/point"
 
 export const pixelToTile = (pixel: Point): Point => ({
-  x: Math.floor((pixel.x - DOT_CC) / TILE_CC),
-  y: Math.floor((pixel.y - DOT_CC) / TILE_CC),
+  x: Math.floor((pixel.x - DOT.CC) / TILE.CC),
+  y: Math.floor((pixel.y - DOT.CC) / TILE.CC),
 })
 
 export abstract class Tile {
@@ -16,17 +16,17 @@ export abstract class Tile {
   constructor(tilePos: Point) {
     this.tilePos = tilePos
     this.pos = {
-      x: DOT_CC + tilePos.x * TILE_CC,
-      y: DOT_CC + tilePos.y * TILE_CC,
+      x: DOT.CC + tilePos.x * TILE.CC,
+      y: DOT.CC + tilePos.y * TILE.CC,
     }
     this.consumed = false
   }
 
   overlap(ball: Ball) {
-    if (ball.vx > 0) return ball.pos.x + BALL_RADIUS - this.pos.x
-    if (ball.vx < 0) return this.pos.x + TILE_SIZE - ball.pos.x + BALL_RADIUS
-    if (ball.vy > 0) return ball.pos.y + BALL_RADIUS - this.pos.y
-    return this.pos.y + TILE_SIZE - ball.pos.y + BALL_RADIUS
+    if (ball.vx > 0) return ball.pos.x + BALL.RADIUS - this.pos.x
+    if (ball.vx < 0) return this.pos.x + TILE.SIZE - ball.pos.x + BALL.RADIUS
+    if (ball.vy > 0) return ball.pos.y + BALL.RADIUS - this.pos.y
+    return this.pos.y + TILE.SIZE - ball.pos.y + BALL.RADIUS
   }
 
   onClick(): void {}

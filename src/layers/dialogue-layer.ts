@@ -1,7 +1,7 @@
 import { GraphicsLayer } from "./graphics-layer"
 import { drawBackgroundPattern } from "./background-pattern"
 import { origin } from "../grid"
-import { GRID_SIZE } from "../lib/constants"
+import { GRID } from "../lib/constants"
 import { Style } from "../lib/style"
 import { write, writeHeadline, writeHuge } from "../lib/text"
 
@@ -14,7 +14,7 @@ export class DialogueLayer extends GraphicsLayer {
 
   constructor() {
     super(3)
-    this.canvas.setClip(origin, GRID_SIZE, GRID_SIZE)
+    this.canvas.setClip(origin, GRID.SIZE, GRID.SIZE)
     this.canvas.el.style.pointerEvents = "none"
     this.canvas.el.addEventListener("click", this.handleClick)
   }
@@ -79,7 +79,7 @@ export class DialogueLayer extends GraphicsLayer {
   levelIntroduction = () => this.show()
 
   draw = () => {
-    this.canvas.drawSquare(origin, GRID_SIZE, BACKDROP_STYLE)
+    this.canvas.drawSquare(origin, GRID.SIZE, BACKDROP_STYLE)
     drawBackgroundPattern(this.canvas)
   }
 }

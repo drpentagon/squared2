@@ -1,10 +1,10 @@
 import { Canvas } from "../canvas"
 import { origin } from "../grid"
-import { DOT_CC, DOT_SIZE, DOT_SPACING, TILE_CC, TILE_SIZE } from "./constants"
+import { DOT, TILE } from "./constants"
 import { Point } from "./point"
 import { Style } from "./style"
 
-const CELL_SIZE = DOT_CC + DOT_SIZE
+const CELL_SIZE = DOT.CC + DOT.SIZE
 
 const TEXT_STYLE = new Style("rgba(255, 255, 255, 0.8)")
 
@@ -57,20 +57,35 @@ export const stringLength = (text: string): number =>
     .split("")
     .filter((ch) => letters[ch] !== undefined).length
 
-export const write = (canvas: Canvas, text: string, x: number, y: number) =>
-  writeText(canvas, text, x, y, DOT_CC * 4, DOT_SIZE, DOT_SPACING)
+export const write = (canvas: Canvas, text: string, x: number, y: number, base: Point = origin) =>
+  writeText(canvas, text, x, y, DOT.CC * 4, DOT.SIZE, DOT.SPACING, base)
 
-export const writeHeadline = (canvas: Canvas, text: string, x: number, y: number) =>
-  writeText(canvas, text, x, y, TILE_CC, CELL_SIZE, DOT_SPACING)
+export const writeHeadline = (
+  canvas: Canvas,
+  text: string,
+  x: number,
+  y: number,
+  base: Point = origin,
+) => writeText(canvas, text, x, y, TILE.CC, CELL_SIZE, DOT.SPACING, base)
 
-export const writeHuge = (canvas: Canvas, text: string, x: number, y: number) =>
-  writeText(canvas, text, x, y, TILE_CC * 4, TILE_SIZE, DOT_CC + DOT_SPACING)
+export const writeHuge = (
+  canvas: Canvas,
+  text: string,
+  x: number,
+  y: number,
+  base: Point = origin,
+) => writeText(canvas, text, x, y, TILE.CC * 4, TILE.SIZE, DOT.CC + DOT.SPACING, base)
 
-export const writeMini = (canvas: Canvas, text: string, x: number, y: number) =>
-  writeText(canvas, text, x, y, 8, 2, 0)
+export const writeMini = (
+  canvas: Canvas,
+  text: string,
+  x: number,
+  y: number,
+  base: Point = origin,
+) => writeText(canvas, text, x, y, 8, 2, 0, base)
 
 export const writeEnormous = (canvas: Canvas, letter: string) =>
-  writeText(canvas, letter, 15, 15, TILE_CC * 2 + 6 * DOT_CC, DOT_CC + DOT_SPACING, 0)
+  writeText(canvas, letter, 15, 15, TILE.CC * 2 + 6 * DOT.CC, DOT.CC + DOT.SPACING, 0, origin)
 
 const writeText = (
   canvas: Canvas,
@@ -80,14 +95,21 @@ const writeText = (
   step: number,
   pixelSize: number,
   spacing: number,
+  base: Point,
 ) => {
-  const base: Point = { x: origin.x + x * DOT_CC, y: origin.y + y * DOT_CC }
+  const start: Point = { x: base.x + x * DOT.CC, y: base.y + y * DOT.CC }
   let i = 0
   text
     .toUpperCase()
     .split("")
     .forEach((ch) => {
-      const drawn = writeLetter(canvas, ch, { x: base.x + i * step, y: base.y }, pixelSize, spacing)
+      const drawn = writeLetter(
+        canvas,
+        ch,
+        { x: start.x + i * step, y: start.y },
+        pixelSize,
+        spacing,
+      )
       if (drawn) i++
     })
 }

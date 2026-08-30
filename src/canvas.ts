@@ -1,4 +1,4 @@
-import { DOT_CC, DOT_SIZE } from "./lib/constants"
+import { DOT } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Style } from "./lib/style"
 
@@ -47,20 +47,24 @@ export class Canvas {
   fillDots = (origin: Point, cols: number, rows: number, style = new Style()) => {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        this.drawSquare({ x: origin.x + c * DOT_CC, y: origin.y + r * DOT_CC }, DOT_SIZE, style)
+        this.drawSquare({ x: origin.x + c * DOT.CC, y: origin.y + r * DOT.CC }, DOT.SIZE, style)
       }
     }
   }
 
   drawSquare = (origin: Point, size: number, style = new Style()) => {
+    this.drawRect(origin, size, size, style)
+  }
+
+  drawRect = (origin: Point, width: number, height: number, style = new Style()) => {
     this.ctx.save()
     style.apply(this.ctx)
-    this.ctx.fillRect(origin.x, origin.y, size, size)
+    this.ctx.fillRect(origin.x, origin.y, width, height)
     this.ctx.strokeRect(
       origin.x + this.ctx.lineWidth / 2,
       origin.y + this.ctx.lineWidth / 2,
-      size - this.ctx.lineWidth,
-      size - this.ctx.lineWidth,
+      width - this.ctx.lineWidth,
+      height - this.ctx.lineWidth,
     )
     this.ctx.restore()
   }

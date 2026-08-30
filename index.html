@@ -46,6 +46,14 @@
         width: calc(var(--panel-width) * 1px);
         height: calc(var(--grid-size) * 1px);
       }
+      #tile-edit-panel {
+        left: calc(
+          (var(--grid-origin-x) + var(--grid-size) + var(--dot-spacing) + var(--dot-cc)) * 1px
+        );
+        top: calc(var(--grid-origin-y) * 1px);
+        width: calc(var(--edit-panel-width) * 1px);
+        height: calc(var(--edit-panel-height) * 1px);
+      }
       #copy-button {
         position: absolute;
         display: none;
@@ -73,6 +81,10 @@
           top: calc((var(--grid-origin-y) - var(--dot-spacing) - var(--panel-width)) * 1px);
           width: calc(var(--grid-size) * 1px);
           height: calc(var(--panel-width) * 1px);
+        }
+        #tile-edit-panel {
+          left: calc(var(--grid-origin-x) * 1px);
+          top: calc((var(--grid-origin-y) + var(--grid-size) + var(--dot-spacing)) * 1px);
         }
       }
     </style>

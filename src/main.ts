@@ -1,9 +1,10 @@
 import { origin } from "./grid"
 import { Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
-import { DOT_CC, GRID_SIZE, TILE_CC, TILE_SIZE } from "./lib/constants"
+import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
+import { tileEditPanel } from "./ui/tile-edit-panel"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
 
 const levels = ["level0", "level1", "level2"]
@@ -29,6 +30,12 @@ const loop = async (timestamp: number) => {
     toolsPanel.render()
   }
 
+  const markedTile =
+    EDITOR_STATE && level.markedTilePos ? level.getTile(level.markedTilePos) : undefined
+  const markedTool = markedTile ? toolsPanel.findToolByType(markedTile.type) : undefined
+  tileEditPanel.setContent(markedTool ?? null, markedTile ?? null)
+  tileEditPanel.render()
+
   level.render(EDITOR_STATE)
   requestAnimationFrame(loop)
 }
@@ -39,7 +46,15 @@ const loadNextLevel = async () => {
   level = new Level(await import(`./levels/${levels[currentLevelIndex]}.json`))
 }
 
-dialogueLayer.title().then(() => loadNextLevel().then(() => requestAnimationFrame(loop)))
+dialogueLayer.title().then(() =>
+  loadNextLevel().then(() => {
+    // TEMPORARY: start directly in edit mode for the first level
+    EDITOR_STATE = true
+    setEditing(EDITOR_STATE)
+    level.reset()
+    requestAnimationFrame(loop)
+  }),
+)
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) lastTime = performance.now()
@@ -55,16 +70,16 @@ const VARIANT_BY_QUADRANT = [
 
 document.addEventListener("click", (e) => {
   const local: Point = { x: e.clientX - origin.x, y: e.clientY - origin.y }
-  if (local.x < 0 || local.x >= GRID_SIZE || local.y < 0 || local.y >= GRID_SIZE) return
+  if (local.x < 0 || local.x >= GRID.SIZE || local.y < 0 || local.y >= GRID.SIZE) return
 
   const tilePos = pixelToTile(local)
 
   const tileOrigin: Point = {
-    x: DOT_CC + tilePos.x * TILE_CC,
-    y: DOT_CC + tilePos.y * TILE_CC,
+    x: DOT.CC + tilePos.x * TILE.CC,
+    y: DOT.CC + tilePos.y * TILE.CC,
   }
-  const col = local.x - tileOrigin.x >= TILE_SIZE / 2 ? 1 : 0
-  const row = local.y - tileOrigin.y >= TILE_SIZE / 2 ? 1 : 0
+  const col = local.x - tileOrigin.x >= TILE.SIZE / 2 ? 1 : 0
+  const row = local.y - tileOrigin.y >= TILE.SIZE / 2 ? 1 : 0
   const variant = VARIANT_BY_QUADRANT[row][col]
 
   if (!EDITOR_STATE) {
@@ -92,6 +107,10 @@ document.addEventListener("click", (e) => {
 })
 
 toolsPanel.clearLevelTool.onClear = () => level.clear()
+
+tileEditPanel.onDelete = () => {
+  if (level.markedTilePos) level.removeTile(level.markedTilePos)
+}
 
 const copyButton = document.createElement("button")
 copyButton.id = "copy-button"

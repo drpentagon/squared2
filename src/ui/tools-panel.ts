@@ -6,7 +6,7 @@ import { RedirectorTool } from "./redirector-tool"
 import { MaybeTile, Tool } from "./tool"
 import { WallTool } from "./wall-tool"
 import { Canvas } from "../canvas"
-import { TOOL_SIZE, TOOL_STEP } from "../lib/constants"
+import { TOOL } from "../lib/constants"
 import { Point } from "../lib/point"
 
 export class ToolsPanel {
@@ -40,7 +40,7 @@ export class ToolsPanel {
   }
 
   private toolPos = (index: number): Point => {
-    return this.horizontal ? { x: index * TOOL_STEP, y: 0 } : { x: 0, y: index * TOOL_STEP }
+    return this.horizontal ? { x: index * TOOL.STEP, y: 0 } : { x: 0, y: index * TOOL.STEP }
   }
 
   private selectTool = (tool: Tool) => {
@@ -57,9 +57,9 @@ export class ToolsPanel {
       const pos = this.toolPos(index)
       return (
         local.x >= pos.x &&
-        local.x < pos.x + TOOL_SIZE &&
+        local.x < pos.x + TOOL.SIZE &&
         local.y >= pos.y &&
-        local.y < pos.y + TOOL_SIZE
+        local.y < pos.y + TOOL.SIZE
       )
     })
 
@@ -71,8 +71,10 @@ export class ToolsPanel {
     return
   }
 
+  findToolByType = (type: string): Tool | undefined => this.tools.find((t) => t.type === type)
+
   selectToolForType = (type: string) => {
-    const tool = this.tools.find((t) => t.type === type)
+    const tool = this.findToolByType(type)
     if (tool) this.selectTool(tool)
   }
 

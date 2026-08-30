@@ -1,4 +1,4 @@
-import { TILE_SIZE, directions } from "./constants"
+import { TILE, directions } from "./constants"
 import { Point } from "./point"
 
 const ROTATIONS: ((x: number, y: number, center: Point) => [number, number])[] = [
@@ -10,7 +10,7 @@ const ROTATIONS: ((x: number, y: number, center: Point) => [number, number])[] =
 
 export const DIRECTION_STEPS = [directions.UP, directions.RIGHT, directions.DOWN, directions.LEFT]
 
-const TILE_CENTER: Point = { x: TILE_SIZE / 2, y: TILE_SIZE / 2 }
+const TILE_CENTER: Point = { x: TILE.SIZE / 2, y: TILE.SIZE / 2 }
 
 export const rotatePolygon = (
   points: [number, number][],

@@ -1,7 +1,7 @@
 import { GraphicsLayer } from "./graphics-layer"
 import { Ball } from "../ball"
 import { origin } from "../grid"
-import { GRID_SIZE } from "../lib/constants"
+import { GRID } from "../lib/constants"
 import { TileMap } from "../tiles/tile"
 
 export class DynamicGraphics extends GraphicsLayer {
@@ -10,7 +10,7 @@ export class DynamicGraphics extends GraphicsLayer {
 
   constructor(tiles: TileMap, balls: Ball[]) {
     super(2)
-    this.canvas.setClip(origin, GRID_SIZE, GRID_SIZE)
+    this.canvas.setClip(origin, GRID.SIZE, GRID.SIZE)
 
     this.tiles = tiles
     this.balls = balls

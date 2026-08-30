@@ -11,7 +11,9 @@ export class GoalTool extends RotatingTileTool<Goal> {
 
   protected createTile = (pos: Point) => new Goal(pos, OPENING_UP, false)
 
-  protected rotate = (tile: Goal) => {
-    tile.direction = (tile.direction + 1) % 4
+  variantIndex = (tile: Goal) => tile.direction
+
+  setVariant = (tile: Goal, variant: number) => {
+    tile.direction = variant
   }
 }

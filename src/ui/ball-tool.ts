@@ -1,6 +1,6 @@
 import { RotatingTileTool } from "./rotating-tile-tool"
 import { Ball } from "../ball"
-import { TOOL_SIZE, tileTypes } from "../lib/constants"
+import { TOOL, tileTypes } from "../lib/constants"
 import { DIRECTION_STEPS } from "../lib/geometry"
 import { Point } from "../lib/point"
 
@@ -18,14 +18,15 @@ const velocityByDirection = (direction: string, speed: number): [number, number]
 
 export class BallTool extends RotatingTileTool<Ball> {
   readonly type = tileTypes.BALL
-  protected offset = TOOL_SIZE / 2
+  protected offset = TOOL.SIZE / 2
   protected speed = 200
   protected readonly symbol = new Ball({ x: 0, y: 0 }, this.speed, 0)
 
   protected createTile = (pos: Point) => new Ball(pos, this.speed, 0)
 
-  protected rotate = (tile: Ball) => {
-    const next = DIRECTION_STEPS[(DIRECTION_STEPS.indexOf(tile.direction()) + 1) % 4]
-    ;[tile.vx, tile.vy] = velocityByDirection(next, this.speed)
+  variantIndex = (tile: Ball) => DIRECTION_STEPS.indexOf(tile.direction())
+
+  setVariant = (tile: Ball, variant: number) => {
+    ;[tile.vx, tile.vy] = velocityByDirection(DIRECTION_STEPS[variant], this.speed)
   }
 }

@@ -1,16 +1,6 @@
 import { Canvas } from "./canvas"
 import { origin } from "./grid"
-import {
-  BALL_SIZE,
-  DOT_CC,
-  DOT_SIZE,
-  DOT_SPACING,
-  GRID_SIZE,
-  BALL_RADIUS,
-  TILE_CC,
-  directions,
-  tileTypes,
-} from "./lib/constants"
+import { BALL, DOT, GRID, TILE, directions, tileTypes } from "./lib/constants"
 import { rotatePolygon } from "./lib/geometry"
 import { Point } from "./lib/point"
 import { BALL_STYLE } from "./lib/styles"
@@ -18,13 +8,13 @@ import { pixelToTile } from "./tiles/tile"
 
 const { UP, DOWN, LEFT, RIGHT } = directions
 
-const DIRECTION_MARKER_OFFSET = BALL_RADIUS + DOT_SPACING
+const DIRECTION_MARKER_OFFSET = BALL.RADIUS + DOT.SPACING
 
 const DIRECTION_MARKER: [number, number][] = [
-  [-BALL_RADIUS, -DIRECTION_MARKER_OFFSET],
-  [BALL_RADIUS, -DIRECTION_MARKER_OFFSET],
-  [BALL_RADIUS, -DIRECTION_MARKER_OFFSET - DOT_SIZE],
-  [-BALL_RADIUS, -DIRECTION_MARKER_OFFSET - DOT_SIZE],
+  [-BALL.RADIUS, -DIRECTION_MARKER_OFFSET],
+  [BALL.RADIUS, -DIRECTION_MARKER_OFFSET],
+  [BALL.RADIUS, -DIRECTION_MARKER_OFFSET - DOT.SIZE],
+  [-BALL.RADIUS, -DIRECTION_MARKER_OFFSET - DOT.SIZE],
 ]
 
 const BALL_CENTER: Point = { x: 0, y: 0 }
@@ -45,8 +35,8 @@ export class Ball {
     this.consumed = false
 
     this.pos = {
-      x: 3 * DOT_CC + tilePos.x * TILE_CC + BALL_RADIUS,
-      y: 3 * DOT_CC + tilePos.y * TILE_CC + BALL_RADIUS,
+      x: 3 * DOT.CC + tilePos.x * TILE.CC + BALL.RADIUS,
+      y: 3 * DOT.CC + tilePos.y * TILE.CC + BALL.RADIUS,
     }
   }
 
@@ -58,12 +48,12 @@ export class Ball {
     this.pos.x += this.vx * dt
     this.pos.y += this.vy * dt
 
-    this.pos.x = ((this.pos.x % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-    this.pos.y = ((this.pos.y % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
+    this.pos.x = ((this.pos.x % GRID.SIZE) + GRID.SIZE) % GRID.SIZE
+    this.pos.y = ((this.pos.y % GRID.SIZE) + GRID.SIZE) % GRID.SIZE
 
     const leading: Point = {
-      x: this.vx >= 0 ? this.pos.x + BALL_RADIUS : this.pos.x - BALL_RADIUS,
-      y: this.vy >= 0 ? this.pos.y + BALL_RADIUS : this.pos.y - BALL_RADIUS,
+      x: this.vx >= 0 ? this.pos.x + BALL.RADIUS : this.pos.x - BALL.RADIUS,
+      y: this.vy >= 0 ? this.pos.y + BALL.RADIUS : this.pos.y - BALL.RADIUS,
     }
 
     this.oldTilePos = { x: this.tilePos.x, y: this.tilePos.y }
@@ -94,7 +84,7 @@ export class Ball {
     pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y },
     editing = false,
   ) {
-    canvas.drawSquare({ x: pos.x - BALL_RADIUS, y: pos.y - BALL_RADIUS }, BALL_SIZE, BALL_STYLE)
+    canvas.drawSquare({ x: pos.x - BALL.RADIUS, y: pos.y - BALL.RADIUS }, BALL.SIZE, BALL_STYLE)
 
     if (editing) {
       canvas.drawPolygon(

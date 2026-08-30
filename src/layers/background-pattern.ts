@@ -1,6 +1,6 @@
 import { Canvas } from "../canvas"
 import { origin } from "../grid"
-import { DOT_GRID_SIZE, DOT_CC, TILES } from "../lib/constants"
+import { DOT, TILE } from "../lib/constants"
 import { Point } from "../lib/point"
 import { Style } from "../lib/style"
 
@@ -20,10 +20,10 @@ const SECONDARY_PATTERN = [
 ]
 
 export const drawBackgroundPattern = (canvas: Canvas) => {
-  canvas.fillDots(origin, DOT_GRID_SIZE, DOT_GRID_SIZE, dotStyle)
+  canvas.fillDots(origin, DOT.GRID_SIZE, DOT.GRID_SIZE, dotStyle)
 
-  for (let y = 0; y < TILES; y++) {
-    for (let x = 0; x < TILES; x++) {
+  for (let y = 0; y < TILE.COUNT; y++) {
+    for (let x = 0; x < TILE.COUNT; x++) {
       drawPattern(canvas, { x, y }, PRIMARY_PATTERN, primaryStyle)
       drawPattern(canvas, { x, y }, SECONDARY_PATTERN, secondaryStyle)
     }
@@ -37,8 +37,8 @@ const drawPattern = (canvas: Canvas, tilePos: Point, pattern: number[][], style:
         c &&
         canvas.fillDots(
           {
-            x: origin.x + (1 + tilePos.x * 7 + px * 2) * DOT_CC,
-            y: origin.y + (1 + tilePos.y * 7 + py * 2) * DOT_CC,
+            x: origin.x + (1 + tilePos.x * 7 + px * 2) * DOT.CC,
+            y: origin.y + (1 + tilePos.y * 7 + py * 2) * DOT.CC,
           },
           2,
           2,

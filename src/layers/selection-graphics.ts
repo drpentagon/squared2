@@ -1,10 +1,10 @@
 import { GraphicsLayer } from "./graphics-layer"
 import { origin } from "../grid"
-import { DOT_CC, TILE_CC, TILE_SIZE } from "../lib/constants"
+import { DOT, TILE } from "../lib/constants"
 import { Point } from "../lib/point"
 import { SELECTED } from "../lib/styles"
 
-const MARKER_SIZE = TILE_SIZE + 2 * DOT_CC
+const MARKER_SIZE = TILE.SIZE + 2 * DOT.CC
 
 export class SelectionGraphics extends GraphicsLayer {
   constructor() {
@@ -18,7 +18,7 @@ export class SelectionGraphics extends GraphicsLayer {
     if (!tilePos) return
 
     this.canvas.drawSquare(
-      { x: origin.x + tilePos.x * TILE_CC, y: origin.y + tilePos.y * TILE_CC },
+      { x: origin.x + tilePos.x * TILE.CC, y: origin.y + tilePos.y * TILE.CC },
       MARKER_SIZE,
       SELECTED,
     )
