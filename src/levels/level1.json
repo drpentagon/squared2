@@ -206,38 +206,38 @@
     {
       "x": 1,
       "y": 6,
-      "vx": 0,
-      "vy": -400
+      "direction": "UP",
+      "velocity": 400
     },
     {
       "x": 3,
       "y": 6,
-      "vx": 0,
-      "vy": -400
+      "direction": "UP",
+      "velocity": 400
     },
     {
       "x": 5,
       "y": 6,
-      "vx": 0,
-      "vy": -400
+      "direction": "UP",
+      "velocity": 400
     },
     {
       "x": 7,
       "y": 6,
-      "vx": 0,
-      "vy": 400
+      "direction": "DOWN",
+      "velocity": 400
     },
     {
       "x": 9,
       "y": 6,
-      "vx": 0,
-      "vy": 400
+      "direction": "DOWN",
+      "velocity": 400
     },
     {
       "x": 11,
       "y": 6,
-      "vx": 0,
-      "vy": 400
+      "direction": "DOWN",
+      "velocity": 400
     }
   ]
 }

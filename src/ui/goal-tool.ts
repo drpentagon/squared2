@@ -1,9 +1,9 @@
 import { RotatingTileTool } from "./rotating-tile-tool"
-import { tileTypes } from "../lib/constants"
+import { DIRECTIONS, directions, tileTypes } from "../lib/constants"
 import { Point } from "../lib/point"
 import { Goal } from "../tiles/goal"
 
-const OPENING_UP = 0
+const OPENING_UP = directions.UP
 
 export class GoalTool extends RotatingTileTool<Goal> {
   readonly type = tileTypes.GOAL
@@ -11,9 +11,9 @@ export class GoalTool extends RotatingTileTool<Goal> {
 
   protected createTile = (pos: Point) => new Goal(pos, OPENING_UP, false)
 
-  variantIndex = (tile: Goal) => tile.direction
+  variantIndex = (tile: Goal) => DIRECTIONS.indexOf(tile.direction)
 
   setVariant = (tile: Goal, variant: number) => {
-    tile.direction = variant
+    tile.direction = DIRECTIONS[variant]
   }
 }

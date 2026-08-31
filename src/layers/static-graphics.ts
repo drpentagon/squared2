@@ -1,10 +1,11 @@
 import { GraphicsLayer } from "./graphics-layer"
-import { TileMap } from "../tiles/tile"
+import { PositionMap } from "../position-map"
+import { Tile } from "../tiles/tile"
 
 export class StaticGraphics extends GraphicsLayer {
-  private tiles: TileMap
+  private tiles: PositionMap<Tile>
 
-  constructor(tiles: TileMap) {
+  constructor(tiles: PositionMap<Tile>) {
     super(1)
     this.tiles = tiles
   }

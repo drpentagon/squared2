@@ -22,21 +22,65 @@
         height: 100vh;
         image-rendering: pixelated;
       }
-      .edit-panel {
+      .canvas-panel {
         position: absolute;
         display: none;
         box-sizing: border-box;
         background: transparent;
         z-index: 3;
       }
-      .edit-panel canvas {
+      .canvas-panel canvas {
         display: block;
         width: 100%;
         height: 100%;
         image-rendering: pixelated;
       }
-      body.editing .edit-panel {
+      body.editing .canvas-panel {
         display: block;
+      }
+      .edit-panel {
+        position: absolute;
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        width: 160px;
+        box-sizing: border-box;
+        padding: 12px;
+        background: #0a3d0c;
+        border: 1px solid #2f8a34;
+        border-radius: 4px;
+        z-index: 3;
+      }
+      body.editing .edit-panel {
+        display: flex;
+      }
+      .edit-panel-button {
+        font-family: sans-serif;
+        font-size: 14px;
+        padding: 8px 16px;
+        background: #0a3d0c;
+        color: #d6ffd8;
+        border: 1px solid #2f8a34;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .edit-panel-button:hover {
+        background: #0f4f12;
+      }
+      .delete-button {
+        background: #3d0a0a;
+        color: #ffd6d6;
+        border-color: #8a2f2f;
+      }
+      .delete-button:hover {
+        background: #4f0f0f;
+      }
+      .rotation-control {
+        display: flex;
+        gap: 8px;
+      }
+      .rotation-control .edit-panel-button {
+        flex: 1;
       }
       #tools-panel {
         left: calc(
@@ -51,8 +95,6 @@
           (var(--grid-origin-x) + var(--grid-size) + var(--dot-spacing) + var(--dot-cc)) * 1px
         );
         top: calc(var(--grid-origin-y) * 1px);
-        width: calc(var(--edit-panel-width) * 1px);
-        height: calc(var(--edit-panel-height) * 1px);
       }
       #copy-button {
         position: absolute;

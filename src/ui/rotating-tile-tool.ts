@@ -1,9 +1,10 @@
 import { RotationControl } from "./elements/rotation-control"
 import { EditPanelCommand } from "./tile-edit-panel"
-import { AnyTile, MaybeTile, Tool } from "./tool"
-import { Point } from "../lib/point"
+import { MaybeTile, Tool } from "./tool"
+import { GridObject } from "../grid-object"
+import { equals, Point } from "../lib/point"
 
-export abstract class RotatingTileTool<T extends AnyTile> extends Tool {
+export abstract class RotatingTileTool<T extends GridObject> extends Tool {
   private clickPos: Point | null = null
   private clickCount = 0
   readonly rotationControl = new RotationControl<T>(this)
@@ -16,14 +17,14 @@ export abstract class RotatingTileTool<T extends AnyTile> extends Tool {
     return [...super.editPanelCommands(), EditPanelCommand.ROTATION_CONTROL]
   }
 
-  protected matches = (tile: AnyTile): tile is T => tile.type === this.type
+  protected matches = (tile: GridObject): tile is T => tile.type === this.type
 
   private rotate = (tile: T) => {
     this.setVariant(tile, (this.variantIndex(tile) + 1) % 4)
   }
 
   execute = (pos: Point, variant: number, existingTile: MaybeTile) => {
-    if (this.clickPos?.x !== pos.x || this.clickPos?.y !== pos.y) {
+    if (!this.clickPos || !equals(this.clickPos, pos)) {
       this.clickPos = pos
       this.clickCount = 0
     }

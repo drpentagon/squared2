@@ -1,6 +1,6 @@
 import { GraphicsLayer } from "./graphics-layer"
-import { drawBackgroundPattern } from "./background-pattern"
 import { origin } from "../grid"
+import { drawBackgroundPattern } from "../lib/background-pattern"
 import { GRID } from "../lib/constants"
 import { Style } from "../lib/style"
 import { write, writeHeadline, writeHuge } from "../lib/text"

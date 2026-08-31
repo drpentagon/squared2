@@ -1,49 +1,36 @@
-import { Canvas } from "../../canvas"
-import { TILE } from "../../lib/constants"
-import { ROTATE_BUTTON_STYLE } from "../../lib/styles"
-import { writeMini } from "../../lib/text"
-import { Point } from "../../lib/point"
-
-const BUTTON_WIDTH = TILE.SIZE
-const BUTTON_HEIGHT = TILE.SIZE
-const BUTTON_GAP = TILE.SPACING
-
-const RIGHT_BUTTON_OFFSET: Point = { x: BUTTON_WIDTH + BUTTON_GAP, y: 0 }
-
 export interface RotationSource<T> {
   variantIndex: (tile: T) => number
   setVariant: (tile: T, variant: number) => void
 }
 
-const containsPoint = (pos: Point, point: Point): boolean =>
-  point.x >= pos.x &&
-  point.x < pos.x + BUTTON_WIDTH &&
-  point.y >= pos.y &&
-  point.y < pos.y + BUTTON_HEIGHT
-
 export class RotationControl<T> {
-  constructor(private source: RotationSource<T>) {}
+  readonly el: HTMLElement
+  private tile: T | null = null
 
-  draw = (canvas: Canvas, pos: Point) => {
-    const rightPos = { x: pos.x + RIGHT_BUTTON_OFFSET.x, y: pos.y + RIGHT_BUTTON_OFFSET.y }
+  constructor(private source: RotationSource<T>) {
+    this.el = document.createElement("div")
+    this.el.className = "rotation-control"
 
-    canvas.drawRect(pos, BUTTON_WIDTH, BUTTON_HEIGHT, ROTATE_BUTTON_STYLE)
-    writeMini(canvas, "CCW", 1, 1, pos)
-
-    canvas.drawRect(rightPos, BUTTON_WIDTH, BUTTON_HEIGHT, ROTATE_BUTTON_STYLE)
-    writeMini(canvas, "CW", 1, 1, rightPos)
+    const ccwButton = this.makeButton("↺", -1)
+    const cwButton = this.makeButton("↻", 1)
+    this.el.append(ccwButton, cwButton)
   }
 
-  handleClick = (pos: Point, point: Point, tile: T): boolean => {
-    const rightPos = { x: pos.x + RIGHT_BUTTON_OFFSET.x, y: pos.y + RIGHT_BUTTON_OFFSET.y }
+  setTile = (tile: T | null) => {
+    this.tile = tile
+  }
 
-    const isCounterClockwise = containsPoint(pos, point)
-    const isClockwise = !isCounterClockwise && containsPoint(rightPos, point)
+  private makeButton = (label: string, direction: -1 | 1): HTMLButtonElement => {
+    const button = document.createElement("button")
+    button.className = "edit-panel-button"
+    button.textContent = label
+    button.addEventListener("click", () => this.rotate(direction))
+    return button
+  }
 
-    if (!isCounterClockwise && !isClockwise) return false
-
-    const current = this.source.variantIndex(tile)
-    this.source.setVariant(tile, isClockwise ? (current + 1) % 4 : (current + 3) % 4)
-    return true
+  private rotate = (direction: -1 | 1) => {
+    if (!this.tile) return
+    const current = this.source.variantIndex(this.tile)
+    this.source.setVariant(this.tile, (current + direction + 4) % 4)
   }
 }

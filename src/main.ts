@@ -34,7 +34,6 @@ const loop = async (timestamp: number) => {
     EDITOR_STATE && level.markedTilePos ? level.getTile(level.markedTilePos) : undefined
   const markedTool = markedTile ? toolsPanel.findToolByType(markedTile.type) : undefined
   tileEditPanel.setContent(markedTool ?? null, markedTile ?? null)
-  tileEditPanel.render()
 
   level.render(EDITOR_STATE)
   requestAnimationFrame(loop)

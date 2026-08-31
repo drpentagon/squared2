@@ -1,5 +1,5 @@
 import { GraphicsLayer } from "./graphics-layer"
-import { drawBackgroundPattern } from "./background-pattern"
+import { drawBackgroundPattern } from "../lib/background-pattern"
 
 export class BackgroundGraphics extends GraphicsLayer {
   constructor() {

@@ -2,8 +2,15 @@ import { Tile } from "./tile"
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
 import { origin } from "../grid"
-import { SQUARE, TILE, tileTypes } from "../lib/constants"
-import { rotatePolygon, DIRECTION_STEPS } from "../lib/geometry"
+import {
+  DIRECTIONS,
+  NEXT_DIRECTION,
+  OPPOSITE_DIRECTION,
+  SQUARE,
+  TILE,
+  tileTypes,
+} from "../lib/constants"
+import { rotatePolygon } from "../lib/geometry"
 import { Point } from "../lib/point"
 import { playBounce, playBell } from "../lib/sound"
 import { GOAL } from "../lib/styles"
@@ -19,21 +26,23 @@ const BASE: [number, number][] = [
   [0, TILE.SIZE],
 ]
 
-const SHAPES = [0, 1, 2, 3].map((n) => rotatePolygon(BASE, n))
+const SHAPES: Record<string, [number, number][]> = Object.fromEntries(
+  DIRECTIONS.map((dir) => [dir, rotatePolygon(BASE, dir)]),
+)
 
 export class Goal extends Tile {
   readonly type = tileTypes.GOAL
-  direction: number
+  direction: string
   rotates: boolean
 
-  constructor(tilePos: Point, direction: number, rotates = false) {
+  constructor(tilePos: Point, direction: string, rotates = false) {
     super(tilePos)
     this.direction = direction
     this.rotates = rotates
   }
 
   interact = (ball: Ball) => {
-    if (DIRECTION_STEPS.indexOf(ball.direction()) !== (this.direction + 2) % 4) {
+    if (OPPOSITE_DIRECTION[ball.direction] !== this.direction) {
       ball.perpendicularBounce(this.overlap(ball))
       playBounce()
       return
@@ -42,7 +51,7 @@ export class Goal extends Tile {
     if (this.overlap(ball) >= TILE.SIZE / 2) {
       ball.consumed = true
       playBell()
-      if (this.rotates) this.direction = (this.direction + 1) % 4
+      if (this.rotates) this.direction = NEXT_DIRECTION[this.direction]
     }
   }
 

@@ -1,8 +1,8 @@
 import { Canvas } from "../canvas"
 import { origin } from "../grid"
-import { DOT, TILE } from "../lib/constants"
-import { Point } from "../lib/point"
-import { Style } from "../lib/style"
+import { DOT, TILE } from "./constants"
+import { Point } from "./point"
+import { Style } from "./style"
 
 const dotStyle = new Style("rgba(255, 255, 255, 0.10)")
 const primaryStyle = new Style("rgba(255, 255, 255, 0.05)")

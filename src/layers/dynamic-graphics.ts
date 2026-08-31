@@ -2,13 +2,14 @@ import { GraphicsLayer } from "./graphics-layer"
 import { Ball } from "../ball"
 import { origin } from "../grid"
 import { GRID } from "../lib/constants"
-import { TileMap } from "../tiles/tile"
+import { PositionMap } from "../position-map"
+import { Tile } from "../tiles/tile"
 
 export class DynamicGraphics extends GraphicsLayer {
-  private tiles: TileMap
+  private tiles: PositionMap<Tile>
   private balls: Ball[]
 
-  constructor(tiles: TileMap, balls: Ball[]) {
+  constructor(tiles: PositionMap<Tile>, balls: Ball[]) {
     super(2)
     this.canvas.setClip(origin, GRID.SIZE, GRID.SIZE)
 
@@ -32,7 +33,7 @@ export class DynamicGraphics extends GraphicsLayer {
 
   draw = (editing = false) => {
     this.canvas.clear()
-    this.tiles.forEach((tile) => tile.draw(this.canvas))
+    this.tiles.forEach((tile) => tile.draw(this.canvas, undefined, editing))
     this.balls.forEach((ball) => ball.draw(this.canvas, undefined, editing))
   }
 }

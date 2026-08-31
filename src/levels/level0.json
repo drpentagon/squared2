@@ -56,8 +56,8 @@
     {
       "x": 6,
       "y": 9,
-      "vx": 200,
-      "vy": 0
+      "direction": "RIGHT",
+      "velocity": 200
     }
   ]
 }

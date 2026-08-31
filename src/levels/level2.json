@@ -31,8 +31,8 @@
   "permanentRedirects": [],
   "goals": [{ "x": 6, "y": 6, "direction": 0, "rotates": true }],
   "balls": [
-    { "x": 3, "y": 4, "vx": 0, "vy": -400 },
-    { "x": 9, "y": 9, "vx": 0, "vy": 400 },
-    { "x": 2, "y": 10, "vx": 400, "vy": 0 }
+    { "x": 3, "y": 4, "direction": "UP", "velocity": 400 },
+    { "x": 9, "y": 9, "direction": "DOWN", "velocity": 400 },
+    { "x": 2, "y": 10, "direction": "RIGHT", "velocity": 400 }
   ]
 }

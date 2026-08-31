@@ -1,5 +1,5 @@
 import { Redirector } from "./redirector"
-import { tileTypes } from "../lib/constants"
+import { NEXT_DIRECTION, tileTypes } from "../lib/constants"
 import { playFragileBounce } from "../lib/sound"
 import { Style } from "../lib/style"
 import { FRAGILE } from "../lib/styles"
@@ -9,7 +9,7 @@ export class FragileRedirector extends Redirector {
   protected readonly style: Style = FRAGILE
 
   onClick() {
-    this.variant = (this.variant + 1) % 4
+    this.direction = NEXT_DIRECTION[this.direction]
   }
 
   protected onBounce() {

@@ -21,15 +21,6 @@ const PANEL_WIDTH = 8 * DOT_CC - DOT_SPACING
 const TOOL_SIZE = PANEL_WIDTH
 const TOOL_STEP = TOOL_SIZE + DOT_SPACING
 
-const DELETE_BUTTON_WIDTH = 19 * DOT_CC - DOT_SPACING
-const DELETE_BUTTON_HEIGHT = 3 * DOT_CC - DOT_SPACING
-
-const ROTATION_CONTROL_WIDTH = 2 * TILE_SIZE + TILE_SPACING
-const ROTATION_CONTROL_HEIGHT = TILE_SIZE
-
-const EDIT_PANEL_WIDTH = DELETE_BUTTON_WIDTH + 2 * DOT_CC
-const EDIT_PANEL_HEIGHT = DELETE_BUTTON_HEIGHT + 2 * DOT_CC
-
 export const DOT = { GRID_SIZE: DOT_GRID_SIZE, SIZE: DOT_SIZE, SPACING: DOT_SPACING, CC: DOT_CC }
 export const TILE = { COUNT: TILE_COUNT, CC: TILE_CC, SIZE: TILE_SIZE, SPACING: TILE_SPACING }
 export const GRID = { SIZE: GRID_SIZE }
@@ -37,15 +28,35 @@ export const SQUARE = { SIZE: SQUARE_SIZE, STEP: SQUARE_STEP }
 export const BALL = { SIZE: BALL_SIZE, RADIUS: BALL_RADIUS }
 export const PANEL = { WIDTH: PANEL_WIDTH }
 export const TOOL = { SIZE: TOOL_SIZE, STEP: TOOL_STEP }
-export const DELETE_BUTTON = { WIDTH: DELETE_BUTTON_WIDTH, HEIGHT: DELETE_BUTTON_HEIGHT }
-export const ROTATION_CONTROL = { WIDTH: ROTATION_CONTROL_WIDTH, HEIGHT: ROTATION_CONTROL_HEIGHT }
-export const EDIT_PANEL = { WIDTH: EDIT_PANEL_WIDTH, HEIGHT: EDIT_PANEL_HEIGHT }
 
 export const directions = {
   UP: "UP",
   DOWN: "DOWN",
   LEFT: "LEFT",
   RIGHT: "RIGHT",
+}
+
+export const DIRECTIONS = [directions.UP, directions.RIGHT, directions.DOWN, directions.LEFT]
+
+export const OPPOSITE_DIRECTION: Record<string, string> = {
+  [directions.UP]: directions.DOWN,
+  [directions.DOWN]: directions.UP,
+  [directions.LEFT]: directions.RIGHT,
+  [directions.RIGHT]: directions.LEFT,
+}
+
+export const NEXT_DIRECTION: Record<string, string> = {
+  [directions.UP]: directions.RIGHT,
+  [directions.RIGHT]: directions.DOWN,
+  [directions.DOWN]: directions.LEFT,
+  [directions.LEFT]: directions.UP,
+}
+
+export const PREVIOUS_DIRECTION: Record<string, string> = {
+  [directions.UP]: directions.LEFT,
+  [directions.RIGHT]: directions.UP,
+  [directions.DOWN]: directions.RIGHT,
+  [directions.LEFT]: directions.DOWN,
 }
 
 export const tileTypes = {

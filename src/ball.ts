@@ -1,12 +1,11 @@
 import { Canvas } from "./canvas"
 import { origin } from "./grid"
-import { BALL, DOT, GRID, TILE, directions, tileTypes } from "./lib/constants"
+import { GridObject } from "./grid-object"
+import { BALL, DOT, GRID, OPPOSITE_DIRECTION, TILE, directions, tileTypes } from "./lib/constants"
 import { rotatePolygon } from "./lib/geometry"
-import { Point } from "./lib/point"
+import { equals, Point } from "./lib/point"
 import { BALL_STYLE } from "./lib/styles"
 import { pixelToTile } from "./tiles/tile"
-
-const { UP, DOWN, LEFT, RIGHT } = directions
 
 const DIRECTION_MARKER_OFFSET = BALL.RADIUS + DOT.SPACING
 
@@ -17,27 +16,37 @@ const DIRECTION_MARKER: [number, number][] = [
   [-BALL.RADIUS, -DIRECTION_MARKER_OFFSET - DOT.SIZE],
 ]
 
-const BALL_CENTER: Point = { x: 0, y: 0 }
+const DIRECTION_VECTOR: Record<string, Point> = {
+  [directions.UP]: { x: 0, y: -1 },
+  [directions.DOWN]: { x: 0, y: 1 },
+  [directions.LEFT]: { x: -1, y: 0 },
+  [directions.RIGHT]: { x: 1, y: 0 },
+}
 
-export class Ball {
-  tilePos: Point
-  oldTilePos: Point
-  pos: Point
-  vx: number
-  vy: number
-  consumed: boolean
+export class Ball extends GridObject {
+  velocity: number
+  directionVector: Point
+  inNewTile: boolean
+  #direction: string
 
-  constructor(tilePos: Point, vx: number, vy: number) {
-    this.tilePos = tilePos
-    this.oldTilePos = { x: -1, y: -1 }
-    this.vx = vx
-    this.vy = vy
-    this.consumed = false
-
-    this.pos = {
+  constructor(tilePos: Point, velocity: number, direction: string) {
+    super(tilePos, {
       x: 3 * DOT.CC + tilePos.x * TILE.CC + BALL.RADIUS,
       y: 3 * DOT.CC + tilePos.y * TILE.CC + BALL.RADIUS,
-    }
+    })
+    this.velocity = velocity
+    this.#direction = direction
+    this.directionVector = DIRECTION_VECTOR[direction]
+    this.inNewTile = false
+  }
+
+  get direction(): string {
+    return this.#direction
+  }
+
+  set direction(direction: string) {
+    this.#direction = direction
+    this.directionVector = DIRECTION_VECTOR[direction]
   }
 
   get type() {
@@ -45,38 +54,31 @@ export class Ball {
   }
 
   update(dt: number) {
-    this.pos.x += this.vx * dt
-    this.pos.y += this.vy * dt
+    const { x: dx, y: dy } = this.directionVector
+
+    this.pos.x += dx * this.velocity * dt
+    this.pos.y += dy * this.velocity * dt
 
     this.pos.x = ((this.pos.x % GRID.SIZE) + GRID.SIZE) % GRID.SIZE
     this.pos.y = ((this.pos.y % GRID.SIZE) + GRID.SIZE) % GRID.SIZE
 
-    const leading: Point = {
-      x: this.vx >= 0 ? this.pos.x + BALL.RADIUS : this.pos.x - BALL.RADIUS,
-      y: this.vy >= 0 ? this.pos.y + BALL.RADIUS : this.pos.y - BALL.RADIUS,
+    const front: Point = {
+      x: dx >= 0 ? this.pos.x + BALL.RADIUS : this.pos.x - BALL.RADIUS,
+      y: dy >= 0 ? this.pos.y + BALL.RADIUS : this.pos.y - BALL.RADIUS,
     }
 
-    this.oldTilePos = { x: this.tilePos.x, y: this.tilePos.y }
-    this.tilePos = pixelToTile(leading)
+    const newTilePos = pixelToTile(front)
+    this.inNewTile = !equals(newTilePos, this.tilePos)
+    this.tilePos = newTilePos
   }
 
   perpendicularBounce(overlap: number) {
-    this.pos.x -= Math.sign(this.vx) * overlap
-    this.pos.y -= Math.sign(this.vy) * overlap
+    const { x: dx, y: dy } = this.directionVector
 
-    this.vx = -this.vx
-    this.vy = -this.vy
-  }
+    this.pos.x -= dx * overlap
+    this.pos.y -= dy * overlap
 
-  inNewTile() {
-    return this.oldTilePos.x !== this.tilePos.x || this.oldTilePos.y !== this.tilePos.y
-  }
-
-  direction() {
-    if (this.vy < 0) return UP
-    if (this.vy > 0) return DOWN
-    if (this.vx > 0) return RIGHT
-    return LEFT
+    this.direction = OPPOSITE_DIRECTION[this.direction]
   }
 
   draw(
@@ -89,7 +91,7 @@ export class Ball {
     if (editing) {
       canvas.drawPolygon(
         pos,
-        rotatePolygon(DIRECTION_MARKER, this.direction(), BALL_CENTER),
+        rotatePolygon(DIRECTION_MARKER, this.direction, { x: 0, y: 0 }),
         BALL_STYLE,
       )
     }

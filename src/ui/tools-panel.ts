@@ -18,7 +18,7 @@ export class ToolsPanel {
   constructor() {
     const container = document.createElement("div")
     container.id = "tools-panel"
-    container.className = "edit-panel"
+    container.className = "canvas-panel"
     document.body.appendChild(container)
 
     this.canvas = new Canvas(0, container)
