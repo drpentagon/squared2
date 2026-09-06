@@ -3,9 +3,10 @@ import { ClearLevelTool } from "./clear-level-tool"
 import { FragileRedirectorTool } from "./fragile-redirector-tool"
 import { GoalTool } from "./goal-tool"
 import { RedirectorTool } from "./redirector-tool"
-import { MaybeTile, Tool } from "./tool"
+import { Tool } from "./tool"
 import { WallTool } from "./wall-tool"
 import { Canvas } from "../canvas"
+import { GridObject } from "../grid-object"
 import { TOOL } from "../lib/constants"
 import { Point } from "../lib/point"
 
@@ -63,10 +64,17 @@ export class ToolsPanel {
       )
     })
 
-    if (tool) this.selectTool(tool)
+    if (!tool) return
+
+    if (tool === this.clearLevelTool) {
+      this.clearLevelTool.activate()
+      return
+    }
+
+    this.selectTool(tool)
   }
 
-  executeSelectedTool = (pos: Point, variant: number, existingTile: MaybeTile) => {
+  executeSelectedTool = (pos: Point, variant: number, existingTile: GridObject | undefined) => {
     if (this.selectedTool) return this.selectedTool.execute(pos, variant, existingTile)
     return
   }

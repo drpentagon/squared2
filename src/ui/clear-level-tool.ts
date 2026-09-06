@@ -1,4 +1,4 @@
-import { MaybeTile, Tool } from "./tool"
+import { Tool } from "./tool"
 import { SQUARE, TOOL } from "../lib/constants"
 import { Point } from "../lib/point"
 import { CLEAR, TOOL_SELECTED } from "../lib/styles"
@@ -9,10 +9,11 @@ export class ClearLevelTool extends Tool {
 
   onClear: () => void = () => {}
 
-  execute = (_pos: Point, _variant: number, _existingTile: MaybeTile) => {
-    this.onClear()
-    return undefined
+  activate = () => {
+    if (confirm("Are you sure you want to clear the level?")) this.onClear()
   }
+
+  execute = () => undefined
 
   render = (pos: Point) => {
     if (this.selected) this.canvas.drawSquare(pos, TOOL.SIZE, TOOL_SELECTED)

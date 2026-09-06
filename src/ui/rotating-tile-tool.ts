@@ -1,29 +1,25 @@
-import { RotationControl } from "./elements/rotation-control"
-import { EditPanelCommand } from "./tile-edit-panel"
-import { MaybeTile, Tool } from "./tool"
+import { Rotatable } from "./elements/rotation-control"
+import { TileTool } from "./tile-tool"
+import { EditCommandConstructor, EditPanelCommand } from "./tile-edit-panel"
 import { GridObject } from "../grid-object"
+import { NEXT_DIRECTION } from "../lib/constants"
 import { equals, Point } from "../lib/point"
 
-export abstract class RotatingTileTool<T extends GridObject> extends Tool {
+export abstract class RotatingTileTool<T extends GridObject & Rotatable> extends TileTool<T> {
   private clickPos: Point | null = null
   private clickCount = 0
-  readonly rotationControl = new RotationControl<T>(this)
 
   protected abstract createTile(pos: Point, variant: number): T
-  abstract variantIndex(tile: T): number
-  abstract setVariant(tile: T, variant: number): void
 
-  editPanelCommands(): EditPanelCommand[] {
+  editPanelCommands(): EditCommandConstructor[] {
     return [...super.editPanelCommands(), EditPanelCommand.ROTATION_CONTROL]
   }
 
-  protected matches = (tile: GridObject): tile is T => tile.type === this.type
-
   private rotate = (tile: T) => {
-    this.setVariant(tile, (this.variantIndex(tile) + 1) % 4)
+    tile.direction = NEXT_DIRECTION[tile.direction]
   }
 
-  execute = (pos: Point, variant: number, existingTile: MaybeTile) => {
+  execute = (pos: Point, variant: number, existingTile: GridObject | undefined) => {
     if (!this.clickPos || !equals(this.clickPos, pos)) {
       this.clickPos = pos
       this.clickCount = 0
@@ -32,7 +28,7 @@ export abstract class RotatingTileTool<T extends GridObject> extends Tool {
 
     if (!existingTile) return this.createTile(pos, variant)
 
-    if (this.matches(existingTile)) {
+    if (this.sameType(existingTile)) {
       if (this.clickCount > 4) {
         this.clickCount = 0
         return

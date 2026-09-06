@@ -10,10 +10,4 @@ export class FragileRedirectorTool extends RotatingTileTool<FragileRedirector> {
 
   protected createTile = (pos: Point, variant: number) =>
     new FragileRedirector(pos, DIRECTIONS[variant])
-
-  variantIndex = (tile: FragileRedirector) => DIRECTIONS.indexOf(tile.direction)
-
-  setVariant = (tile: FragileRedirector, variant: number) => {
-    tile.direction = DIRECTIONS[variant]
-  }
 }

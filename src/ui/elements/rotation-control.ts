@@ -1,36 +1,37 @@
-export interface RotationSource<T> {
-  variantIndex: (tile: T) => number
-  setVariant: (tile: T, variant: number) => void
+import { EditCommand } from "./edit-command"
+import { GridObject } from "../../grid-object"
+import { NEXT_DIRECTION, PREVIOUS_DIRECTION } from "../../lib/constants"
+
+export interface Rotatable {
+  direction: string
 }
 
-export class RotationControl<T> {
+export class RotationControl extends EditCommand {
   readonly el: HTMLElement
-  private tile: T | null = null
 
-  constructor(private source: RotationSource<T>) {
+  constructor(tile: GridObject) {
+    super(tile)
     this.el = document.createElement("div")
     this.el.className = "rotation-control"
 
-    const ccwButton = this.makeButton("↺", -1)
-    const cwButton = this.makeButton("↻", 1)
+    const ccwButton = this.makeButton("↺", PREVIOUS_DIRECTION)
+    const cwButton = this.makeButton("↻", NEXT_DIRECTION)
     this.el.append(ccwButton, cwButton)
   }
 
-  setTile = (tile: T | null) => {
-    this.tile = tile
-  }
-
-  private makeButton = (label: string, direction: -1 | 1): HTMLButtonElement => {
+  private makeButton = (
+    label: string,
+    directionTransformLookup: Record<string, string>,
+  ): HTMLButtonElement => {
     const button = document.createElement("button")
     button.className = "edit-panel-button"
     button.textContent = label
-    button.addEventListener("click", () => this.rotate(direction))
+    button.addEventListener("click", () => this.rotate(directionTransformLookup))
     return button
   }
 
-  private rotate = (direction: -1 | 1) => {
-    if (!this.tile) return
-    const current = this.source.variantIndex(this.tile)
-    this.source.setVariant(this.tile, (current + direction + 4) % 4)
+  private rotate = (directionTransformLookup: Record<string, string>) => {
+    const tile = this.tile as GridObject & Rotatable
+    tile.direction = directionTransformLookup[tile.direction]
   }
 }

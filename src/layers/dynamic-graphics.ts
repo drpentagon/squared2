@@ -21,16 +21,6 @@ export class DynamicGraphics extends GraphicsLayer {
     this.balls.forEach((ball) => ball.update(_dt))
   }
 
-  purge = (): boolean => {
-    this.tiles.forEach((tile) => {
-      if (tile.consumed) this.tiles.delete(tile.tilePos)
-    })
-    for (let i = this.balls.length - 1; i >= 0; i--) {
-      if (this.balls[i].consumed) this.balls.splice(i, 1)
-    }
-    return this.balls.length === 0
-  }
-
   draw = (editing = false) => {
     this.canvas.clear()
     this.tiles.forEach((tile) => tile.draw(this.canvas, undefined, editing))

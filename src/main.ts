@@ -28,6 +28,7 @@ const loop = async (timestamp: number) => {
     }
   } else {
     toolsPanel.render()
+    level.purge()
   }
 
   const markedTile =
@@ -106,10 +107,6 @@ document.addEventListener("click", (e) => {
 })
 
 toolsPanel.clearLevelTool.onClear = () => level.clear()
-
-tileEditPanel.onDelete = () => {
-  if (level.markedTilePos) level.removeTile(level.markedTilePos)
-}
 
 const copyButton = document.createElement("button")
 copyButton.id = "copy-button"

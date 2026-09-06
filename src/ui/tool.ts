@@ -1,11 +1,9 @@
 import { Canvas } from "../canvas"
 import { GridObject } from "../grid-object"
-import { EditPanelCommand } from "./tile-edit-panel"
+import { EditCommandConstructor, EditPanelCommand } from "./tile-edit-panel"
 import { TILE, TOOL } from "../lib/constants"
 import { Point } from "../lib/point"
 import { TOOL_SELECTED } from "../lib/styles"
-
-export type MaybeTile = GridObject | undefined
 
 export abstract class Tool {
   abstract readonly type: string
@@ -15,9 +13,13 @@ export abstract class Tool {
 
   constructor(protected canvas: Canvas) {}
 
-  abstract execute(pos: Point, variant: number, existingTile: MaybeTile): MaybeTile
+  abstract execute(
+    pos: Point,
+    variant: number,
+    existingTile: GridObject | undefined,
+  ): GridObject | undefined
 
-  editPanelCommands(): EditPanelCommand[] {
+  editPanelCommands(): EditCommandConstructor[] {
     return [EditPanelCommand.DELETE_BUTTON]
   }
 

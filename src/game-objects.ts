@@ -50,4 +50,24 @@ export class GameObjects {
     this.dynamicTiles.clear()
     this.balls.splice(0, this.balls.length)
   }
+
+  purge = (): boolean => {
+    let staticTileRemoved = false
+    this.staticTiles.forEach((tile) => {
+      if (tile.consumed) {
+        this.staticTiles.delete(tile.tilePos)
+        staticTileRemoved = true
+      }
+    })
+
+    this.dynamicTiles.forEach((tile) => {
+      if (tile.consumed) this.dynamicTiles.delete(tile.tilePos)
+    })
+
+    for (let i = this.balls.length - 1; i >= 0; i--) {
+      if (this.balls[i].consumed) this.balls.splice(i, 1)
+    }
+
+    return staticTileRemoved
+  }
 }

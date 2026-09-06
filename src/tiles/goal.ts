@@ -15,7 +15,7 @@ import { Point } from "../lib/point"
 import { playBounce, playBell } from "../lib/sound"
 import { GOAL } from "../lib/styles"
 
-const BASE: [number, number][] = [
+const GOAL_SHAPE: [number, number][] = [
   [0, 0],
   [SQUARE.SIZE, 0],
   [SQUARE.SIZE, TILE.SIZE - SQUARE.SIZE],
@@ -26,8 +26,8 @@ const BASE: [number, number][] = [
   [0, TILE.SIZE],
 ]
 
-const SHAPES: Record<string, [number, number][]> = Object.fromEntries(
-  DIRECTIONS.map((dir) => [dir, rotatePolygon(BASE, dir)]),
+const SHAPE_ROTATIONS: Record<string, [number, number][]> = Object.fromEntries(
+  DIRECTIONS.map((dir) => [dir, rotatePolygon(GOAL_SHAPE, dir)]),
 )
 
 export class Goal extends Tile {
@@ -56,6 +56,6 @@ export class Goal extends Tile {
   }
 
   draw = (canvas: Canvas, pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y }) => {
-    canvas.drawPolygon(pos, SHAPES[this.direction], GOAL)
+    canvas.drawPolygon(pos, SHAPE_ROTATIONS[this.direction], GOAL)
   }
 }

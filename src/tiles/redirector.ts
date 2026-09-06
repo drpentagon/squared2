@@ -20,7 +20,7 @@ import { Style } from "../lib/style"
 import { ROCK } from "../lib/styles"
 const { DOWN, LEFT, RIGHT } = directions
 
-const BASE: [number, number][] = [
+const REDIRECTOR_SHAPE: [number, number][] = [
   [0, 0],
   [2 * SQUARE.SIZE + DOT.SPACING, 0],
   [2 * SQUARE.SIZE + DOT.SPACING, SQUARE.SIZE],
@@ -29,8 +29,8 @@ const BASE: [number, number][] = [
   [0, 2 * SQUARE.SIZE + DOT.SPACING],
 ]
 
-const SHAPES: Record<string, [number, number][]> = Object.fromEntries(
-  DIRECTIONS.map((dir) => [dir, rotatePolygon(BASE, dir)]),
+const SHAPE_ROTATIONS: Record<string, [number, number][]> = Object.fromEntries(
+  DIRECTIONS.map((dir) => [dir, rotatePolygon(REDIRECTOR_SHAPE, dir)]),
 )
 
 export class Redirector extends Tile {
@@ -85,6 +85,6 @@ export class Redirector extends Tile {
   }
 
   draw = (canvas: Canvas, pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y }) => {
-    canvas.drawPolygon(pos, SHAPES[this.direction], this.style)
+    canvas.drawPolygon(pos, SHAPE_ROTATIONS[this.direction], this.style)
   }
 }

@@ -12,10 +12,10 @@ const TILE_CENTER: Point = { x: TILE.SIZE / 2, y: TILE.SIZE / 2 }
 
 export const rotatePolygon = (
   points: [number, number][],
-  steps: number | string,
+  direction: string,
   center: Point = TILE_CENTER,
 ): [number, number][] => {
-  const n = typeof steps === "string" ? DIRECTIONS.indexOf(steps) : steps
+  const n = DIRECTIONS.indexOf(direction)
   const rotate = ROTATIONS[((n % 4) + 4) % 4]
   return points.map(([x, y]) => rotate(x, y, center))
 }

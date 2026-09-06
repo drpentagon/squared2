@@ -100,8 +100,16 @@ export class Level {
       if (ball.direction !== directionBefore) this.bounces++
     })
 
-    this.finished = this.dynamicGraphics.purge()
+    this.purge()
+    this.finished = this.gameObjects.balls.length === 0
     this.dynamicGraphics.update(dt)
+  }
+
+  purge = () => {
+    if (this.gameObjects.purge()) {
+      this.staticGraphics.clear()
+      this.staticGraphics.draw()
+    }
   }
 
   getTile = (tilePos: Point): GridObject | undefined => this.gameObjects.get(tilePos)
