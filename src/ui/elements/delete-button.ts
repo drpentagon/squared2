@@ -8,7 +8,12 @@ export class DeleteButton extends EditCommand {
     super(tile)
     this.el = document.createElement("button")
     this.el.className = "edit-panel-button delete-button"
-    this.el.textContent = "Ta bort"
+
+    const label = document.createElement("p")
+    label.className = "edit-panel-button-label"
+    label.textContent = "REMOVE"
+    this.el.append(label)
+
     this.el.addEventListener("click", () => {
       this.tile.consumed = true
     })

@@ -25,7 +25,12 @@ export class RotationControl extends EditCommand {
   ): HTMLButtonElement => {
     const button = document.createElement("button")
     button.className = "edit-panel-button"
-    button.textContent = label
+
+    const buttonLabel = document.createElement("p")
+    buttonLabel.className = "edit-panel-button-label"
+    buttonLabel.textContent = label
+    button.append(buttonLabel)
+
     button.addEventListener("click", () => this.rotate(directionTransformLookup))
     return button
   }
