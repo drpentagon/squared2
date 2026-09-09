@@ -1,0 +1,232 @@
+@font-face {
+  font-family: "Miso";
+  src: url("fonts/miso.woff") format("woff");
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  overflow: hidden;
+  background: #051e06;
+  font-family: "Miso", sans-serif;
+  font-size: 14px;
+}
+.canvas-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  image-rendering: pixelated;
+}
+.canvas-panel {
+  position: absolute;
+  display: none;
+  box-sizing: border-box;
+  background: transparent;
+  z-index: 3;
+}
+.canvas-panel canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+body.editing .canvas-panel {
+  display: block;
+}
+.edit-panel {
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  width: 112px;
+  box-sizing: border-box;
+  padding: 8px;
+  background: #333333;
+  border: 1px solid black;
+  border-radius: 24px;
+  z-index: 3;
+}
+body.editing .edit-panel {
+  display: flex;
+}
+.edit-panel-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Miso", sans-serif;
+  font-size: 14px;
+  height: 32px;
+  padding: 0 16px;
+  background: #0a3d0c;
+  color: #d6ffd8;
+  border: 1px solid #2f8a34;
+  border-radius: 16px;
+  cursor: pointer;
+}
+.edit-panel-button:hover,
+.edit-panel-button:active {
+  filter: brightness(80%);
+}
+.delete-button {
+  background: #4f0f0f;
+  color: #ffd6d6;
+  border-color: black;
+}
+.speed-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.speed-button-dots {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.speed-button-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: black;
+}
+.speed-button-dot-on {
+  background: #00ff00;
+}
+.speed-button-divider-top {
+  height: 1px;
+  background: #212121;
+}
+.speed-button-divider-bottom {
+  height: 1px;
+  background: #494949;
+}
+.speed-button {
+  position: relative;
+  display: flex;
+  height: 32px;
+  border-radius: 16px;
+  border: 1px solid black;
+  overflow: hidden;
+  background: #333333;
+}
+.speed-button:has(.speed-button-left:hover),
+.speed-button:has(.speed-button-left:active) {
+  background: linear-gradient(to right, #292929, #3d3d3d);
+}
+.speed-button:has(.speed-button-right:hover),
+.speed-button:has(.speed-button-right:active) {
+  background: linear-gradient(to right, #3d3d3d, #292929);
+}
+.speed-button-left,
+.speed-button-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #d6ffd8;
+  font-family: "Miso", sans-serif;
+  cursor: pointer;
+}
+.speed-button-left {
+  justify-content: flex-start;
+}
+.speed-button-right {
+  justify-content: flex-end;
+}
+.speed-button-symbol {
+  font-size: 28px;
+  line-height: 1;
+  padding: 2px;
+  position: relative;
+  top: 2px;
+}
+.speed-button-decrease {
+  padding-left: 10px;
+}
+.speed-button-increase {
+  padding-right: 10px;
+}
+.speed-button-text {
+  position: absolute;
+  top: calc(50% + 2px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-family: "Miso", sans-serif;
+  font-size: 14px;
+  color: #d6ffd8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.rotation-control {
+  display: flex;
+  justify-content: space-between;
+}
+.rotation-control .edit-panel-button {
+  width: 32px;
+  padding: 0;
+  font-size: 24px;
+  background: #333333;
+  border-color: black;
+}
+.edit-panel-button-label {
+  position: relative;
+  top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.rotation-control .edit-panel-button-label {
+  top: -2px;
+}
+#tools-panel {
+  left: calc(
+    (var(--grid-origin-x) - var(--dot-spacing) - var(--panel-width) - var(--dot-cc)) * 1px
+  );
+  top: calc(var(--grid-origin-y) * 1px);
+  width: calc(var(--panel-width) * 1px);
+  height: calc(var(--grid-size) * 1px);
+}
+#tile-edit-panel {
+  left: calc((var(--grid-origin-x) + var(--grid-size) + var(--dot-spacing) + var(--dot-cc)) * 1px);
+  top: calc(var(--grid-origin-y) * 1px);
+}
+#copy-button {
+  position: absolute;
+  display: none;
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+  padding: 8px 16px;
+  font-family: "Miso", sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #0a3d0c;
+  color: #d6ffd8;
+  border: 1px solid #2f8a34;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#copy-button:hover,
+#copy-button:active {
+  filter: brightness(80%);
+}
+body.editing #copy-button {
+  display: block;
+}
+@media (max-width: 700px) {
+  #tools-panel {
+    left: calc(var(--grid-origin-x) * 1px);
+    top: calc((var(--grid-origin-y) - var(--dot-spacing) - var(--panel-width)) * 1px);
+    width: calc(var(--grid-size) * 1px);
+    height: calc(var(--panel-width) * 1px);
+  }
+  #tile-edit-panel {
+    left: calc(var(--grid-origin-x) * 1px);
+    top: calc((var(--grid-origin-y) + var(--grid-size) + var(--dot-spacing)) * 1px);
+  }
+}
