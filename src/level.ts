@@ -110,6 +110,10 @@ export class Level {
       this.staticGraphics.clear()
       this.staticGraphics.draw()
     }
+
+    if (this.markedTilePos && !this.gameObjects.get(this.markedTilePos)) {
+      this.markedTilePos = null
+    }
   }
 
   getTile = (tilePos: Point): GridObject | undefined => this.gameObjects.get(tilePos)

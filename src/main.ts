@@ -2,7 +2,7 @@ import { origin } from "./grid"
 import { Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
 import { DOT, GRID, TILE } from "./lib/constants"
-import { Point } from "./lib/point"
+import { equals, Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
 import { tileEditPanel } from "./ui/tile-edit-panel"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
@@ -86,8 +86,11 @@ document.addEventListener("click", (e) => {
     level.handlnteraction(tilePos, variant)
   } else {
     const existingTile = level.getTile(tilePos)
-    if (existingTile && existingTile.type !== toolsPanel.selectedTool?.type) {
-      toolsPanel.selectToolForType(existingTile.type)
+    const alreadyMarked = level.markedTilePos && equals(tilePos, level.markedTilePos)
+    if (existingTile && !alreadyMarked) {
+      if (existingTile.type !== toolsPanel.selectedTool?.type) {
+        toolsPanel.selectToolForType(existingTile.type)
+      }
       level.markTile(tilePos)
       return
     }

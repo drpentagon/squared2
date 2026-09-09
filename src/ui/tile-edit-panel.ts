@@ -22,6 +22,7 @@ export class TileEditPanel {
     this.container = document.createElement("div")
     this.container.id = "tile-edit-panel"
     this.container.className = "edit-panel"
+    this.container.style.display = "none"
     document.body.appendChild(this.container)
   }
 
