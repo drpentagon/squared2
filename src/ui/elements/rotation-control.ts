@@ -1,4 +1,5 @@
 import { EditCommand } from "./edit-command"
+import { cloneButton } from "./templates"
 import { GridObject } from "../../grid-object"
 import { NEXT_DIRECTION, PREVIOUS_DIRECTION } from "../../lib/constants"
 
@@ -23,14 +24,8 @@ export class RotationControl extends EditCommand {
     label: string,
     directionTransformLookup: Record<string, string>,
   ): HTMLButtonElement => {
-    const button = document.createElement("button")
-    button.className = "edit-panel-button"
-
-    const buttonLabel = document.createElement("p")
-    buttonLabel.className = "edit-panel-button-label"
-    buttonLabel.textContent = label
-    button.append(buttonLabel)
-
+    const button = cloneButton()
+    button.querySelector<HTMLElement>(".edit-panel-button-label")!.textContent = label
     button.addEventListener("click", () => this.rotate(directionTransformLookup))
     return button
   }

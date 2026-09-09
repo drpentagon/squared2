@@ -7,6 +7,31 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <template id="template-button">
+      <button class="edit-panel-button">
+        <p class="edit-panel-button-label"></p>
+      </button>
+    </template>
+    <template id="template-divider">
+      <div class="divider">
+        <div class="divider-top"></div>
+        <div class="divider-bottom"></div>
+      </div>
+    </template>
+    <template id="template-diode">
+      <span class="diode"></span>
+    </template>
+    <template id="template-plus-minus-button">
+      <div class="plus-minus-button">
+        <button class="plus-minus-button-decrease">
+          <p class="plus-minus-symbol plus-minus-symbol-decrease">-</p>
+        </button>
+        <p class="plus-minus-button-label"></p>
+        <button class="plus-minus-button-increase">
+          <p class="plus-minus-symbol plus-minus-symbol-increase">+</p>
+        </button>
+      </div>
+    </template>
     <script src="/dist/main.js"></script>
   </body>
 </html>

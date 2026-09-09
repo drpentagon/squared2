@@ -86,24 +86,24 @@ body.editing .edit-panel {
   justify-content: space-between;
   align-items: center;
 }
-.speed-button-dot {
+.diode {
   width: 4px;
   height: 4px;
   border-radius: 50%;
   background: black;
 }
-.speed-button-dot-on {
+.diode-on {
   background: #00ff00;
 }
-.speed-button-divider-top {
+.divider-top {
   height: 1px;
   background: #212121;
 }
-.speed-button-divider-bottom {
+.divider-bottom {
   height: 1px;
   background: #494949;
 }
-.speed-button {
+.plus-minus-button {
   position: relative;
   display: flex;
   height: 32px;
@@ -112,16 +112,16 @@ body.editing .edit-panel {
   overflow: hidden;
   background: #333333;
 }
-.speed-button:has(.speed-button-left:hover),
-.speed-button:has(.speed-button-left:active) {
+.plus-minus-button:has(.plus-minus-button-decrease:hover),
+.plus-minus-button:has(.plus-minus-button-decrease:active) {
   background: linear-gradient(to right, #292929, #3d3d3d);
 }
-.speed-button:has(.speed-button-right:hover),
-.speed-button:has(.speed-button-right:active) {
+.plus-minus-button:has(.plus-minus-button-increase:hover),
+.plus-minus-button:has(.plus-minus-button-increase:active) {
   background: linear-gradient(to right, #3d3d3d, #292929);
 }
-.speed-button-left,
-.speed-button-right {
+.plus-minus-button-decrease,
+.plus-minus-button-increase {
   flex: 1;
   display: flex;
   align-items: center;
@@ -131,26 +131,26 @@ body.editing .edit-panel {
   font-family: "Miso", sans-serif;
   cursor: pointer;
 }
-.speed-button-left {
+.plus-minus-button-decrease {
   justify-content: flex-start;
 }
-.speed-button-right {
+.plus-minus-button-increase {
   justify-content: flex-end;
 }
-.speed-button-symbol {
+.plus-minus-symbol {
   font-size: 28px;
   line-height: 1;
   padding: 2px;
   position: relative;
   top: 2px;
 }
-.speed-button-decrease {
+.plus-minus-symbol-decrease {
   padding-left: 10px;
 }
-.speed-button-increase {
+.plus-minus-symbol-increase {
   padding-right: 10px;
 }
-.speed-button-text {
+.plus-minus-button-label {
   position: absolute;
   top: calc(50% + 2px);
   left: 50%;

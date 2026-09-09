@@ -1,4 +1,5 @@
 import { EditCommand } from "./edit-command"
+import { cloneDiode, cloneDivider, clonePlusMinusButton } from "./templates"
 import { Ball } from "../../ball"
 import { GridObject } from "../../grid-object"
 
@@ -27,48 +28,26 @@ export class SpeedButton extends EditCommand {
     this.el = document.createElement("div")
     this.el.className = "speed-button-wrapper"
 
+    const button = clonePlusMinusButton()
+    button.querySelector<HTMLElement>(".plus-minus-button-label")!.textContent = "SPEED"
+    button
+      .querySelector(".plus-minus-button-decrease")!
+      .addEventListener("click", () => this.setLitCount(this.litCount - 1))
+    button
+      .querySelector(".plus-minus-button-increase")!
+      .addEventListener("click", () => this.setLitCount(this.litCount + 1))
+
     const dots = document.createElement("div")
     dots.className = "speed-button-dots"
     for (let i = 0; i < DOT_COUNT; i++) {
-      const dot = document.createElement("span")
-      dot.className = "speed-button-dot"
+      const dot = cloneDiode()
       this.dots.push(dot)
       dots.append(dot)
     }
     this.updateDots()
 
-    const button = document.createElement("div")
-    button.className = "speed-button"
+    const divider = cloneDivider()
 
-    const decreaseButton = document.createElement("button")
-    decreaseButton.className = "speed-button-left"
-    const decreaseSymbol = document.createElement("p")
-    decreaseSymbol.className = "speed-button-symbol speed-button-decrease"
-    decreaseSymbol.textContent = "-"
-    decreaseButton.append(decreaseSymbol)
-    decreaseButton.addEventListener("click", () => this.setLitCount(this.litCount - 1))
-
-    const label = document.createElement("p")
-    label.className = "speed-button-text"
-    label.textContent = "SPEED"
-
-    const increaseButton = document.createElement("button")
-    increaseButton.className = "speed-button-right"
-    const increaseSymbol = document.createElement("p")
-    increaseSymbol.className = "speed-button-symbol speed-button-increase"
-    increaseSymbol.textContent = "+"
-    increaseButton.append(increaseSymbol)
-    increaseButton.addEventListener("click", () => this.setLitCount(this.litCount + 1))
-
-    const divider = document.createElement("div")
-    divider.className = "speed-button-divider"
-    const dividerTop = document.createElement("div")
-    dividerTop.className = "speed-button-divider-top"
-    const dividerBottom = document.createElement("div")
-    dividerBottom.className = "speed-button-divider-bottom"
-    divider.append(dividerTop, dividerBottom)
-
-    button.append(decreaseButton, label, increaseButton)
     this.el.append(button, dots, divider)
   }
 
@@ -80,7 +59,7 @@ export class SpeedButton extends EditCommand {
 
   private updateDots = () => {
     this.dots.forEach((dot, i) => {
-      dot.classList.toggle("speed-button-dot-on", i < this.litCount)
+      dot.classList.toggle("diode-on", i < this.litCount)
     })
   }
 }

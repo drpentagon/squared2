@@ -1,4 +1,5 @@
 import { EditCommand } from "./edit-command"
+import { cloneButton } from "./templates"
 import { GridObject } from "../../grid-object"
 
 export class DeleteButton extends EditCommand {
@@ -6,13 +7,9 @@ export class DeleteButton extends EditCommand {
 
   constructor(tile: GridObject) {
     super(tile)
-    this.el = document.createElement("button")
-    this.el.className = "edit-panel-button delete-button"
-
-    const label = document.createElement("p")
-    label.className = "edit-panel-button-label"
-    label.textContent = "REMOVE"
-    this.el.append(label)
+    this.el = cloneButton()
+    this.el.classList.add("delete-button")
+    this.el.querySelector<HTMLElement>(".edit-panel-button-label")!.textContent = "REMOVE"
 
     this.el.addEventListener("click", () => {
       this.tile.consumed = true
