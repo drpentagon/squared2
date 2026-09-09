@@ -76,12 +76,12 @@ body.editing .edit-panel {
   color: #ffd6d6;
   border-color: black;
 }
-.speed-button-wrapper {
+.range-controller {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.speed-button-dots {
+.diode-range {
   display: flex;
   justify-content: space-between;
   align-items: center;
