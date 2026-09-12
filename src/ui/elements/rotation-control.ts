@@ -15,8 +15,8 @@ export class RotationControl extends EditCommand {
     this.el = document.createElement("div")
     this.el.className = "rotation-control"
 
-    const ccwButton = new Button("↺", () => this.rotate(PREVIOUS_DIRECTION))
-    const cwButton = new Button("↻", () => this.rotate(NEXT_DIRECTION))
+    const ccwButton = new Button("↺", () => this.rotate(PREVIOUS_DIRECTION), "button--small")
+    const cwButton = new Button("↻", () => this.rotate(NEXT_DIRECTION), "button--small")
     this.el.append(ccwButton.el, cwButton.el)
   }
 

@@ -2,16 +2,30 @@
   font-family: "Miso";
   src: url("fonts/miso.woff") format("woff");
 }
+:root {
+  --unit: 4px;
+  --color-panel: #333333;
+  --color-panel-highlighted: #494949; /* panel, 20% ljusare */
+  --color-panel-shaded: #212121; /* panel, 20% mörkare */
+  --color-border: black;
+  --gradient-sheen: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1));
+}
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+button {
+  font: inherit;
+  color: inherit;
 }
 body {
   overflow: hidden;
   background: #051e06;
   font-family: "Miso", sans-serif;
   font-size: 14px;
+  color: #d6ffd8;
+  letter-spacing: 1px;
 }
 .canvas-layer {
   position: absolute;
@@ -24,7 +38,6 @@ body {
 .canvas-panel {
   position: absolute;
   display: none;
-  box-sizing: border-box;
   background: transparent;
   z-index: 3;
 }
@@ -41,40 +54,36 @@ body.editing .canvas-panel {
   position: absolute;
   display: none;
   flex-direction: column;
-  gap: 8px;
+  gap: calc(var(--unit) * 2);
   width: 112px;
-  box-sizing: border-box;
-  padding: 8px;
-  background: #333333;
-  border: 1px solid black;
-  border-radius: 24px;
+  padding: calc(var(--unit) * 2);
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--unit) * 6);
   z-index: 3;
 }
 body.editing .edit-panel {
   display: flex;
 }
-.edit-panel-button {
+.button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Miso", sans-serif;
-  font-size: 14px;
   height: 32px;
-  padding: 0 16px;
-  background: #0a3d0c;
-  color: #d6ffd8;
+  padding: 0 calc(var(--unit) * 4);
+  background-color: #0a3d0c;
+  background-image: var(--gradient-sheen);
   border: 1px solid #2f8a34;
-  border-radius: 16px;
+  border-radius: calc(var(--unit) * 4);
   cursor: pointer;
 }
-.edit-panel-button:hover,
-.edit-panel-button:active {
+.button:hover,
+.button:active {
   filter: brightness(80%);
 }
-.delete-button {
-  background: #4f0f0f;
-  color: #ffd6d6;
-  border-color: black;
+.button--delete {
+  background-color: #4f0f0f;
+  border-color: var(--color-border);
 }
 .range-controller {
   display: flex;
@@ -92,33 +101,35 @@ body.editing .edit-panel {
   border-radius: 50%;
   background: black;
 }
-.diode-on {
+.diode--on {
   background: #00ff00;
 }
-.divider-top {
-  height: 1px;
-  background: #212121;
-}
-.divider-bottom {
-  height: 1px;
-  background: #494949;
+.divider {
+  height: 0;
+  border-top: 1px solid var(--color-panel-shaded);
+  border-bottom: 1px solid var(--color-panel-highlighted);
 }
 .plus-minus-button {
   position: relative;
   display: flex;
   height: 32px;
-  border-radius: 16px;
-  border: 1px solid black;
+  border-radius: calc(var(--unit) * 4);
+  border: 1px solid var(--color-border);
   overflow: hidden;
-  background: #333333;
+  background-color: var(--color-panel);
+  background-image: var(--gradient-sheen);
 }
 .plus-minus-button:has(.plus-minus-button-decrease:hover),
 .plus-minus-button:has(.plus-minus-button-decrease:active) {
-  background: linear-gradient(to right, #292929, #3d3d3d);
+  background-image:
+    var(--gradient-sheen),
+    linear-gradient(to right, var(--color-panel-shaded), var(--color-panel-highlighted));
 }
 .plus-minus-button:has(.plus-minus-button-increase:hover),
 .plus-minus-button:has(.plus-minus-button-increase:active) {
-  background: linear-gradient(to right, #3d3d3d, #292929);
+  background-image:
+    var(--gradient-sheen),
+    linear-gradient(to right, var(--color-panel-highlighted), var(--color-panel-shaded));
 }
 .plus-minus-button-decrease,
 .plus-minus-button-increase {
@@ -127,8 +138,6 @@ body.editing .edit-panel {
   align-items: center;
   background: transparent;
   border: none;
-  color: #d6ffd8;
-  font-family: "Miso", sans-serif;
   cursor: pointer;
 }
 .plus-minus-button-decrease {
@@ -144,10 +153,10 @@ body.editing .edit-panel {
   position: relative;
   top: 2px;
 }
-.plus-minus-symbol-decrease {
+.plus-minus-symbol--decrease {
   padding-left: 10px;
 }
-.plus-minus-symbol-increase {
+.plus-minus-symbol--increase {
   padding-right: 10px;
 }
 .plus-minus-button-label {
@@ -156,28 +165,23 @@ body.editing .edit-panel {
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  font-family: "Miso", sans-serif;
-  font-size: 14px;
-  color: #d6ffd8;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 .rotation-control {
   display: flex;
   justify-content: space-between;
 }
-.rotation-control .edit-panel-button {
+.button--small {
   width: 32px;
   padding: 0;
   font-size: 24px;
-  background: #333333;
-  border-color: black;
+  background-color: var(--color-panel);
+  border-color: var(--color-border);
 }
 .edit-panel-button-label {
   position: relative;
   top: 2px;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 .rotation-control .edit-panel-button-label {
   top: -2px;
@@ -200,20 +204,7 @@ body.editing .edit-panel {
   top: 20px;
   right: 20px;
   z-index: 3;
-  padding: 8px 16px;
-  font-family: "Miso", sans-serif;
-  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  background: #0a3d0c;
-  color: #d6ffd8;
-  border: 1px solid #2f8a34;
-  border-radius: 4px;
-  cursor: pointer;
-}
-#copy-button:hover,
-#copy-button:active {
-  filter: brightness(80%);
 }
 body.editing #copy-button {
   display: block;

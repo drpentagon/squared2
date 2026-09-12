@@ -12,7 +12,7 @@ export class DeleteButton extends EditCommand {
       () => {
         this.tile.consumed = true
       },
-      "delete-button",
+      "button--delete",
     )
     this.el = button.el
   }
