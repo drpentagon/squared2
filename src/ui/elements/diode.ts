@@ -8,6 +8,6 @@ export class Diode {
   }
 
   setOn = (on: boolean) => {
-    this.el.classList.toggle("diode-on", on)
+    this.el.classList.toggle("diode--on", on)
   }
 }

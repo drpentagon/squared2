@@ -113,6 +113,7 @@ toolsPanel.clearLevelTool.onClear = () => level.clear()
 
 const copyButton = document.createElement("button")
 copyButton.id = "copy-button"
+copyButton.className = "button"
 copyButton.textContent = "Kopiera bana"
 document.body.appendChild(copyButton)
 
