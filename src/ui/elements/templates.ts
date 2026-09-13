@@ -10,3 +10,4 @@ export const cloneButton = (): HTMLButtonElement => cloneTemplate("template-butt
 export const cloneDivider = (): HTMLElement => cloneTemplate("template-divider")
 export const cloneDiode = (): HTMLElement => cloneTemplate("template-diode")
 export const clonePlusMinusButton = (): HTMLElement => cloneTemplate("template-plus-minus-button")
+export const cloneTextInput = (): HTMLInputElement => cloneTemplate("template-textinput")

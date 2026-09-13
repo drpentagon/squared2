@@ -1,9 +1,8 @@
 import { BallTool } from "./ball-tool"
-import { ClearLevelTool } from "./clear-level-tool"
 import { FragileRedirectorTool } from "./fragile-redirector-tool"
 import { GoalTool } from "./goal-tool"
 import { RedirectorTool } from "./redirector-tool"
-import { Tool } from "./tool"
+import { TileTool } from "./tile-tool"
 import { WallTool } from "./wall-tool"
 import { Canvas } from "../canvas"
 import { GridObject } from "../grid-object"
@@ -12,9 +11,8 @@ import { Point } from "../lib/point"
 
 export class ToolsPanel {
   private canvas: Canvas
-  private tools: Tool[]
-  readonly clearLevelTool: ClearLevelTool
-  selectedTool: Tool | null = null
+  private tools: TileTool<GridObject>[]
+  selectedTool: TileTool<GridObject> | null = null
 
   constructor() {
     const container = document.createElement("div")
@@ -25,14 +23,12 @@ export class ToolsPanel {
     this.canvas = new Canvas(0, container)
     this.canvas.el.addEventListener("click", this.handleClick)
 
-    this.clearLevelTool = new ClearLevelTool(this.canvas)
     this.tools = [
       new WallTool(this.canvas),
       new RedirectorTool(this.canvas),
       new FragileRedirectorTool(this.canvas),
       new BallTool(this.canvas),
       new GoalTool(this.canvas),
-      this.clearLevelTool,
     ]
   }
 
@@ -44,7 +40,7 @@ export class ToolsPanel {
     return this.horizontal ? { x: index * TOOL.STEP, y: 0 } : { x: 0, y: index * TOOL.STEP }
   }
 
-  private selectTool = (tool: Tool) => {
+  private selectTool = (tool: TileTool<GridObject>) => {
     if (this.selectedTool) this.selectedTool.selected = false
     this.selectedTool = tool
     tool.selected = true
@@ -66,11 +62,6 @@ export class ToolsPanel {
 
     if (!tool) return
 
-    if (tool === this.clearLevelTool) {
-      this.clearLevelTool.activate()
-      return
-    }
-
     this.selectTool(tool)
   }
 
@@ -79,7 +70,8 @@ export class ToolsPanel {
     return
   }
 
-  findToolByType = (type: string): Tool | undefined => this.tools.find((t) => t.type === type)
+  findToolByType = (type: string): TileTool<GridObject> | undefined =>
+    this.tools.find((t) => t.type === type)
 
   selectToolForType = (type: string) => {
     const tool = this.findToolByType(type)

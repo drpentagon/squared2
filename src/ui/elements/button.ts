@@ -5,7 +5,7 @@ export class Button {
 
   constructor(text: string, onClick: () => void, modifier?: string) {
     this.el = cloneButton()
-    if (modifier) this.el.classList.add(modifier)
+    if (modifier) this.el.classList.add(...modifier.split(" "))
     this.el.querySelector<HTMLElement>(".edit-panel-button-label")!.textContent = text
     this.el.addEventListener("click", onClick)
   }

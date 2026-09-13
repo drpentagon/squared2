@@ -19,6 +19,7 @@ export type GoalData = Point & { direction: number; rotates?: boolean }
 export type BallData = Point & { direction: string; velocity: number }
 
 export type LevelData = {
+  name: string
   walls: WallData[]
   wallRanges: WallRangeData[]
   fragileRedirects: RedirectorData[]
@@ -218,7 +219,15 @@ export class Level {
 
     const { walls, wallRanges } = groupWallsIntoRanges(wallPositions)
 
-    return { walls, wallRanges, fragileRedirects, permanentRedirects, goals, balls }
+    return {
+      name: this.data.name,
+      walls,
+      wallRanges,
+      fragileRedirects,
+      permanentRedirects,
+      goals,
+      balls,
+    }
   }
 }
 
