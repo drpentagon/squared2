@@ -6,7 +6,9 @@
     "dev": "esbuild src/main.ts --bundle --outfile=dist/main.js --watch --servedir=.",
     "build": "esbuild src/main.ts --bundle --outfile=dist/main.js --minify",
     "format": "prettier --write src/**/*.ts",
-    "check": "prettier --check src/**/*.ts"
+    "check": "prettier --check src/**/*.ts",
+    "server": "npm --prefix server run dev",
+    "server:seed": "npm --prefix server run seed"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
