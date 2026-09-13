@@ -29,6 +29,7 @@ export type LevelData = {
 }
 
 export class Level {
+  id: number
   data: LevelData
   gameObjects: GameObjects
   finished: boolean
@@ -42,7 +43,8 @@ export class Level {
   staticGraphics: StaticGraphics
   dynamicGraphics: DynamicGraphics
 
-  constructor(data: LevelData) {
+  constructor(id: number, data: LevelData) {
+    this.id = id
     this.data = data
     this.gameObjects = new GameObjects()
     this.finished = false

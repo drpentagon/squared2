@@ -1,8 +1,10 @@
+import { saveLevel } from "./api"
 import { Level } from "./level"
 import { equals } from "./lib/point"
 import { Mode } from "./mode"
 import { tileEditPanel } from "./ui/tile-edit-panel"
 import { toolsPanel } from "./ui/tools-panel"
+import { SaveIndicator } from "./ui/elements/save-indicator"
 import { TextInput } from "./ui/elements/textinput"
 
 let currentLevel: Level
@@ -13,16 +15,13 @@ const levelNameInput = new TextInput("LEVEL NAME", 11, (value) => {
 })
 levelPanel.prepend(levelNameInput.el)
 
-const copyButton = document.getElementById("copy-button") as HTMLButtonElement
-const copyButtonLabel = copyButton.querySelector<HTMLElement>(".edit-panel-button-label")!
+const saveButton = document.getElementById("save-button") as HTMLButtonElement
+const saveIndicator = new SaveIndicator()
+saveButton.before(saveIndicator.el)
 
-copyButton.addEventListener("click", async () => {
-  await navigator.clipboard.writeText(JSON.stringify(currentLevel.serialize(), null, 2))
-  const originalText = copyButtonLabel.textContent
-  copyButtonLabel.textContent = "Kopierad!"
-  setTimeout(() => {
-    copyButtonLabel.textContent = originalText
-  }, 1500)
+saveButton.addEventListener("click", async () => {
+  await saveLevel(currentLevel.id, currentLevel.serialize())
+  saveIndicator.play()
 })
 
 const clearLevelButton = document.getElementById("clear-level-button") as HTMLButtonElement

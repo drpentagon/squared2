@@ -1,3 +1,4 @@
+import { fetchLevel, fetchLevelIds } from "./api"
 import { gameMode } from "./game-mode"
 import { editMode } from "./edit-mode"
 import { origin } from "./grid"
@@ -9,7 +10,7 @@ import { Mode } from "./mode"
 import { pixelToTile } from "./tiles/tile"
 import { setEditing } from "./ui/tools-panel"
 
-const levels = ["level0", "level1", "level2"]
+let levelIds: number[] = []
 let currentLevelIndex: number | null = null
 let level: Level
 let lastTime = 0
@@ -38,20 +39,21 @@ const loop = async (timestamp: number) => {
 const loadNextLevel = async () => {
   level?.destroy()
   currentLevelIndex = currentLevelIndex === null ? 0 : currentLevelIndex + 1
-  level = new Level(await import(`./levels/${levels[currentLevelIndex]}.json`))
+  const id = levelIds[currentLevelIndex]
+  level = new Level(id, await fetchLevel(id))
   gameMode.setLevel(level)
   editMode.setLevel(level)
 }
 
-dialogueLayer.title().then(() =>
-  loadNextLevel().then(() => {
-    // TEMPORARY: start directly in edit mode for the first level
-    EDITOR_STATE = true
-    setEditing(EDITOR_STATE)
-    level.reset()
-    requestAnimationFrame(loop)
-  }),
-)
+dialogueLayer.title().then(async () => {
+  levelIds = await fetchLevelIds()
+  await loadNextLevel()
+  // TEMPORARY: start directly in edit mode for the first level
+  EDITOR_STATE = true
+  setEditing(EDITOR_STATE)
+  level.reset()
+  requestAnimationFrame(loop)
+})
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) lastTime = performance.now()
