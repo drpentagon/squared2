@@ -6,6 +6,7 @@ import { equals, Point } from "./lib/point"
 import { pixelToTile } from "./tiles/tile"
 import { tileEditPanel } from "./ui/tile-edit-panel"
 import { setEditing, toolsPanel } from "./ui/tools-panel"
+import { TextInput } from "./ui/elements/textinput"
 
 const levels = ["level0", "level1", "level2"]
 let currentLevelIndex: number | null = null
@@ -44,6 +45,7 @@ const loadNextLevel = async () => {
   level?.destroy()
   currentLevelIndex = currentLevelIndex === null ? 0 : currentLevelIndex + 1
   level = new Level(await import(`./levels/${levels[currentLevelIndex]}.json`))
+  levelNameInput.value = level.data.name
 }
 
 dialogueLayer.title().then(() =>
@@ -109,21 +111,32 @@ document.addEventListener("click", (e) => {
   }
 })
 
-toolsPanel.clearLevelTool.onClear = () => level.clear()
+const levelPanel = document.getElementById("level-panel")!
+const levelNameInput = new TextInput("LEVEL NAME", 11, (value) => {
+  level.data.name = value
+})
+levelPanel.prepend(levelNameInput.el)
 
-const copyButton = document.createElement("button")
-copyButton.id = "copy-button"
-copyButton.className = "button"
-copyButton.textContent = "Kopiera bana"
-document.body.appendChild(copyButton)
+const copyButton = document.getElementById("copy-button") as HTMLButtonElement
+const copyButtonLabel = copyButton.querySelector<HTMLElement>(".edit-panel-button-label")!
 
 copyButton.addEventListener("click", async () => {
   await navigator.clipboard.writeText(JSON.stringify(level.serialize(), null, 2))
-  const originalText = copyButton.textContent
-  copyButton.textContent = "Kopierad!"
+  const originalText = copyButtonLabel.textContent
+  copyButtonLabel.textContent = "Kopierad!"
   setTimeout(() => {
-    copyButton.textContent = originalText
+    copyButtonLabel.textContent = originalText
   }, 1500)
+})
+
+const clearLevelButton = document.getElementById("clear-level-button") as HTMLButtonElement
+
+clearLevelButton.addEventListener("click", () => {
+  if (!confirm("Are you sure you want to clear the level?")) return
+
+  level.clear()
+  level.data.name = ""
+  levelNameInput.value = ""
 })
 
 document.addEventListener("keydown", (e) => {

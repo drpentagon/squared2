@@ -51,6 +51,15 @@ const letters: Record<string, number> = {
   "9": 0b111111001,
 }
 
+export const SUPPORTED_CHARACTERS = new Set(Object.keys(letters))
+
+export const sanitizeForFont = (text: string): string =>
+  text
+    .toUpperCase()
+    .split("")
+    .filter((ch) => SUPPORTED_CHARACTERS.has(ch))
+    .join("")
+
 export const stringLength = (text: string): number =>
   text
     .toUpperCase()

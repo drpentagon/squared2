@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div id="level-panel" class="edit-panel">
+      <button id="copy-button" class="button">
+        <p class="edit-panel-button-label">Copy level</p>
+      </button>
+      <button id="clear-level-button" class="button button--delete">
+        <p class="edit-panel-button-label">Clear level</p>
+      </button>
+    </div>
     <template id="template-button">
       <button class="button">
         <p class="edit-panel-button-label"></p>
@@ -17,6 +25,9 @@
     </template>
     <template id="template-diode">
       <span class="diode"></span>
+    </template>
+    <template id="template-textinput">
+      <input type="text" class="textinput" />
     </template>
     <template id="template-plus-minus-button">
       <div class="plus-minus-button">
