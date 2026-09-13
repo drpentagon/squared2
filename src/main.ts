@@ -1,12 +1,13 @@
+import { gameMode } from "./game-mode"
+import { editMode } from "./edit-mode"
 import { origin } from "./grid"
 import { Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
 import { DOT, GRID, TILE } from "./lib/constants"
-import { equals, Point } from "./lib/point"
+import { Point } from "./lib/point"
+import { Mode } from "./mode"
 import { pixelToTile } from "./tiles/tile"
-import { tileEditPanel } from "./ui/tile-edit-panel"
-import { setEditing, toolsPanel } from "./ui/tools-panel"
-import { TextInput } from "./ui/elements/textinput"
+import { setEditing } from "./ui/tools-panel"
 
 const levels = ["level0", "level1", "level2"]
 let currentLevelIndex: number | null = null
@@ -14,28 +15,21 @@ let level: Level
 let lastTime = 0
 let EDITOR_STATE = false
 
+const currentMode = (): Mode => (EDITOR_STATE ? editMode : gameMode)
+
 const dialogueLayer = new DialogueLayer()
 
 const loop = async (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  if (!EDITOR_STATE) {
-    level.update(dt)
-    if (level.finished) {
-      await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
-      await loadNextLevel()
-      lastTime = performance.now()
-    }
-  } else {
-    toolsPanel.render()
-    level.purge()
-  }
+  currentMode().update(dt)
 
-  const markedTile =
-    EDITOR_STATE && level.markedTilePos ? level.getTile(level.markedTilePos) : undefined
-  const markedTool = markedTile ? toolsPanel.findToolByType(markedTile.type) : undefined
-  tileEditPanel.setContent(markedTool ?? null, markedTile ?? null)
+  if (!EDITOR_STATE && level.finished) {
+    await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
+    await loadNextLevel()
+    lastTime = performance.now()
+  }
 
   level.render(EDITOR_STATE)
   requestAnimationFrame(loop)
@@ -45,7 +39,8 @@ const loadNextLevel = async () => {
   level?.destroy()
   currentLevelIndex = currentLevelIndex === null ? 0 : currentLevelIndex + 1
   level = new Level(await import(`./levels/${levels[currentLevelIndex]}.json`))
-  levelNameInput.value = level.data.name
+  gameMode.setLevel(level)
+  editMode.setLevel(level)
 }
 
 dialogueLayer.title().then(() =>
@@ -84,59 +79,7 @@ document.addEventListener("click", (e) => {
   const row = local.y - tileOrigin.y >= TILE.SIZE / 2 ? 1 : 0
   const variant = VARIANT_BY_QUADRANT[row][col]
 
-  if (!EDITOR_STATE) {
-    level.handlnteraction(tilePos, variant)
-  } else {
-    const existingTile = level.getTile(tilePos)
-    const alreadyMarked = level.markedTilePos && equals(tilePos, level.markedTilePos)
-    if (existingTile && !alreadyMarked) {
-      if (existingTile.type !== toolsPanel.selectedTool?.type) {
-        toolsPanel.selectToolForType(existingTile.type)
-      }
-      level.markTile(tilePos)
-      return
-    }
-
-    const newTile = toolsPanel.executeSelectedTool(tilePos, variant, existingTile)
-    switch (true) {
-      case existingTile?.type === toolsPanel.selectedTool?.type && !newTile:
-        level.removeTile(tilePos)
-        break
-      case !newTile:
-        return
-      default:
-        level.addTile(tilePos, newTile)
-        level.markTile(tilePos)
-    }
-  }
-})
-
-const levelPanel = document.getElementById("level-panel")!
-const levelNameInput = new TextInput("LEVEL NAME", 11, (value) => {
-  level.data.name = value
-})
-levelPanel.prepend(levelNameInput.el)
-
-const copyButton = document.getElementById("copy-button") as HTMLButtonElement
-const copyButtonLabel = copyButton.querySelector<HTMLElement>(".edit-panel-button-label")!
-
-copyButton.addEventListener("click", async () => {
-  await navigator.clipboard.writeText(JSON.stringify(level.serialize(), null, 2))
-  const originalText = copyButtonLabel.textContent
-  copyButtonLabel.textContent = "Kopierad!"
-  setTimeout(() => {
-    copyButtonLabel.textContent = originalText
-  }, 1500)
-})
-
-const clearLevelButton = document.getElementById("clear-level-button") as HTMLButtonElement
-
-clearLevelButton.addEventListener("click", () => {
-  if (!confirm("Are you sure you want to clear the level?")) return
-
-  level.clear()
-  level.data.name = ""
-  levelNameInput.value = ""
+  currentMode().handleClick(tilePos, variant)
 })
 
 document.addEventListener("keydown", (e) => {
