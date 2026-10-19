@@ -5,7 +5,7 @@ import { SpeedButton } from "./elements/speed-button"
 import { TileTool } from "./tile-tool"
 import { GridObject } from "../grid-object"
 
-export type EditCommandConstructor = new (tile: GridObject) => EditCommand
+export type EditCommandConstructor = new (tile: GridObject, onChange: () => void) => EditCommand
 
 export const EditPanelCommand = {
   DELETE_BUTTON: DeleteButton,
@@ -26,7 +26,11 @@ export class TileEditPanel {
     document.body.appendChild(this.container)
   }
 
-  setContent = (tool: TileTool<GridObject> | null, tile: GridObject | null) => {
+  setContent = (
+    tool: TileTool<GridObject> | null,
+    tile: GridObject | null,
+    onChange: () => void,
+  ) => {
     if (tool === this.tool && tile === this.tile) return
     this.tool = tool
     this.tile = tile
@@ -36,7 +40,7 @@ export class TileEditPanel {
     if (!tool || !tile) return
 
     for (const Command of [...tool.editPanelCommands()].reverse()) {
-      const editCommand = new Command(tile)
+      const editCommand = new Command(tile, onChange)
       this.container.appendChild(editCommand.el)
     }
   }

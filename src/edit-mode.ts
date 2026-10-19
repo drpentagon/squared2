@@ -56,7 +56,7 @@ const updatePanels = () => {
     ? currentLevel.getTile(currentLevel.markedTilePos)
     : undefined
   const markedTool = markedTile ? toolsPanel.findToolByType(markedTile.type) : undefined
-  tileEditPanel.setContent(markedTool ?? null, markedTile ?? null)
+  tileEditPanel.setContent(markedTool ?? null, markedTile ?? null, currentLevel.redrawStatic)
 }
 
 const markExistingTile = (tilePos: Point) => {

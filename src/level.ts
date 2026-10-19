@@ -108,8 +108,7 @@ export class Level {
 
     this.backgroundGraphics.clear()
     this.backgroundGraphics.draw()
-    this.staticGraphics.clear()
-    this.staticGraphics.draw()
+    this.redrawStatic()
   }
 
   update = (dt: number) => {
@@ -128,10 +127,7 @@ export class Level {
   }
 
   purge = () => {
-    if (this.gameObjects.purge()) {
-      this.staticGraphics.clear()
-      this.staticGraphics.draw()
-    }
+    if (this.gameObjects.purge()) this.redrawStatic()
 
     if (this.markedTilePos && !this.gameObjects.get(this.markedTilePos)) {
       this.markedTilePos = null
@@ -144,8 +140,7 @@ export class Level {
     if (!tile) return
     if (!this.gameObjects.add(tilePos, tile)) return
 
-    this.staticGraphics.clear()
-    this.staticGraphics.draw()
+    this.redrawStatic()
   }
 
   removeTile = (tilePos: Point) => {
@@ -153,8 +148,7 @@ export class Level {
 
     this.markedTilePos = null
 
-    this.staticGraphics.clear()
-    this.staticGraphics.draw()
+    this.redrawStatic()
   }
 
   markTile = (tilePos: Point | null) => {
@@ -164,6 +158,10 @@ export class Level {
   clear = () => {
     this.gameObjects.clear()
 
+    this.redrawStatic()
+  }
+
+  redrawStatic = () => {
     this.staticGraphics.clear()
     this.staticGraphics.draw()
   }

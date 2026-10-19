@@ -10,7 +10,10 @@ export interface Rotatable {
 export class RotationControl extends EditCommand {
   readonly el: HTMLElement
 
-  constructor(tile: GridObject) {
+  constructor(
+    tile: GridObject,
+    private onChange: () => void,
+  ) {
     super(tile)
     this.el = document.createElement("div")
     this.el.className = "rotation-control"
@@ -23,5 +26,6 @@ export class RotationControl extends EditCommand {
   private rotate = (directionTransformLookup: Record<string, string>) => {
     const tile = this.tile as GridObject & Rotatable
     tile.direction = directionTransformLookup[tile.direction]
+    this.onChange()
   }
 }
