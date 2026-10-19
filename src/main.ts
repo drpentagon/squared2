@@ -1,8 +1,8 @@
 import { fetchLevel, fetchLevelIds } from "./api"
 import { gameMode } from "./game-mode"
-import { editMode } from "./edit-mode"
+import { editMode, saveCurrentLevel, setOnNewLevel } from "./edit-mode"
 import { origin } from "./grid"
-import { Level } from "./level"
+import { emptyLevelData, Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
@@ -45,6 +45,15 @@ const loadNextLevel = async () => {
   editMode.setLevel(level)
 }
 
+const createNewLevel = () => {
+  level?.destroy()
+  level = new Level(null, emptyLevelData())
+  gameMode.setLevel(level)
+  editMode.setLevel(level)
+}
+
+setOnNewLevel(createNewLevel)
+
 dialogueLayer.title().then(async () => {
   levelIds = await fetchLevelIds()
   await loadNextLevel()
@@ -84,8 +93,13 @@ document.addEventListener("click", (e) => {
   currentMode().handleClick(tilePos, variant)
 })
 
-document.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", async (e) => {
   if (e.key !== "e") return
+
+  if (EDITOR_STATE && confirm("Save your changes before leaving edit mode?")) {
+    await saveCurrentLevel()
+  }
+
   EDITOR_STATE = !EDITOR_STATE
   setEditing(EDITOR_STATE)
   if (EDITOR_STATE) level.reset()

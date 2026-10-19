@@ -20,3 +20,13 @@ export const saveLevel = async (id: number, data: LevelData): Promise<void> => {
     body: JSON.stringify(data),
   })
 }
+
+export const createLevel = async (data: LevelData): Promise<number> => {
+  const res = await fetch(`${API_BASE}/api/levels`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+  const created: { id: number } = await res.json()
+  return created.id
+}

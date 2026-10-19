@@ -5,7 +5,7 @@ import { BackgroundGraphics } from "./layers/background-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
 import { SelectionGraphics } from "./layers/selection-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
-import { DIRECTIONS, tileTypes } from "./lib/constants"
+import { DIRECTIONS, TILE, tileTypes } from "./lib/constants"
 import { equals, Point } from "./lib/point"
 import { FragileRedirector } from "./tiles/fragile-redirector"
 import { Goal } from "./tiles/goal"
@@ -28,8 +28,27 @@ export type LevelData = {
   balls: BallData[]
 }
 
+export const emptyLevelData = (): LevelData => {
+  const max = TILE.COUNT - 1
+
+  return {
+    name: "",
+    walls: [],
+    wallRanges: [
+      { from: { x: 0, y: 0 }, to: { x: max, y: 0 } },
+      { from: { x: 0, y: 1 }, to: { x: 0, y: max } },
+      { from: { x: max, y: 1 }, to: { x: max, y: max } },
+      { from: { x: 1, y: max }, to: { x: max - 1, y: max } },
+    ],
+    fragileRedirects: [],
+    permanentRedirects: [],
+    goals: [],
+    balls: [],
+  }
+}
+
 export class Level {
-  id: number
+  id: number | null
   data: LevelData
   gameObjects: GameObjects
   finished: boolean
@@ -43,7 +62,7 @@ export class Level {
   staticGraphics: StaticGraphics
   dynamicGraphics: DynamicGraphics
 
-  constructor(id: number, data: LevelData) {
+  constructor(id: number | null, data: LevelData) {
     this.id = id
     this.data = data
     this.gameObjects = new GameObjects()
