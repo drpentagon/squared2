@@ -4,7 +4,6 @@ import { Canvas } from "../canvas"
 import { origin } from "../grid"
 import {
   BALL,
-  DIRECTIONS,
   DOT,
   NEXT_DIRECTION,
   PREVIOUS_DIRECTION,
@@ -13,7 +12,7 @@ import {
   directions,
   tileTypes,
 } from "../lib/constants"
-import { rotatePolygon } from "../lib/geometry"
+import { shapeRotations } from "../lib/geometry"
 import { Point } from "../lib/point"
 import { playBounce } from "../lib/sound"
 import { Style } from "../lib/style"
@@ -29,9 +28,7 @@ const REDIRECTOR_SHAPE: [number, number][] = [
   [0, 2 * SQUARE.SIZE + DOT.SPACING],
 ]
 
-const SHAPE_ROTATIONS: Record<string, [number, number][]> = Object.fromEntries(
-  DIRECTIONS.map((dir) => [dir, rotatePolygon(REDIRECTOR_SHAPE, dir)]),
-)
+const SHAPE = shapeRotations(REDIRECTOR_SHAPE)
 
 export class Redirector extends Tile {
   readonly type = tileTypes.REDIRECTOR
@@ -85,6 +82,10 @@ export class Redirector extends Tile {
   }
 
   draw = (canvas: Canvas, pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y }) => {
-    canvas.drawPolygon(pos, SHAPE_ROTATIONS[this.direction], this.style)
+    canvas.drawPolygon(pos, SHAPE.full[this.direction], this.style)
+  }
+
+  renderMiniature = (canvas: Canvas, pos: Point) => {
+    canvas.drawPolygon(pos, SHAPE.miniature[this.direction], this.style)
   }
 }

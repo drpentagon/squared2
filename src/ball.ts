@@ -16,6 +16,9 @@ const DIRECTION_MARKER: [number, number][] = [
   [-BALL.RADIUS, -DIRECTION_MARKER_OFFSET - DOT.SIZE],
 ]
 
+const MINIATURE_SIZE = 3
+const MINIATURE_OFFSET = (DOT.SIZE - MINIATURE_SIZE) / 2
+
 const DIRECTION_VECTOR: Record<string, Point> = {
   [directions.UP]: { x: 0, y: -1 },
   [directions.DOWN]: { x: 0, y: 1 },
@@ -95,5 +98,13 @@ export class Ball extends GridObject {
         BALL_STYLE,
       )
     }
+  }
+
+  renderMiniature(canvas: Canvas, pos: Point) {
+    canvas.drawSquare(
+      { x: pos.x + MINIATURE_OFFSET, y: pos.y + MINIATURE_OFFSET },
+      MINIATURE_SIZE,
+      BALL_STYLE,
+    )
   }
 }

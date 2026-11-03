@@ -1,9 +1,10 @@
-import { fetchLevel, fetchLevelIds } from "./api"
+import { fetchAllLevels, fetchLevel, fetchLevelIds } from "./api"
 import { gameMode } from "./game-mode"
 import { editMode, saveCurrentLevel, setOnNewLevel } from "./edit-mode"
 import { origin } from "./grid"
 import { emptyLevelData, Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
+import { LevelOverview } from "./layers/level-overview"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Mode } from "./mode"
@@ -19,30 +20,53 @@ let EDITOR_STATE = false
 const currentMode = (): Mode => (EDITOR_STATE ? editMode : gameMode)
 
 const dialogueLayer = new DialogueLayer()
+const levelOverview = new LevelOverview()
 
 const loop = async (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  currentMode().update(dt)
+  if (!levelOverview.isOpen) {
+    currentMode().update(dt)
 
-  if (!EDITOR_STATE && level.finished) {
-    await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
-    await loadNextLevel()
-    lastTime = performance.now()
+    if (!EDITOR_STATE && level.finished) {
+      await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
+      await loadNextLevel()
+      lastTime = performance.now()
+    }
+
+    level.render(EDITOR_STATE)
   }
 
-  level.render(EDITOR_STATE)
   requestAnimationFrame(loop)
 }
 
 const loadNextLevel = async () => {
-  level?.destroy()
   currentLevelIndex = currentLevelIndex === null ? 0 : currentLevelIndex + 1
-  const id = levelIds[currentLevelIndex]
+  await loadLevel(levelIds[currentLevelIndex])
+}
+
+const loadLevel = async (id: number) => {
+  level?.destroy()
   level = new Level(id, await fetchLevel(id))
   gameMode.setLevel(level)
   editMode.setLevel(level)
+}
+
+const openOverview = async () => {
+  const levels = await fetchAllLevels()
+  levelIds = levels.map((entry) => entry.id)
+
+  const chosen = await levelOverview.show(levels)
+  lastTime = performance.now()
+  if (chosen === null) return
+
+  currentLevelIndex = levelIds.indexOf(chosen)
+  await loadLevel(chosen)
+
+  EDITOR_STATE = true
+  setEditing(EDITOR_STATE)
+  level.reset()
 }
 
 const createNewLevel = () => {
@@ -96,11 +120,14 @@ document.addEventListener("click", (e) => {
 document.addEventListener("keydown", async (e) => {
   if (e.key !== "e") return
 
+  if (levelOverview.isOpen) {
+    levelOverview.dismiss()
+    return
+  }
+
   if (EDITOR_STATE && confirm("Save your changes before leaving edit mode?")) {
     await saveCurrentLevel()
   }
 
-  EDITOR_STATE = !EDITOR_STATE
-  setEditing(EDITOR_STATE)
-  if (EDITOR_STATE) level.reset()
+  await openOverview()
 })

@@ -1,4 +1,5 @@
 import { Ball } from "./ball"
+import { Canvas } from "./canvas"
 import { GameObjects } from "./game-objects"
 import { GridObject } from "./grid-object"
 import { BackgroundGraphics } from "./layers/background-graphics"
@@ -27,6 +28,8 @@ export type LevelData = {
   goals: GoalData[]
   balls: BallData[]
 }
+
+export type LevelEntry = { id: number; data: LevelData }
 
 export const emptyLevelData = (): LevelData => {
   const max = TILE.COUNT - 1
@@ -83,26 +86,7 @@ export class Level {
   }
 
   reset = () => {
-    this.gameObjects.staticTiles.clear()
-    this.gameObjects.staticTiles.addArray(this.data.walls.map((t) => new Wall(t)))
-    this.gameObjects.staticTiles.addArray(this.data.wallRanges.flatMap(wallsInRange))
-    this.gameObjects.staticTiles.addArray(
-      this.data.permanentRedirects.map((t) => new Redirector(t, DIRECTIONS[t.variant])),
-    )
-
-    this.gameObjects.dynamicTiles.clear()
-    this.gameObjects.dynamicTiles.addArray(
-      this.data.fragileRedirects.map((t) => new FragileRedirector(t, DIRECTIONS[t.variant])),
-    )
-    this.gameObjects.dynamicTiles.addArray(
-      this.data.goals.map((t) => new Goal(t, DIRECTIONS[t.direction], t.rotates)),
-    )
-
-    this.gameObjects.balls.splice(
-      0,
-      this.gameObjects.balls.length,
-      ...this.data.balls.map((b) => new Ball(b, b.velocity, b.direction)),
-    )
+    loadGameObjects(this.gameObjects, this.data)
 
     this.markedTilePos = null
 
@@ -185,6 +169,10 @@ export class Level {
     this.dynamicGraphics.draw(editing)
   }
 
+  renderMiniature = (canvas: Canvas, pos: Point) => {
+    this.gameObjects.renderMiniature(canvas, pos)
+  }
+
   destroy = () => {
     this.backgroundGraphics.destroy()
     this.selectionGraphics.destroy()
@@ -248,6 +236,29 @@ export class Level {
       balls,
     }
   }
+}
+
+export const loadGameObjects = (gameObjects: GameObjects, data: LevelData) => {
+  gameObjects.staticTiles.clear()
+  gameObjects.staticTiles.addArray(data.walls.map((t) => new Wall(t)))
+  gameObjects.staticTiles.addArray(data.wallRanges.flatMap(wallsInRange))
+  gameObjects.staticTiles.addArray(
+    data.permanentRedirects.map((t) => new Redirector(t, DIRECTIONS[t.variant])),
+  )
+
+  gameObjects.dynamicTiles.clear()
+  gameObjects.dynamicTiles.addArray(
+    data.fragileRedirects.map((t) => new FragileRedirector(t, DIRECTIONS[t.variant])),
+  )
+  gameObjects.dynamicTiles.addArray(
+    data.goals.map((t) => new Goal(t, DIRECTIONS[t.direction], t.rotates)),
+  )
+
+  gameObjects.balls.splice(
+    0,
+    gameObjects.balls.length,
+    ...data.balls.map((b) => new Ball(b, b.velocity, b.direction)),
+  )
 }
 
 const groupWallsIntoRanges = (

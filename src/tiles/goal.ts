@@ -2,15 +2,8 @@ import { Tile } from "./tile"
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
 import { origin } from "../grid"
-import {
-  DIRECTIONS,
-  NEXT_DIRECTION,
-  OPPOSITE_DIRECTION,
-  SQUARE,
-  TILE,
-  tileTypes,
-} from "../lib/constants"
-import { rotatePolygon } from "../lib/geometry"
+import { NEXT_DIRECTION, OPPOSITE_DIRECTION, SQUARE, TILE, tileTypes } from "../lib/constants"
+import { shapeRotations } from "../lib/geometry"
 import { Point } from "../lib/point"
 import { playBounce, playBell } from "../lib/sound"
 import { GOAL } from "../lib/styles"
@@ -26,9 +19,7 @@ const GOAL_SHAPE: [number, number][] = [
   [0, TILE.SIZE],
 ]
 
-const SHAPE_ROTATIONS: Record<string, [number, number][]> = Object.fromEntries(
-  DIRECTIONS.map((dir) => [dir, rotatePolygon(GOAL_SHAPE, dir)]),
-)
+const SHAPE = shapeRotations(GOAL_SHAPE)
 
 export class Goal extends Tile {
   readonly type = tileTypes.GOAL
@@ -56,6 +47,10 @@ export class Goal extends Tile {
   }
 
   draw = (canvas: Canvas, pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y }) => {
-    canvas.drawPolygon(pos, SHAPE_ROTATIONS[this.direction], GOAL)
+    canvas.drawPolygon(pos, SHAPE.full[this.direction], GOAL)
+  }
+
+  renderMiniature = (canvas: Canvas, pos: Point) => {
+    canvas.drawPolygon(pos, SHAPE.miniature[this.direction], GOAL)
   }
 }

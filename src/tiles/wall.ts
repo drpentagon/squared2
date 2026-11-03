@@ -2,7 +2,7 @@ import { Tile } from "./tile"
 import { Ball } from "../ball"
 import { Canvas } from "../canvas"
 import { origin } from "../grid"
-import { SQUARE, tileTypes } from "../lib/constants"
+import { DOT, SQUARE, tileTypes } from "../lib/constants"
 import { Point } from "../lib/point"
 import { playBounce } from "../lib/sound"
 import { ROCK } from "../lib/styles"
@@ -26,5 +26,9 @@ export class Wall extends Tile {
         )
       }
     }
+  }
+
+  renderMiniature = (canvas: Canvas, pos: Point) => {
+    canvas.drawSquare(pos, DOT.SIZE, this.style)
   }
 }

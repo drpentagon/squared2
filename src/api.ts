@@ -1,6 +1,11 @@
-import { LevelData } from "./level"
+import { LevelData, LevelEntry } from "./level"
 
 const API_BASE = "http://localhost:3001"
+
+export const fetchAllLevels = async (): Promise<LevelEntry[]> => {
+  const ids = await fetchLevelIds()
+  return Promise.all(ids.map(async (id) => ({ id, data: await fetchLevel(id) })))
+}
 
 export const fetchLevelIds = async (): Promise<number[]> => {
   const res = await fetch(`${API_BASE}/api/levels`)

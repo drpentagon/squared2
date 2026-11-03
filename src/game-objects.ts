@@ -1,7 +1,9 @@
 import { Ball } from "./ball"
+import { Canvas } from "./canvas"
 import { GridObject } from "./grid-object"
-import { tileTypes } from "./lib/constants"
+import { DOT, TILE, tileTypes } from "./lib/constants"
 import { equals, Point } from "./lib/point"
+import { EMPTY_TILE } from "./lib/styles"
 import { PositionMap } from "./position-map"
 import { Tile } from "./tiles/tile"
 
@@ -49,6 +51,23 @@ export class GameObjects {
     this.staticTiles.clear()
     this.dynamicTiles.clear()
     this.balls.splice(0, this.balls.length)
+  }
+
+  renderMiniature = (canvas: Canvas, pos: Point) => {
+    canvas.fillDots(pos, TILE.COUNT, TILE.COUNT, EMPTY_TILE)
+
+    this.forEach((object) =>
+      object.renderMiniature(canvas, {
+        x: pos.x + object.tilePos.x * DOT.CC,
+        y: pos.y + object.tilePos.y * DOT.CC,
+      }),
+    )
+  }
+
+  forEach = (callback: (object: GridObject) => void) => {
+    this.staticTiles.forEach(callback)
+    this.dynamicTiles.forEach(callback)
+    this.balls.forEach(callback)
   }
 
   purge = (): boolean => {
