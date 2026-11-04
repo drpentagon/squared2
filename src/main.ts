@@ -1,13 +1,13 @@
-import { fetchAllLevels, fetchLevel, fetchLevelIds } from "./api"
+import { fetchLevel, fetchLevelIds } from "./api"
 import { gameMode } from "./game-mode"
 import { editMode, saveCurrentLevel, setOnNewLevel } from "./edit-mode"
 import { origin } from "./grid"
 import { emptyLevelData, Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
-import { LevelOverview, NEW_LEVEL } from "./layers/level-overview"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Mode } from "./mode"
+import { dismissOverview, isOverviewOpen, openOverview, setOverviewHandlers } from "./overview-mode"
 import { pixelToTile } from "./tiles/tile"
 import { setEditing } from "./ui/tools-panel"
 
@@ -20,13 +20,12 @@ let EDITOR_STATE = false
 const currentMode = (): Mode => (EDITOR_STATE ? editMode : gameMode)
 
 const dialogueLayer = new DialogueLayer()
-const levelOverview = new LevelOverview()
 
 const loop = async (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  if (!dialogueLayer.isOpen && !levelOverview.isOpen) {
+  if (!dialogueLayer.isOpen && !isOverviewOpen()) {
     currentMode().update(dt)
 
     if (!EDITOR_STATE && level.finished) {
@@ -53,27 +52,6 @@ const loadLevel = async (id: number) => {
   editMode.setLevel(level)
 }
 
-const openOverview = async () => {
-  dialogueLayer.dismiss()
-
-  const levels = await fetchAllLevels()
-  levelIds = levels.map((entry) => entry.id)
-
-  const chosen = await levelOverview.show(levels)
-  if (chosen === null) return
-
-  if (chosen === NEW_LEVEL) {
-    createNewLevel()
-  } else {
-    currentLevelIndex = levelIds.indexOf(chosen)
-    await loadLevel(chosen)
-  }
-
-  EDITOR_STATE = true
-  setEditing(EDITOR_STATE)
-  level.reset()
-}
-
 const createNewLevel = () => {
   level?.destroy()
   level = new Level(null, emptyLevelData())
@@ -82,6 +60,26 @@ const createNewLevel = () => {
 }
 
 setOnNewLevel(createNewLevel)
+
+setOverviewHandlers({
+  openLevel: async (id, ids) => {
+    levelIds = ids
+    currentLevelIndex = ids.indexOf(id)
+    await loadLevel(id)
+    enterEditMode()
+  },
+
+  createLevel: () => {
+    createNewLevel()
+    enterEditMode()
+  },
+})
+
+const enterEditMode = () => {
+  EDITOR_STATE = true
+  setEditing(EDITOR_STATE)
+  level.reset()
+}
 
 const start = async () => {
   levelIds = await fetchLevelIds()
@@ -125,8 +123,8 @@ document.addEventListener("click", (e) => {
 document.addEventListener("keydown", async (e) => {
   if (e.key !== "e" || !level) return
 
-  if (levelOverview.isOpen) {
-    levelOverview.dismiss()
+  if (isOverviewOpen()) {
+    dismissOverview()
     return
   }
 
@@ -134,5 +132,6 @@ document.addEventListener("keydown", async (e) => {
     await saveCurrentLevel()
   }
 
+  dialogueLayer.dismiss()
   await openOverview()
 })
