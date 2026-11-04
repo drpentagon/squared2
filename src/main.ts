@@ -81,10 +81,6 @@ setOnNewLevel(createNewLevel)
 dialogueLayer.title().then(async () => {
   levelIds = await fetchLevelIds()
   await loadNextLevel()
-  // TEMPORARY: start directly in edit mode for the first level
-  EDITOR_STATE = true
-  setEditing(EDITOR_STATE)
-  level.reset()
   requestAnimationFrame(loop)
 })
 
