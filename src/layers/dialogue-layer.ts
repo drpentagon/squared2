@@ -21,6 +21,10 @@ export class DialogueLayer extends GraphicsLayer {
 
   update = (_dt: number) => {}
 
+  get isOpen() {
+    return this.open
+  }
+
   show = (): Promise<void> => {
     this.open = true
     this.canvas.el.style.pointerEvents = "auto"
@@ -35,12 +39,18 @@ export class DialogueLayer extends GraphicsLayer {
     this.clear()
   }
 
-  private handleClick = (e: MouseEvent) => {
+  dismiss = () => {
     if (!this.open) return
-    e.stopPropagation()
+
     this.hide()
     this.onClose?.()
     this.onClose = null
+  }
+
+  private handleClick = (e: MouseEvent) => {
+    if (!this.open) return
+    e.stopPropagation()
+    this.dismiss()
   }
 
   title = (): Promise<void> => {

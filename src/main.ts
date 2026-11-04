@@ -26,7 +26,7 @@ const loop = async (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  if (!levelOverview.isOpen) {
+  if (!dialogueLayer.isOpen && !levelOverview.isOpen) {
     currentMode().update(dt)
 
     if (!EDITOR_STATE && level.finished) {
@@ -54,11 +54,12 @@ const loadLevel = async (id: number) => {
 }
 
 const openOverview = async () => {
+  dialogueLayer.dismiss()
+
   const levels = await fetchAllLevels()
   levelIds = levels.map((entry) => entry.id)
 
   const chosen = await levelOverview.show(levels)
-  lastTime = performance.now()
   if (chosen === null) return
 
   if (chosen === NEW_LEVEL) {
@@ -82,11 +83,15 @@ const createNewLevel = () => {
 
 setOnNewLevel(createNewLevel)
 
-dialogueLayer.title().then(async () => {
+const start = async () => {
   levelIds = await fetchLevelIds()
   await loadNextLevel()
+
+  dialogueLayer.title()
   requestAnimationFrame(loop)
-})
+}
+
+start()
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) lastTime = performance.now()
@@ -118,7 +123,7 @@ document.addEventListener("click", (e) => {
 })
 
 document.addEventListener("keydown", async (e) => {
-  if (e.key !== "e") return
+  if (e.key !== "e" || !level) return
 
   if (levelOverview.isOpen) {
     levelOverview.dismiss()
