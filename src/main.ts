@@ -4,7 +4,7 @@ import { editMode, saveCurrentLevel, setOnNewLevel } from "./edit-mode"
 import { origin } from "./grid"
 import { emptyLevelData, Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
-import { LevelOverview } from "./layers/level-overview"
+import { LevelOverview, NEW_LEVEL } from "./layers/level-overview"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Mode } from "./mode"
@@ -61,8 +61,12 @@ const openOverview = async () => {
   lastTime = performance.now()
   if (chosen === null) return
 
-  currentLevelIndex = levelIds.indexOf(chosen)
-  await loadLevel(chosen)
+  if (chosen === NEW_LEVEL) {
+    createNewLevel()
+  } else {
+    currentLevelIndex = levelIds.indexOf(chosen)
+    await loadLevel(chosen)
+  }
 
   EDITOR_STATE = true
   setEditing(EDITOR_STATE)
