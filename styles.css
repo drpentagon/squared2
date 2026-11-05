@@ -82,11 +82,23 @@ body.editing .edit-panel {
 .button:active {
   filter: brightness(80%);
 }
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.button:disabled:hover,
+.button:disabled:active {
+  filter: none;
+}
 .button--delete {
   background-color: #4f0f0f;
 }
-.button--save {
+.button--primary {
   background-color: #0a3d0c;
+}
+.button-row {
+  display: flex;
+  justify-content: space-between;
 }
 .textinput {
   height: 32px;
@@ -187,10 +199,6 @@ body.editing .edit-panel {
   pointer-events: none;
   text-transform: uppercase;
 }
-.rotation-control {
-  display: flex;
-  justify-content: space-between;
-}
 .button--small {
   width: 32px;
   padding: 0;
@@ -212,13 +220,17 @@ body.editing .edit-panel {
   width: calc(var(--panel-width) * 1px);
   height: calc(var(--grid-size) * 1px);
 }
-#tile-edit-panel {
+#tile-edit-panel,
+#level-overview-panel {
   left: calc((var(--grid-origin-x) + var(--grid-size) + var(--dot-spacing) + var(--dot-cc)) * 1px);
   top: calc(var(--grid-origin-y) * 1px);
 }
 #level-panel {
   left: calc((var(--grid-origin-x) + var(--grid-size) + var(--dot-spacing) + var(--dot-cc)) * 1px);
   bottom: calc(var(--grid-origin-y) * 1px);
+}
+#level-overview-panel {
+  z-index: 5;
 }
 @media (max-width: 700px) {
   #tools-panel {
@@ -227,7 +239,8 @@ body.editing .edit-panel {
     width: calc(var(--grid-size) * 1px);
     height: calc(var(--panel-width) * 1px);
   }
-  #tile-edit-panel {
+  #tile-edit-panel,
+  #level-overview-panel {
     left: calc(var(--grid-origin-x) * 1px);
     top: calc((var(--grid-origin-y) + var(--grid-size) + var(--dot-spacing)) * 1px);
   }

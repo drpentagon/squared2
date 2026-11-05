@@ -6,11 +6,11 @@ import { DOT, GRID, TILE } from "../lib/constants"
 import { Point } from "../lib/point"
 import { Style } from "../lib/style"
 
-export const NEW_LEVEL = "NEW_LEVEL"
-export type OverviewChoice = number | typeof NEW_LEVEL | null
+export type OverviewClick = { kind: "level"; id: number } | { kind: "new" } | { kind: "empty" }
 
 const COLUMNS = 6
 const THUMBNAIL_STEP = TILE.COUNT + 1
+const THUMBNAIL_SIZE = TILE.COUNT * DOT.CC - DOT.SPACING
 const MARGIN = Math.floor((DOT.GRID_SIZE - (COLUMNS * THUMBNAIL_STEP - 1)) / 2)
 
 const DASH_PERIOD = 4
@@ -20,6 +20,7 @@ const PLUS_REACH = 2
 const CENTER = (TILE.COUNT - 1) / 2
 
 const BACKDROP_STYLE = new Style("#051e06")
+const SELECTED_STYLE = new Style("rgba(255, 255, 255, 0.1)")
 const NEW_LEVEL_STYLE = new Style("#ffffff")
 
 const ring = (): Point[] => {
@@ -38,8 +39,9 @@ const RING = ring()
 
 export class LevelOverview extends GraphicsLayer {
   private levels: LevelEntry[] = []
+  private selectedId: number | null = null
   private visible = false
-  private onSelect: ((choice: OverviewChoice) => void) | null = null
+  private onClick: (click: OverviewClick) => void = () => {}
 
   constructor() {
     super(4)
@@ -52,19 +54,30 @@ export class LevelOverview extends GraphicsLayer {
     return this.visible
   }
 
-  show = (levels: LevelEntry[]): Promise<OverviewChoice> => {
+  open = (levels: LevelEntry[], onClick: (click: OverviewClick) => void) => {
     this.levels = levels
+    this.selectedId = null
+    this.onClick = onClick
     this.visible = true
     this.canvas.el.style.pointerEvents = "auto"
     this.draw()
-
-    return new Promise((resolve) => {
-      this.onSelect = resolve
-    })
   }
 
-  dismiss = () => {
-    if (this.visible) this.close(null)
+  close = () => {
+    this.visible = false
+    this.selectedId = null
+    this.canvas.el.style.pointerEvents = "none"
+    this.clear()
+  }
+
+  setLevels = (levels: LevelEntry[]) => {
+    this.levels = levels
+    if (this.visible) this.draw()
+  }
+
+  setSelected = (id: number | null) => {
+    this.selectedId = id
+    if (this.visible) this.draw()
   }
 
   draw = () => {
@@ -75,9 +88,14 @@ export class LevelOverview extends GraphicsLayer {
   }
 
   private drawThumbnail = (level: LevelEntry, index: number) => {
+    const pos = this.thumbnailOrigin(index)
+    if (level.id === this.selectedId) {
+      this.canvas.drawSquare(pos, THUMBNAIL_SIZE, SELECTED_STYLE)
+    }
+
     const gameObjects = new GameObjects()
     loadGameObjects(gameObjects, level.data)
-    gameObjects.renderMiniature(this.canvas, this.thumbnailOrigin(index))
+    gameObjects.renderMiniature(this.canvas, pos)
   }
 
   private drawNewLevelButton = (index: number) => {
@@ -111,17 +129,13 @@ export class LevelOverview extends GraphicsLayer {
     e.stopPropagation()
 
     const slot = this.slotAt({ x: e.clientX - origin.x, y: e.clientY - origin.y })
-    if (slot === null) {
-      this.close(null)
-      return
-    }
-
     if (slot === this.levels.length) {
-      this.close(NEW_LEVEL)
+      this.onClick({ kind: "new" })
       return
     }
 
-    this.close(this.levels[slot]?.id ?? null)
+    const level = slot === null ? undefined : this.levels[slot]
+    this.onClick(level ? { kind: "level", id: level.id } : { kind: "empty" })
   }
 
   private slotAt = (local: Point): number | null => {
@@ -134,14 +148,5 @@ export class LevelOverview extends GraphicsLayer {
     if (col >= COLUMNS) return null
 
     return Math.floor(dotY / THUMBNAIL_STEP) * COLUMNS + col
-  }
-
-  private close = (choice: OverviewChoice) => {
-    this.visible = false
-    this.canvas.el.style.pointerEvents = "none"
-    this.clear()
-
-    this.onSelect?.(choice)
-    this.onSelect = null
   }
 }

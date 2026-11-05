@@ -16,7 +16,7 @@ export class RotationControl extends EditCommand {
   ) {
     super(tile)
     this.el = document.createElement("div")
-    this.el.className = "rotation-control"
+    this.el.className = "button-row rotation-control"
 
     const ccwButton = new Button("↺", () => this.rotate(PREVIOUS_DIRECTION), "button--small")
     const cwButton = new Button("↻", () => this.rotate(NEXT_DIRECTION), "button--small")

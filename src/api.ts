@@ -26,6 +26,18 @@ export const saveLevel = async (id: number, data: LevelData): Promise<void> => {
   })
 }
 
+export const moveLevel = async (id: number, direction: "back" | "forward"): Promise<void> => {
+  await fetch(`${API_BASE}/api/levels/${id}/move`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ direction }),
+  })
+}
+
+export const deleteLevel = async (id: number): Promise<void> => {
+  await fetch(`${API_BASE}/api/levels/${id}`, { method: "DELETE" })
+}
+
 export const createLevel = async (data: LevelData): Promise<number> => {
   const res = await fetch(`${API_BASE}/api/levels`, {
     method: "POST",

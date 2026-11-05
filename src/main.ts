@@ -62,22 +62,31 @@ const createNewLevel = () => {
 setOnNewLevel(createNewLevel)
 
 setOverviewHandlers({
-  openLevel: async (id, ids) => {
-    levelIds = ids
-    currentLevelIndex = ids.indexOf(id)
-    await loadLevel(id)
-    enterEditMode()
+  editLevel: async (id, ids) => {
+    await loadFromOverview(id, ids)
+    setEditorState(true)
+  },
+
+  playLevel: async (id, ids) => {
+    await loadFromOverview(id, ids)
+    setEditorState(false)
   },
 
   createLevel: () => {
     createNewLevel()
-    enterEditMode()
+    setEditorState(true)
   },
 })
 
-const enterEditMode = () => {
-  EDITOR_STATE = true
-  setEditing(EDITOR_STATE)
+const loadFromOverview = async (id: number, ids: number[]) => {
+  levelIds = ids
+  currentLevelIndex = ids.indexOf(id)
+  await loadLevel(id)
+}
+
+const setEditorState = (editing: boolean) => {
+  EDITOR_STATE = editing
+  setEditing(editing)
   level.reset()
 }
 
