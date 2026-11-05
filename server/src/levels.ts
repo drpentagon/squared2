@@ -1,4 +1,5 @@
 import { Request, Response } from "express"
+import { appendToChain, orderedIds, rewriteChain } from "./chain"
 import { db } from "./db"
 
 interface LevelRow {
@@ -10,11 +11,10 @@ interface LevelRow {
 }
 
 export const listLevels = (_req: Request, res: Response) => {
-  const rows = db.prepare("SELECT id, name FROM levels ORDER BY id").all() as Pick<
-    LevelRow,
-    "id" | "name"
-  >[]
-  res.json(rows)
+  const rows = db.prepare("SELECT id, name FROM levels").all() as Pick<LevelRow, "id" | "name">[]
+  const byId = new Map(rows.map((row) => [row.id, row]))
+
+  res.json(orderedIds().flatMap((id) => byId.get(id) ?? []))
 }
 
 export const getLevel = (req: Request, res: Response) => {
@@ -31,8 +31,15 @@ export const getLevel = (req: Request, res: Response) => {
 export const createLevel = (req: Request, res: Response) => {
   const { name, ...rest } = req.body
   const data = JSON.stringify({ name, ...rest })
-  const result = db.prepare("INSERT INTO levels (name, data) VALUES (?, ?)").run(name, data)
-  res.status(201).json({ id: result.lastInsertRowid })
+
+  const create = db.transaction(() => {
+    const result = db.prepare("INSERT INTO levels (name, data) VALUES (?, ?)").run(name, data)
+    const id = Number(result.lastInsertRowid)
+    appendToChain(id)
+    return id
+  })
+
+  res.status(201).json({ id: create() })
 }
 
 export const updateLevel = (req: Request, res: Response) => {
@@ -48,9 +55,46 @@ export const updateLevel = (req: Request, res: Response) => {
   res.json({ ok: true })
 }
 
+export const moveLevel = (req: Request, res: Response) => {
+  const { direction } = req.body
+  if (direction !== "back" && direction !== "forward") {
+    res.status(400).json({ error: "direction must be back or forward" })
+    return
+  }
+
+  const id = Number(req.params.id)
+  const ids = orderedIds()
+  const index = ids.indexOf(id)
+  if (index === -1) {
+    res.status(404).json({ error: "Level not found" })
+    return
+  }
+
+  const target = direction === "back" ? index - 1 : index + 1
+  if (target < 0 || target >= ids.length) {
+    res.json({ ok: true })
+    return
+  }
+
+  const moved = [...ids]
+  moved[index] = ids[target]
+  moved[target] = ids[index]
+  rewriteChain(moved)
+
+  res.json({ ok: true })
+}
+
 export const deleteLevel = (req: Request, res: Response) => {
-  const result = db.prepare("DELETE FROM levels WHERE id = ?").run(req.params.id)
-  if (result.changes === 0) {
+  const id = Number(req.params.id)
+
+  const remove = db.transaction(() => {
+    const ids = orderedIds()
+    if (ids.includes(id)) rewriteChain(ids.filter((other) => other !== id))
+
+    return db.prepare("DELETE FROM levels WHERE id = ?").run(id).changes
+  })
+
+  if (remove() === 0) {
     res.status(404).json({ error: "Level not found" })
     return
   }

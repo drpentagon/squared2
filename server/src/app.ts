@@ -1,6 +1,6 @@
 import cors from "cors"
 import express from "express"
-import { createLevel, deleteLevel, getLevel, listLevels, updateLevel } from "./levels"
+import { createLevel, deleteLevel, getLevel, listLevels, moveLevel, updateLevel } from "./levels"
 
 const app = express()
 app.use(cors())
@@ -10,6 +10,7 @@ app.get("/api/levels", listLevels)
 app.post("/api/levels", createLevel)
 app.get("/api/levels/:id", getLevel)
 app.put("/api/levels/:id", updateLevel)
+app.post("/api/levels/:id/move", moveLevel)
 app.delete("/api/levels/:id", deleteLevel)
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001
