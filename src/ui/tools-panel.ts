@@ -17,7 +17,7 @@ export class ToolsPanel {
   constructor() {
     const container = document.createElement("div")
     container.id = "tools-panel"
-    container.className = "canvas-panel"
+    container.className = "canvas-panel panel--edit_level"
     document.body.appendChild(container)
 
     this.canvas = new Canvas(0, container)
@@ -89,7 +89,3 @@ export class ToolsPanel {
 }
 
 export const toolsPanel = new ToolsPanel()
-
-export const setEditing = (editing: boolean) => {
-  document.body.classList.toggle("editing", editing)
-}

@@ -8,12 +8,13 @@ import { SaveIndicator } from "./ui/elements/save-indicator"
 import { TextInput } from "./ui/elements/textinput"
 
 let currentLevel: Level
-let onNewLevel: () => void = () => {}
+let savedSnapshot = ""
+let onCloseLevel: () => void = () => {}
 
 const levelPanel = document.getElementById("level-panel")!
 const saveButton = document.getElementById("save-button") as HTMLButtonElement
 const clearLevelButton = document.getElementById("clear-level-button") as HTMLButtonElement
-const newLevelButton = document.getElementById("new-level-button") as HTMLButtonElement
+const closeButton = document.getElementById("close-button") as HTMLButtonElement
 
 const levelNameInput = new TextInput("LEVEL NAME", 11, (value) => {
   currentLevel.data.name = value
@@ -25,12 +26,13 @@ saveButton.before(saveIndicator.el)
 
 saveButton.addEventListener("click", () => saveCurrentLevel())
 clearLevelButton.addEventListener("click", () => clearCurrentLevel())
-newLevelButton.addEventListener("click", () => onNewLevel())
+closeButton.addEventListener("click", () => closeCurrentLevel())
 
 export const editMode: Mode = {
   setLevel: (level) => {
     currentLevel = level
     levelNameInput.value = level.data.name
+    savedSnapshot = snapshot()
   },
 
   update: () => {
@@ -86,6 +88,8 @@ export const saveCurrentLevel = async () => {
   } else {
     await saveLevel(currentLevel.id, data)
   }
+
+  savedSnapshot = JSON.stringify(data)
   saveIndicator.play()
 }
 
@@ -97,6 +101,14 @@ const clearCurrentLevel = () => {
   levelNameInput.value = ""
 }
 
-export const setOnNewLevel = (handler: () => void) => {
-  onNewLevel = handler
+const closeCurrentLevel = () => {
+  if (snapshot() !== savedSnapshot && !confirm("Close this level without saving?")) return
+
+  onCloseLevel()
+}
+
+const snapshot = () => JSON.stringify(currentLevel.serialize())
+
+export const setOnCloseLevel = (handler: () => void) => {
+  onCloseLevel = handler
 }

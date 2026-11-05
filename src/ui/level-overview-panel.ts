@@ -17,8 +17,7 @@ export class LevelOverviewPanel {
   constructor(actions: LevelOverviewActions) {
     this.container = document.createElement("div")
     this.container.id = "level-overview-panel"
-    this.container.className = "edit-panel"
-    this.container.style.display = "none"
+    this.container.className = "panel panel--edit_overview panel--hidden"
 
     const back = new Button("←", actions.moveBack, "button--small")
     const forward = new Button("→", actions.moveForward, "button--small")
@@ -42,10 +41,10 @@ export class LevelOverviewPanel {
   show = (canMoveBack: boolean, canMoveForward: boolean) => {
     this.backButton.disabled = !canMoveBack
     this.forwardButton.disabled = !canMoveForward
-    this.container.style.display = "flex"
+    this.container.classList.remove("panel--hidden")
   }
 
   hide = () => {
-    this.container.style.display = "none"
+    this.container.classList.add("panel--hidden")
   }
 }

@@ -1,6 +1,6 @@
 import { fetchLevel, fetchLevelIds } from "./api"
 import { gameMode } from "./game-mode"
-import { editMode, saveCurrentLevel, setOnNewLevel } from "./edit-mode"
+import { editMode, saveCurrentLevel, setOnCloseLevel } from "./edit-mode"
 import { origin } from "./grid"
 import { emptyLevelData, Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
@@ -9,15 +9,17 @@ import { Point } from "./lib/point"
 import { Mode } from "./mode"
 import { dismissOverview, isOverviewOpen, openOverview, setOverviewHandlers } from "./overview-mode"
 import { pixelToTile } from "./tiles/tile"
-import { setEditing } from "./ui/tools-panel"
+import { setViewState, ViewState } from "./view-state"
 
 let levelIds: number[] = []
 let currentLevelIndex: number | null = null
 let level: Level
 let lastTime = 0
-let EDITOR_STATE = false
+let viewState: ViewState = "game"
 
-const currentMode = (): Mode => (EDITOR_STATE ? editMode : gameMode)
+const editing = () => viewState === "edit-level"
+
+const currentMode = (): Mode => (editing() ? editMode : gameMode)
 
 const dialogueLayer = new DialogueLayer()
 
@@ -28,13 +30,13 @@ const loop = async (timestamp: number) => {
   if (!dialogueLayer.isOpen && !isOverviewOpen()) {
     currentMode().update(dt)
 
-    if (!EDITOR_STATE && level.finished) {
+    if (viewState === "game" && level.finished) {
       await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
       await loadNextLevel()
       lastTime = performance.now()
     }
 
-    level.render(EDITOR_STATE)
+    level.render(editing())
   }
 
   requestAnimationFrame(loop)
@@ -59,22 +61,22 @@ const createNewLevel = () => {
   editMode.setLevel(level)
 }
 
-setOnNewLevel(createNewLevel)
+setOnCloseLevel(() => showOverview())
 
 setOverviewHandlers({
   editLevel: async (id, ids) => {
     await loadFromOverview(id, ids)
-    setEditorState(true)
+    enterState("edit-level")
   },
 
   playLevel: async (id, ids) => {
     await loadFromOverview(id, ids)
-    setEditorState(false)
+    enterState("game")
   },
 
   createLevel: () => {
     createNewLevel()
-    setEditorState(true)
+    enterState("edit-level")
   },
 })
 
@@ -84,15 +86,21 @@ const loadFromOverview = async (id: number, ids: number[]) => {
   await loadLevel(id)
 }
 
-const setEditorState = (editing: boolean) => {
-  EDITOR_STATE = editing
-  setEditing(editing)
+const enterState = (state: ViewState) => {
+  viewState = state
+  setViewState(state)
   level.reset()
+}
+
+const showOverview = async () => {
+  enterState("edit-overview")
+  await openOverview()
 }
 
 const start = async () => {
   levelIds = await fetchLevelIds()
   await loadNextLevel()
+  enterState("game")
 
   dialogueLayer.title()
   requestAnimationFrame(loop)
@@ -134,13 +142,14 @@ document.addEventListener("keydown", async (e) => {
 
   if (isOverviewOpen()) {
     dismissOverview()
+    enterState("game")
     return
   }
 
-  if (EDITOR_STATE && confirm("Save your changes before leaving edit mode?")) {
+  if (editing() && confirm("Save your changes before leaving edit mode?")) {
     await saveCurrentLevel()
   }
 
   dialogueLayer.dismiss()
-  await openOverview()
+  await showOverview()
 })

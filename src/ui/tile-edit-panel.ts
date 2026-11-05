@@ -21,8 +21,7 @@ export class TileEditPanel {
   constructor() {
     this.container = document.createElement("div")
     this.container.id = "tile-edit-panel"
-    this.container.className = "edit-panel"
-    this.container.style.display = "none"
+    this.container.className = "panel panel--edit_level panel--hidden"
     document.body.appendChild(this.container)
   }
 
@@ -35,7 +34,7 @@ export class TileEditPanel {
     this.tool = tool
     this.tile = tile
 
-    this.container.style.display = tool ? "flex" : "none"
+    this.container.classList.toggle("panel--hidden", !tool)
     this.container.innerHTML = ""
     if (!tool || !tile) return
 

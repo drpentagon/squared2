@@ -38,7 +38,7 @@ body {
 }
 .canvas-panel {
   position: absolute;
-  display: none;
+  display: block;
   background: transparent;
   z-index: 3;
 }
@@ -48,12 +48,9 @@ body {
   height: 100%;
   image-rendering: pixelated;
 }
-body.editing .canvas-panel {
-  display: block;
-}
-.edit-panel {
+.panel {
   position: absolute;
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: calc(var(--unit) * 2);
   width: 112px;
@@ -63,8 +60,11 @@ body.editing .canvas-panel {
   border-radius: calc(var(--unit) * 6);
   z-index: 3;
 }
-body.editing .edit-panel {
-  display: flex;
+body:not(.game) .panel--game,
+body:not(.edit-overview) .panel--edit_overview,
+body:not(.edit-level) .panel--edit_level,
+.panel--hidden {
+  display: none;
 }
 .button {
   display: flex;
@@ -204,12 +204,12 @@ body.editing .edit-panel {
   padding: 0;
   font-size: 24px;
 }
-.edit-panel-button-label {
+.panel-button-label {
   position: relative;
   top: 2px;
   text-transform: uppercase;
 }
-.rotation-control .edit-panel-button-label {
+.rotation-control .panel-button-label {
   top: -2px;
 }
 #tools-panel {
