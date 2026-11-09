@@ -27,24 +27,34 @@ const loop = async (timestamp: number) => {
   const dt = (timestamp - lastTime) / 1000
   lastTime = timestamp
 
-  if (!dialogueLayer.isOpen && !isOverviewOpen()) {
-    currentMode().update(dt)
+  try {
+    if (!dialogueLayer.isOpen && !isOverviewOpen()) {
+      currentMode().update(dt)
 
-    if (viewState === "game" && level.finished) {
-      await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
-      await loadNextLevel()
-      lastTime = performance.now()
+      if (viewState === "game" && level.finished) {
+        await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
+        await loadNextLevel()
+        lastTime = performance.now()
+      }
+
+      level.render(editing())
     }
-
-    level.render(editing())
+  } finally {
+    requestAnimationFrame(loop)
   }
-
-  requestAnimationFrame(loop)
 }
 
 const loadNextLevel = async () => {
-  currentLevelIndex = currentLevelIndex === null ? 0 : currentLevelIndex + 1
-  await loadLevel(levelIds[currentLevelIndex])
+  const next = currentLevelIndex === null ? 0 : currentLevelIndex + 1
+  const id = levelIds[next]
+
+  if (id === undefined) {
+    await showOverview()
+    return
+  }
+
+  currentLevelIndex = next
+  await loadLevel(id)
 }
 
 const loadLevel = async (id: number) => {
@@ -89,7 +99,7 @@ const loadFromOverview = async (id: number, ids: number[]) => {
 const enterState = (state: ViewState) => {
   viewState = state
   setViewState(state)
-  level.reset()
+  level?.reset()
 }
 
 const showOverview = async () => {
