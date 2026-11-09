@@ -53,6 +53,11 @@ const handleClick = (click: OverviewClick) => {
     return
   }
 
+  if (click.kind === "level" && click.id === selectedId) {
+    openSelected(handlers.editLevel)
+    return
+  }
+
   select(click.kind === "level" ? click.id : null)
 }
 
