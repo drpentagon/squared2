@@ -1,13 +1,13 @@
 import { fetchLevel, fetchLevelIds } from "./api"
 import { gameMode } from "./game-mode"
-import { editMode, saveCurrentLevel, setOnCloseLevel } from "./edit-mode"
+import { editMode, setOnCloseLevel } from "./edit-mode"
 import { origin } from "./grid"
 import { emptyLevelData, Level } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Mode } from "./mode"
-import { dismissOverview, isOverviewOpen, openOverview, setOverviewHandlers } from "./overview-mode"
+import { isOverviewOpen, openOverview, setOverviewHandlers } from "./overview-mode"
 import { pixelToTile } from "./tiles/tile"
 import { setViewState, ViewState } from "./view-state"
 
@@ -103,6 +103,7 @@ const enterState = (state: ViewState) => {
 }
 
 const showOverview = async () => {
+  dialogueLayer.dismiss()
   enterState("edit-overview")
   await openOverview()
 }
@@ -125,6 +126,8 @@ window.addEventListener("focus", () => {
   lastTime = performance.now()
 })
 
+const OPEN_OVERVIEW_CLICKS = 3
+
 const VARIANT_BY_QUADRANT = [
   [0, 1],
   [3, 2],
@@ -132,7 +135,11 @@ const VARIANT_BY_QUADRANT = [
 
 document.addEventListener("click", (e) => {
   const local: Point = { x: e.clientX - origin.x, y: e.clientY - origin.y }
-  if (local.x < 0 || local.x >= GRID.SIZE || local.y < 0 || local.y >= GRID.SIZE) return
+
+  if (local.x < 0 || local.x >= GRID.SIZE || local.y < 0 || local.y >= GRID.SIZE) {
+    if (e.detail === OPEN_OVERVIEW_CLICKS && viewState === "game") showOverview()
+    return
+  }
 
   const tilePos = pixelToTile(local)
 
@@ -145,21 +152,4 @@ document.addEventListener("click", (e) => {
   const variant = VARIANT_BY_QUADRANT[row][col]
 
   currentMode().handleClick(tilePos, variant)
-})
-
-document.addEventListener("keydown", async (e) => {
-  if (e.key !== "e" || !level) return
-
-  if (isOverviewOpen()) {
-    dismissOverview()
-    enterState("game")
-    return
-  }
-
-  if (editing() && confirm("Save your changes before leaving edit mode?")) {
-    await saveCurrentLevel()
-  }
-
-  dialogueLayer.dismiss()
-  await showOverview()
 })

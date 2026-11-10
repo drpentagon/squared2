@@ -41,7 +41,7 @@ export const openOverview = async () => {
 
 export const isOverviewOpen = () => levelOverview.isOpen
 
-export const dismissOverview = () => {
+const dismissOverview = () => {
   select(null)
   levelOverview.close()
 }
