@@ -96,6 +96,16 @@ body:not(.edit-level) .panel--edit_level,
 .button--primary {
   background-color: #0a3d0c;
 }
+.button--toggle {
+  position: relative;
+  justify-content: flex-start;
+}
+.button--toggle .diode {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--unit) * 4);
+  transform: translate(50%, -50%);
+}
 .button-row {
   display: flex;
   justify-content: space-between;

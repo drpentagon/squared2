@@ -1,5 +1,7 @@
 import { DeleteButton } from "./elements/delete-button"
+import { DividerCommand } from "./elements/divider-command"
 import { EditCommand } from "./elements/edit-command"
+import { RotatesToggle } from "./elements/rotates-toggle"
 import { RotationControl } from "./elements/rotation-control"
 import { SpeedButton } from "./elements/speed-button"
 import { TileTool } from "./tile-tool"
@@ -9,6 +11,8 @@ export type EditCommandConstructor = new (tile: GridObject, onChange: () => void
 
 export const EditPanelCommand = {
   DELETE_BUTTON: DeleteButton,
+  DIVIDER: DividerCommand,
+  ROTATES_TOGGLE: RotatesToggle,
   ROTATION_CONTROL: RotationControl,
   SPEED_BUTTON: SpeedButton,
 } as const

@@ -12,7 +12,11 @@ export abstract class RotatingTileTool<T extends GridObject & Rotatable> extends
   protected abstract createTile(pos: Point, variant: number): T
 
   editPanelCommands(): EditCommandConstructor[] {
-    return [...super.editPanelCommands(), EditPanelCommand.ROTATION_CONTROL]
+    return [
+      ...super.editPanelCommands(),
+      EditPanelCommand.DIVIDER,
+      EditPanelCommand.ROTATION_CONTROL,
+    ]
   }
 
   private rotate = (tile: T) => {
