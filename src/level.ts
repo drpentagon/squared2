@@ -6,7 +6,8 @@ import { BackgroundGraphics } from "./layers/background-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
 import { SelectionGraphics } from "./layers/selection-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
-import { DIRECTIONS, TILE, tileTypes } from "./lib/constants"
+import { TimerGraphics } from "./layers/timer-graphics"
+import { DIRECTIONS, TILE, TIMER, tileTypes } from "./lib/constants"
 import { equals, Point } from "./lib/point"
 import { FragileRedirector } from "./tiles/fragile-redirector"
 import { Goal } from "./tiles/goal"
@@ -64,6 +65,7 @@ export class Level {
   selectionGraphics: SelectionGraphics
   staticGraphics: StaticGraphics
   dynamicGraphics: DynamicGraphics
+  timerGraphics: TimerGraphics
 
   constructor(id: number | null, data: LevelData) {
     this.id = id
@@ -78,6 +80,7 @@ export class Level {
     this.backgroundGraphics = new BackgroundGraphics()
     this.selectionGraphics = new SelectionGraphics()
     this.staticGraphics = new StaticGraphics(this.gameObjects.staticTiles)
+    this.timerGraphics = new TimerGraphics()
     this.reset()
     this.dynamicGraphics = new DynamicGraphics(
       this.gameObjects.dynamicTiles,
@@ -89,10 +92,14 @@ export class Level {
     loadGameObjects(this.gameObjects, this.data)
 
     this.markedTilePos = null
+    this.elapsedTime = 0
+    this.bounces = 0
+    this.redirectsPlaced = 0
 
     this.backgroundGraphics.clear()
     this.backgroundGraphics.draw()
     this.redrawStatic()
+    this.timerGraphics.clear()
   }
 
   update = (dt: number) => {
@@ -169,6 +176,12 @@ export class Level {
     this.dynamicGraphics.draw(editing)
   }
 
+  renderTimer = (visible: boolean) => {
+    this.timerGraphics.draw(visible ? this.remainingFraction() : 0)
+  }
+
+  remainingFraction = () => Math.max(0, 1 - this.elapsedTime / TIMER.DURATION)
+
   renderMiniature = (canvas: Canvas, pos: Point) => {
     this.gameObjects.renderMiniature(canvas, pos)
   }
@@ -178,6 +191,7 @@ export class Level {
     this.selectionGraphics.destroy()
     this.staticGraphics.destroy()
     this.dynamicGraphics.destroy()
+    this.timerGraphics.destroy()
   }
 
   serialize = (): LevelData => {

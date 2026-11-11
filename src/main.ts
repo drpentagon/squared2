@@ -7,7 +7,7 @@ import { DialogueLayer } from "./layers/dialogue-layer"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Mode } from "./mode"
-import { isOverviewOpen, openOverview, setOverviewHandlers } from "./overview-mode"
+import { openOverview, setOverviewHandlers } from "./overview-mode"
 import { pixelToTile } from "./tiles/tile"
 import { setViewState, ViewState } from "./view-state"
 
@@ -28,16 +28,18 @@ const loop = async (timestamp: number) => {
   lastTime = timestamp
 
   try {
-    if (!dialogueLayer.isOpen && !isOverviewOpen()) {
+    if (viewState !== "edit-overview" && !dialogueLayer.isOpen) {
       currentMode().update(dt)
 
       if (viewState === "game" && level.finished) {
+        level.renderTimer(false)
         await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
         await loadNextLevel()
         lastTime = performance.now()
       }
 
       level.render(editing())
+      level.renderTimer(viewState === "game")
     }
   } finally {
     requestAnimationFrame(loop)
