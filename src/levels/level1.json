@@ -1,5 +1,6 @@
 {
   "name": "LEVEL 2",
+  "duration": 60,
   "walls": [
     {
       "x": 5,

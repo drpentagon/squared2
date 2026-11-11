@@ -104,5 +104,6 @@
       "direction": "RIGHT",
       "velocity": 400
     }
-  ]
+  ],
+  "duration": 60
 }

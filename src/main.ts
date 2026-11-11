@@ -9,6 +9,7 @@ import { Point } from "./lib/point"
 import { Mode } from "./mode"
 import { openOverview, setOverviewHandlers } from "./overview-mode"
 import { pixelToTile } from "./tiles/tile"
+import { timer } from "./timer"
 import { setViewState, ViewState } from "./view-state"
 
 let levelIds: number[] = []
@@ -31,15 +32,19 @@ const loop = async (timestamp: number) => {
     if (viewState !== "edit-overview" && !dialogueLayer.isOpen) {
       currentMode().update(dt)
 
-      if (viewState === "game" && level.finished) {
-        level.renderTimer(false)
-        await dialogueLayer.levelClear(level.elapsedTime, level.bounces, level.redirectsPlaced, 0)
-        await loadNextLevel()
-        lastTime = performance.now()
+      if (viewState === "game") {
+        timer.update(dt)
+
+        if (level.finished) {
+          timer.draw(false)
+          await dialogueLayer.levelClear(timer.elapsed, level.bounces, level.redirectsPlaced, 0)
+          await loadNextLevel()
+          lastTime = performance.now()
+        }
       }
 
       level.render(editing())
-      level.renderTimer(viewState === "game")
+      timer.draw(viewState === "game")
     }
   } finally {
     requestAnimationFrame(loop)
@@ -102,6 +107,7 @@ const enterState = (state: ViewState) => {
   viewState = state
   setViewState(state)
   level?.reset()
+  timer.start(level?.data.duration ?? 0)
 }
 
 const showOverview = async () => {

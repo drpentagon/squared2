@@ -47,3 +47,19 @@ const chainExistingLevels = db.transaction(() => {
 })
 
 chainExistingLevels()
+
+const DEFAULT_DURATION = 60
+
+const addMissingDurations = db.transaction(() => {
+  const rows = db.prepare("SELECT id, data FROM levels").all() as { id: number; data: string }[]
+  const update = db.prepare("UPDATE levels SET data = ? WHERE id = ?")
+
+  for (const row of rows) {
+    const data = JSON.parse(row.data)
+    if (data.duration !== undefined) continue
+
+    update.run(JSON.stringify({ ...data, duration: DEFAULT_DURATION }), row.id)
+  }
+})
+
+addMissingDurations()

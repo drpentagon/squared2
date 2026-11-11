@@ -6,8 +6,7 @@ import { BackgroundGraphics } from "./layers/background-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
 import { SelectionGraphics } from "./layers/selection-graphics"
 import { StaticGraphics } from "./layers/static-graphics"
-import { TimerGraphics } from "./layers/timer-graphics"
-import { DIRECTIONS, TILE, TIMER, tileTypes } from "./lib/constants"
+import { DIRECTIONS, TILE, tileTypes } from "./lib/constants"
 import { equals, Point } from "./lib/point"
 import { FragileRedirector } from "./tiles/fragile-redirector"
 import { Goal } from "./tiles/goal"
@@ -20,8 +19,11 @@ export type RedirectorData = Point & { variant: number }
 export type GoalData = Point & { direction: number; rotates?: boolean }
 export type BallData = Point & { direction: string; velocity: number }
 
+export const DEFAULT_DURATION = 60
+
 export type LevelData = {
   name: string
+  duration: number
   walls: WallData[]
   wallRanges: WallRangeData[]
   fragileRedirects: RedirectorData[]
@@ -37,6 +39,7 @@ export const emptyLevelData = (): LevelData => {
 
   return {
     name: "",
+    duration: DEFAULT_DURATION,
     walls: [],
     wallRanges: [
       { from: { x: 0, y: 0 }, to: { x: max, y: 0 } },
@@ -57,7 +60,6 @@ export class Level {
   gameObjects: GameObjects
   finished: boolean
   bounces: number
-  elapsedTime: number
   redirectsPlaced: number
   markedTilePos: Point | null
 
@@ -65,7 +67,6 @@ export class Level {
   selectionGraphics: SelectionGraphics
   staticGraphics: StaticGraphics
   dynamicGraphics: DynamicGraphics
-  timerGraphics: TimerGraphics
 
   constructor(id: number | null, data: LevelData) {
     this.id = id
@@ -73,14 +74,12 @@ export class Level {
     this.gameObjects = new GameObjects()
     this.finished = false
     this.bounces = 0
-    this.elapsedTime = 0
     this.redirectsPlaced = 0
     this.markedTilePos = null
 
     this.backgroundGraphics = new BackgroundGraphics()
     this.selectionGraphics = new SelectionGraphics()
     this.staticGraphics = new StaticGraphics(this.gameObjects.staticTiles)
-    this.timerGraphics = new TimerGraphics()
     this.reset()
     this.dynamicGraphics = new DynamicGraphics(
       this.gameObjects.dynamicTiles,
@@ -92,19 +91,15 @@ export class Level {
     loadGameObjects(this.gameObjects, this.data)
 
     this.markedTilePos = null
-    this.elapsedTime = 0
     this.bounces = 0
     this.redirectsPlaced = 0
 
     this.backgroundGraphics.clear()
     this.backgroundGraphics.draw()
     this.redrawStatic()
-    this.timerGraphics.clear()
   }
 
   update = (dt: number) => {
-    this.elapsedTime += dt
-
     this.gameObjects.balls.forEach((ball) => {
       const directionBefore = ball.direction
       this.gameObjects.staticTiles.get(ball.tilePos)?.interact(ball)
@@ -176,12 +171,6 @@ export class Level {
     this.dynamicGraphics.draw(editing)
   }
 
-  renderTimer = (visible: boolean) => {
-    this.timerGraphics.draw(visible ? this.remainingFraction() : 0)
-  }
-
-  remainingFraction = () => Math.max(0, 1 - this.elapsedTime / TIMER.DURATION)
-
   renderMiniature = (canvas: Canvas, pos: Point) => {
     this.gameObjects.renderMiniature(canvas, pos)
   }
@@ -191,7 +180,6 @@ export class Level {
     this.selectionGraphics.destroy()
     this.staticGraphics.destroy()
     this.dynamicGraphics.destroy()
-    this.timerGraphics.destroy()
   }
 
   serialize = (): LevelData => {
@@ -242,6 +230,7 @@ export class Level {
 
     return {
       name: this.data.name,
+      duration: this.data.duration,
       walls,
       wallRanges,
       fragileRedirects,
