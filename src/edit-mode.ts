@@ -1,11 +1,16 @@
 import { createLevel, saveLevel } from "./api"
-import { Level } from "./level"
+import { DEFAULT_DURATION, Level } from "./level"
 import { equals, Point } from "./lib/point"
 import { Mode } from "./mode"
 import { tileEditPanel } from "./ui/tile-edit-panel"
 import { toolsPanel } from "./ui/tools-panel"
+import { RangeController } from "./ui/elements/range-controller"
 import { SaveIndicator } from "./ui/elements/save-indicator"
 import { TextInput } from "./ui/elements/textinput"
+
+const DURATION_STEP_COUNT = 7
+const MIN_DURATION = 15
+const DURATION_STEP = 15
 
 let currentLevel: Level
 let savedSnapshot = ""
@@ -19,9 +24,19 @@ const closeButton = document.getElementById("close-button") as HTMLButtonElement
 const levelNameInput = new TextInput("LEVEL NAME", 11, (value) => {
   currentLevel.data.name = value
 })
+const durationControl = new RangeController(
+  "TIME",
+  MIN_DURATION,
+  DURATION_STEP,
+  DURATION_STEP_COUNT,
+  DEFAULT_DURATION,
+  (duration) => {
+    currentLevel.data.duration = duration
+  },
+)
 const saveIndicator = new SaveIndicator()
 
-levelPanel.prepend(levelNameInput.el)
+levelPanel.prepend(levelNameInput.el, durationControl.el)
 saveButton.before(saveIndicator.el)
 
 saveButton.addEventListener("click", () => saveCurrentLevel())
@@ -32,6 +47,7 @@ export const editMode: Mode = {
   setLevel: (level) => {
     currentLevel = level
     levelNameInput.value = level.data.name
+    durationControl.value = level.data.duration
     savedSnapshot = snapshot()
   },
 

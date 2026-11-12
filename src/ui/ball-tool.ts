@@ -13,6 +13,10 @@ export class BallTool extends RotatingTileTool<Ball> {
   protected createTile = (pos: Point) => new Ball(pos, this.speed, directions.RIGHT)
 
   editPanelCommands(): EditCommandConstructor[] {
-    return [...super.editPanelCommands(), EditPanelCommand.SPEED_BUTTON]
+    return [
+      EditPanelCommand.DELETE_BUTTON,
+      EditPanelCommand.SPEED_BUTTON,
+      EditPanelCommand.ROTATION_CONTROL,
+    ]
   }
 }
