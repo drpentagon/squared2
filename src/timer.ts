@@ -10,6 +10,7 @@ const LIT_STYLE = new Style("#ffffff")
 class Timer extends GraphicsLayer {
   #duration = 0
   #remaining = 0
+  #onExpire: () => void = () => {}
 
   constructor() {
     super(1)
@@ -19,14 +20,18 @@ class Timer extends GraphicsLayer {
     return this.#duration - this.#remaining
   }
 
-  start = (duration: number) => {
+  start = (duration: number, onExpire: () => void) => {
     this.#duration = duration
     this.#remaining = duration
+    this.#onExpire = onExpire
     this.clear()
   }
 
   update = (dt: number) => {
+    if (this.#remaining === 0) return
+
     this.#remaining = Math.max(0, this.#remaining - dt)
+    if (this.#remaining === 0) this.#onExpire()
   }
 
   draw = (visible = false) => {

@@ -87,9 +87,9 @@ export class DialogueLayer extends GraphicsLayer {
     return this.show()
   }
 
-  gameOver = (): Promise<void> => {
+  lostSquare = (): Promise<void> => {
     this.draw()
-    writeHeadline(this.canvas, "Game over", 8, 22)
+    writeHeadline(this.canvas, "Lost square", 8, 15)
     return this.show()
   }
 

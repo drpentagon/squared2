@@ -87,6 +87,17 @@ const installLevel = ({ index, id, data }: LoadedLevel) => {
   level = new Level(id, data)
   gameMode.setLevel(level)
   editMode.setLevel(level)
+  timer.start(data.duration, onTimeExpired)
+}
+
+const onTimeExpired = async () => {
+  if (level.finished) return
+
+  timer.draw(false)
+  await dialogueLayer.lostSquare()
+  level.reset()
+  timer.start(level.data.duration, onTimeExpired)
+  lastTime = performance.now()
 }
 
 const loadLevel = async (id: number, index: number) =>
@@ -127,7 +138,7 @@ const enterState = (state: ViewState) => {
   viewState = state
   setViewState(state)
   level?.reset()
-  timer.start(level?.data.duration ?? 0)
+  timer.start(level?.data.duration ?? 0, onTimeExpired)
 }
 
 const showOverview = async () => {
