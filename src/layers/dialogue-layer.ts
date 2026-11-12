@@ -93,8 +93,6 @@ export class DialogueLayer extends GraphicsLayer {
     return this.show()
   }
 
-  levelIntroduction = () => this.show()
-
   draw = () => {
     this.canvas.drawSquare(origin, GRID.SIZE, BACKDROP_STYLE)
     drawBackgroundPattern(this.canvas)

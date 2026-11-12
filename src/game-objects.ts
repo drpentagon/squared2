@@ -47,12 +47,6 @@ export class GameObjects {
     this.dynamicTiles.delete(tilePos)
   }
 
-  clear = () => {
-    this.staticTiles.clear()
-    this.dynamicTiles.clear()
-    this.balls.splice(0, this.balls.length)
-  }
-
   renderMiniature = (canvas: Canvas, pos: Point) => {
     canvas.fillDots(pos, TILE.COUNT, TILE.COUNT, EMPTY_TILE)
 

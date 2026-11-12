@@ -141,12 +141,6 @@ export class Level {
     this.markedTilePos = tilePos
   }
 
-  clear = () => {
-    this.gameObjects.clear()
-
-    this.redrawStatic()
-  }
-
   redrawStatic = () => {
     this.staticGraphics.clear()
     this.staticGraphics.draw()

@@ -60,12 +60,6 @@ export const sanitizeForFont = (text: string): string =>
     .filter((ch) => SUPPORTED_CHARACTERS.has(ch))
     .join("")
 
-export const stringLength = (text: string): number =>
-  text
-    .toUpperCase()
-    .split("")
-    .filter((ch) => letters[ch] !== undefined).length
-
 export const write = (canvas: Canvas, text: string, x: number, y: number, base: Point = origin) =>
   writeText(canvas, text, x, y, DOT.CC * 4, DOT.SIZE, DOT.SPACING, base)
 
