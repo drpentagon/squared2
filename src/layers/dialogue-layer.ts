@@ -66,17 +66,24 @@ export class DialogueLayer extends GraphicsLayer {
     bounces: number,
     redirects: number,
     score: number,
+    nextLevelName: string | null,
   ): Promise<void> => {
     this.draw()
-    writeHeadline(this.canvas, "Level Clear", 8, 22)
-    write(this.canvas, "time", 8, 36)
-    write(this.canvas, `${Math.round(elapsedTime)}`, 50, 36)
-    write(this.canvas, "Bounces", 8, 43)
-    write(this.canvas, `${bounces}`, 50, 43)
-    write(this.canvas, "Redirects", 8, 50)
-    write(this.canvas, `${redirects}`, 50, 50)
-    write(this.canvas, "score", 8, 57)
-    write(this.canvas, `${score}`, 50, 57)
+    writeHeadline(this.canvas, "Level Clear", 8, 15)
+    write(this.canvas, "time", 8, 29)
+    write(this.canvas, `${Math.round(elapsedTime)}`, 50, 29)
+    write(this.canvas, "Bounces", 8, 36)
+    write(this.canvas, `${bounces}`, 50, 36)
+    write(this.canvas, "Redirects", 8, 43)
+    write(this.canvas, `${redirects}`, 50, 43)
+    write(this.canvas, "score", 8, 50)
+    write(this.canvas, `${score}`, 50, 50)
+
+    if (nextLevelName) {
+      write(this.canvas, "next level:", 8, 64)
+      writeHeadline(this.canvas, nextLevelName, 8, 71)
+    }
+
     return this.show()
   }
 

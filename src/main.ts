@@ -2,7 +2,7 @@ import { fetchLevel, fetchLevelIds } from "./api"
 import { gameMode } from "./game-mode"
 import { editMode, setOnCloseLevel } from "./edit-mode"
 import { origin } from "./grid"
-import { emptyLevelData, Level } from "./level"
+import { emptyLevelData, Level, LevelData } from "./level"
 import { DialogueLayer } from "./layers/dialogue-layer"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
@@ -17,6 +17,8 @@ let currentLevelIndex: number | null = null
 let level: Level
 let lastTime = 0
 let viewState: ViewState = "game"
+
+type LoadedLevel = { index: number; id: number; data: LevelData }
 
 const editing = () => viewState === "edit-level"
 
@@ -37,8 +39,16 @@ const loop = async (timestamp: number) => {
 
         if (level.finished) {
           timer.draw(false)
-          await dialogueLayer.levelClear(timer.elapsed, level.bounces, level.redirectsPlaced, 0)
-          await loadNextLevel()
+          const next = await fetchNextLevel()
+          await dialogueLayer.levelClear(
+            timer.elapsed,
+            level.bounces,
+            level.redirectsPlaced,
+            0,
+            next?.data.name ?? null,
+          )
+          if (next) installLevel(next)
+          else await showOverview()
           lastTime = performance.now()
         }
       }
@@ -52,24 +62,35 @@ const loop = async (timestamp: number) => {
 }
 
 const loadNextLevel = async () => {
-  const next = currentLevelIndex === null ? 0 : currentLevelIndex + 1
-  const id = levelIds[next]
+  const next = await fetchNextLevel()
 
-  if (id === undefined) {
+  if (!next) {
     await showOverview()
     return
   }
 
-  currentLevelIndex = next
-  await loadLevel(id)
+  installLevel(next)
 }
 
-const loadLevel = async (id: number) => {
+const fetchNextLevel = async (): Promise<LoadedLevel | null> => {
+  const index = currentLevelIndex === null ? 0 : currentLevelIndex + 1
+  const id = levelIds[index]
+
+  if (id === undefined) return null
+
+  return { index, id, data: await fetchLevel(id) }
+}
+
+const installLevel = ({ index, id, data }: LoadedLevel) => {
+  currentLevelIndex = index
   level?.destroy()
-  level = new Level(id, await fetchLevel(id))
+  level = new Level(id, data)
   gameMode.setLevel(level)
   editMode.setLevel(level)
 }
+
+const loadLevel = async (id: number, index: number) =>
+  installLevel({ index, id, data: await fetchLevel(id) })
 
 const createNewLevel = () => {
   level?.destroy()
@@ -99,8 +120,7 @@ setOverviewHandlers({
 
 const loadFromOverview = async (id: number, ids: number[]) => {
   levelIds = ids
-  currentLevelIndex = ids.indexOf(id)
-  await loadLevel(id)
+  await loadLevel(id, ids.indexOf(id))
 }
 
 const enterState = (state: ViewState) => {
