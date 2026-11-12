@@ -11,10 +11,6 @@
       <button id="save-button" class="button button--primary">
         <p class="panel-button-label">Save</p>
       </button>
-      <button id="clear-level-button" class="button button--delete">
-        <p class="panel-button-label">Clear level</p>
-      </button>
-      <div class="divider"></div>
       <button id="close-button" class="button">
         <p class="panel-button-label">Close</p>
       </button>
@@ -27,6 +23,17 @@
     <template id="template-divider">
       <div class="divider"></div>
     </template>
+    <template id="template-icon">
+      <svg
+        class="icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></svg>
+    </template>
     <template id="template-diode">
       <span class="diode"></span>
     </template>
@@ -36,11 +43,11 @@
     <template id="template-plus-minus-button">
       <div class="plus-minus-button">
         <button class="plus-minus-button-decrease">
-          <p class="plus-minus-symbol plus-minus-symbol--decrease">-</p>
+          <p class="plus-minus-symbol plus-minus-symbol--decrease"></p>
         </button>
         <p class="plus-minus-button-label"></p>
         <button class="plus-minus-button-increase">
-          <p class="plus-minus-symbol plus-minus-symbol--increase">+</p>
+          <p class="plus-minus-symbol plus-minus-symbol--increase"></p>
         </button>
       </div>
     </template>

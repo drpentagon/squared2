@@ -18,7 +18,6 @@ let onCloseLevel: () => void = () => {}
 
 const levelPanel = document.getElementById("level-panel")!
 const saveButton = document.getElementById("save-button") as HTMLButtonElement
-const clearLevelButton = document.getElementById("clear-level-button") as HTMLButtonElement
 const closeButton = document.getElementById("close-button") as HTMLButtonElement
 
 const levelNameInput = new TextInput("LEVEL NAME", 11, (value) => {
@@ -40,7 +39,6 @@ levelPanel.prepend(levelNameInput.el, durationControl.el)
 saveButton.before(saveIndicator.el)
 
 saveButton.addEventListener("click", () => saveCurrentLevel())
-clearLevelButton.addEventListener("click", () => clearCurrentLevel())
 closeButton.addEventListener("click", () => closeCurrentLevel())
 
 export const editMode: Mode = {
@@ -107,14 +105,6 @@ export const saveCurrentLevel = async () => {
 
   savedSnapshot = JSON.stringify(data)
   saveIndicator.play()
-}
-
-const clearCurrentLevel = () => {
-  if (!confirm("Are you sure you want to clear the level?")) return
-
-  currentLevel.clear()
-  currentLevel.data.name = ""
-  levelNameInput.value = ""
 }
 
 const closeCurrentLevel = () => {

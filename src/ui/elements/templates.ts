@@ -1,4 +1,4 @@
-const cloneTemplate = <T extends HTMLElement>(id: string): T => {
+const cloneTemplate = <T extends Element>(id: string): T => {
   const template = document.getElementById(id)
   if (!(template instanceof HTMLTemplateElement)) {
     throw new Error(`Missing <template id="${id}">`)
@@ -8,6 +8,7 @@ const cloneTemplate = <T extends HTMLElement>(id: string): T => {
 
 export const cloneButton = (): HTMLButtonElement => cloneTemplate("template-button")
 export const cloneDivider = (): HTMLElement => cloneTemplate("template-divider")
+export const cloneIcon = (): SVGElement => cloneTemplate("template-icon")
 export const cloneDiode = (): HTMLElement => cloneTemplate("template-diode")
 export const clonePlusMinusButton = (): HTMLElement => cloneTemplate("template-plus-minus-button")
 export const cloneTextInput = (): HTMLInputElement => cloneTemplate("template-textinput")

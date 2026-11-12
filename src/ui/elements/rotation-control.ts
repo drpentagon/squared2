@@ -1,5 +1,5 @@
-import { Button } from "./button"
 import { EditCommand } from "./edit-command"
+import { IconButton } from "./icon-button"
 import { GridObject } from "../../grid-object"
 import { NEXT_DIRECTION, PREVIOUS_DIRECTION } from "../../lib/constants"
 
@@ -18,8 +18,12 @@ export class RotationControl extends EditCommand {
     this.el = document.createElement("div")
     this.el.className = "button-row rotation-control"
 
-    const ccwButton = new Button("↺", () => this.rotate(PREVIOUS_DIRECTION), "button--small")
-    const cwButton = new Button("↻", () => this.rotate(NEXT_DIRECTION), "button--small")
+    const ccwButton = new IconButton(
+      "rotateCcw",
+      () => this.rotate(PREVIOUS_DIRECTION),
+      "button--small",
+    )
+    const cwButton = new IconButton("rotateCw", () => this.rotate(NEXT_DIRECTION), "button--small")
     this.el.append(ccwButton.el, cwButton.el)
   }
 

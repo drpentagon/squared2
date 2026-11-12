@@ -137,6 +137,10 @@ body:not(.edit-level) .panel--edit_level,
   align-items: center;
   padding: 0 calc(var(--unit) * 2);
 }
+.icon {
+  width: 16px;
+  height: 16px;
+}
 .diode {
   width: 4px;
   height: 4px;
@@ -189,11 +193,8 @@ body:not(.edit-level) .panel--edit_level,
   justify-content: flex-end;
 }
 .plus-minus-symbol {
-  font-size: 28px;
-  line-height: 1;
+  display: flex;
   padding: 2px;
-  position: relative;
-  top: 2px;
 }
 .plus-minus-symbol--decrease {
   padding-left: 10px;
@@ -212,15 +213,11 @@ body:not(.edit-level) .panel--edit_level,
 .button--small {
   width: 32px;
   padding: 0;
-  font-size: 24px;
 }
 .panel-button-label {
   position: relative;
   top: 2px;
   text-transform: uppercase;
-}
-.rotation-control .panel-button-label {
-  top: -2px;
 }
 #tools-panel {
   left: calc(

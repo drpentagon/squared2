@@ -1,5 +1,6 @@
 import { Button } from "./elements/button"
 import { Divider } from "./elements/divider"
+import { IconButton } from "./elements/icon-button"
 
 export type LevelOverviewActions = {
   edit: () => void
@@ -19,8 +20,8 @@ export class LevelOverviewPanel {
     this.container.id = "level-overview-panel"
     this.container.className = "panel panel--edit_overview panel--hidden"
 
-    const back = new Button("←", actions.moveBack, "button--small")
-    const forward = new Button("→", actions.moveForward, "button--small")
+    const back = new IconButton("chevronLeft", actions.moveBack, "button--small")
+    const forward = new IconButton("chevronRight", actions.moveForward, "button--small")
     this.backButton = back.el
     this.forwardButton = forward.el
 
@@ -32,7 +33,7 @@ export class LevelOverviewPanel {
       new Button("Edit", actions.edit).el,
       moveRow,
       new Divider().el,
-      new Button("Play", actions.play, "button--primary").el,
+      new IconButton("play", actions.play, "button--primary").el,
       new Button("Delete", actions.remove, "button--delete").el,
     )
     document.body.appendChild(this.container)
