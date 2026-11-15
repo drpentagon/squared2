@@ -3,7 +3,11 @@ import { Point } from "./lib/point"
 
 export const origin: Point = { x: 0, y: 0 }
 
-const updateOrigin = () => {
+export const viewport = { landscape: false }
+
+const updateLayout = () => {
+  viewport.landscape = window.innerWidth > window.innerHeight
+
   origin.x = Math.floor((window.innerWidth - GRID.SIZE) / 2)
   origin.y = Math.floor((window.innerHeight - GRID.SIZE) / 2)
 
@@ -16,5 +20,5 @@ const updateOrigin = () => {
   root.setProperty("--dot-cc", String(DOT.CC))
 }
 
-updateOrigin()
-window.addEventListener("resize", updateOrigin)
+updateLayout()
+window.addEventListener("resize", updateLayout)

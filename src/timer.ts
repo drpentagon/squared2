@@ -1,13 +1,15 @@
+import { viewport } from "./grid"
 import { GraphicsLayer } from "./layers/graphics-layer"
 import { DOT } from "./lib/constants"
-import { dotAt, drawDotFrame } from "./lib/dot-frame"
+import { DotRect, drawDotFrame, fillDotRect } from "./lib/dot-frame"
 import { Style } from "./lib/style"
 
-const ROWS = 3
+const THICKNESS = 3
 const TOP_ROW = DOT.GRID_SIZE + 1
-const INNER_COLS = DOT.GRID_SIZE - 2
+const LEFT_COL = DOT.GRID_SIZE + 1
+const INNER_LENGTH = DOT.GRID_SIZE - 2
 
-const LIT_STYLE = new Style("#ffffff")
+const LIT_STYLE = new Style("rgba(255, 255, 255, 0.5)")
 
 class Timer extends GraphicsLayer {
   #duration = 0
@@ -15,7 +17,7 @@ class Timer extends GraphicsLayer {
   #onExpire: () => void = () => {}
 
   constructor() {
-    super(1)
+    super(1, "timer")
   }
 
   get elapsed() {
@@ -38,12 +40,24 @@ class Timer extends GraphicsLayer {
 
   draw = () => {
     this.canvas.clear()
-    drawDotFrame(this.canvas, 0, TOP_ROW, DOT.GRID_SIZE, ROWS)
+    drawDotFrame(this.canvas, this.#frame())
+
     if (this.#remaining <= 0) return
 
-    const lit = Math.ceil((this.#remaining / this.#duration) * INNER_COLS)
-    this.canvas.fillDots(dotAt(1, TOP_ROW + 1), lit, 1, LIT_STYLE)
+    fillDotRect(this.canvas, this.#bar(this.#lit()), LIT_STYLE)
   }
+
+  #frame = (): DotRect =>
+    viewport.landscape
+      ? { col: LEFT_COL, row: 0, cols: THICKNESS, rows: DOT.GRID_SIZE }
+      : { col: 0, row: TOP_ROW, cols: DOT.GRID_SIZE, rows: THICKNESS }
+
+  #bar = (lit: number): DotRect =>
+    viewport.landscape
+      ? { col: LEFT_COL + 1, row: DOT.GRID_SIZE - 1 - lit, cols: 1, rows: lit }
+      : { col: 1, row: TOP_ROW + 1, cols: lit, rows: 1 }
+
+  #lit = () => Math.ceil((this.#remaining / this.#duration) * INNER_LENGTH)
 }
 
 export const timer = new Timer()

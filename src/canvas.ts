@@ -6,9 +6,9 @@ export class Canvas {
   el: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
 
-  constructor(layerLevel: number, container: HTMLElement = document.body) {
+  constructor(layerLevel: number, container: HTMLElement = document.body, modifier = "") {
     this.el = document.createElement("canvas")
-    this.el.className = "canvas-layer"
+    this.el.className = modifier ? `canvas-layer canvas-layer--${modifier}` : "canvas-layer"
     this.el.style.zIndex = String(layerLevel)
     container.appendChild(this.el)
     this.ctx = this.el.getContext("2d")!

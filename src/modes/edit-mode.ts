@@ -3,8 +3,6 @@ import { gameStates } from "../game-state"
 import { DEFAULT_DURATION } from "../level"
 import { levelSequence } from "../level-sequence"
 import { equals, Point } from "../lib/point"
-import { statusPanel } from "../status-panel"
-import { timer } from "../timer"
 import { Mode, Navigate } from "./mode"
 import { tileEditPanel } from "../ui/tile-edit-panel"
 import { toolsPanel } from "../ui/tools-panel"
@@ -53,9 +51,6 @@ class EditMode implements Mode {
     levelNameInput.value = level.data.name
     durationControl.value = level.data.duration
     this.#savedSnapshot = this.#snapshot()
-
-    timer.clear()
-    statusPanel.clear()
   }
 
   update = () => {

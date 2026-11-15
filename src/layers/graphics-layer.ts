@@ -3,8 +3,8 @@ import { Canvas } from "../canvas"
 export class GraphicsLayer {
   protected canvas: Canvas
 
-  constructor(layerLevel: number) {
-    this.canvas = new Canvas(layerLevel)
+  constructor(layerLevel: number, modifier?: string) {
+    this.canvas = new Canvas(layerLevel, document.body, modifier)
   }
   update = (_dt: number) => {}
   draw = () => {}

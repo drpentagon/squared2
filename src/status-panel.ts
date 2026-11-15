@@ -1,34 +1,63 @@
+import { viewport } from "./grid"
 import { GraphicsLayer } from "./layers/graphics-layer"
 import { BACKGROUND_DOT_STYLE } from "./lib/background-pattern"
 import { DOT } from "./lib/constants"
-import { dotAt, drawDotFrame } from "./lib/dot-frame"
+import { DotRect, drawDotFrame, fillDotRect } from "./lib/dot-frame"
 import { Style } from "./lib/style"
 import { write } from "./lib/text"
 
-const ROWS = 3
-const TOP_ROW = -(ROWS + 1)
+const THICKNESS = 3
+const TOP_ROW = -(THICKNESS + 1)
+const LEFT_COL = -(THICKNESS + 1)
 
-const RECT_COUNT = 3
-const RECT_COLS = 12
-const RECT_GAP = 1
-const RECTS_LEFT = DOT.GRID_SIZE - (RECT_COUNT * RECT_COLS + (RECT_COUNT - 1) * RECT_GAP)
+const TITLE = "squared"
+const LETTER_STEP = 4
 
-const TEXT_STYLE = new Style("#ffffff")
+const METER_COUNT = 3
+const METER_LENGTH = 12
+const METER_GAP = 1
+const METERS_OFFSET = DOT.GRID_SIZE - (METER_COUNT * METER_LENGTH + (METER_COUNT - 1) * METER_GAP)
+
+const TEXT_STYLE = new Style("rgba(255, 255, 255, 0.5)")
 
 class StatusPanel extends GraphicsLayer {
   constructor() {
-    super(1)
+    super(1, "status")
   }
 
   draw = () => {
     this.canvas.clear()
-    this.canvas.fillDots(dotAt(0, TOP_ROW), DOT.GRID_SIZE, ROWS, BACKGROUND_DOT_STYLE)
+    fillDotRect(this.canvas, this.#strip(), BACKGROUND_DOT_STYLE)
 
-    write(this.canvas, "squared", 0, TOP_ROW, TEXT_STYLE)
+    this.#writeTitle()
 
-    for (let i = 0; i < RECT_COUNT; i++) {
-      drawDotFrame(this.canvas, RECTS_LEFT + i * (RECT_COLS + RECT_GAP), TOP_ROW, RECT_COLS, ROWS)
+    for (let i = 0; i < METER_COUNT; i++) {
+      drawDotFrame(this.canvas, this.#meter(i))
     }
+  }
+
+  #strip = (): DotRect =>
+    viewport.landscape
+      ? { col: LEFT_COL, row: 0, cols: THICKNESS, rows: DOT.GRID_SIZE }
+      : { col: 0, row: TOP_ROW, cols: DOT.GRID_SIZE, rows: THICKNESS }
+
+  #meter = (index: number): DotRect => {
+    const offset = METERS_OFFSET + index * (METER_LENGTH + METER_GAP)
+
+    return viewport.landscape
+      ? { col: LEFT_COL, row: offset, cols: THICKNESS, rows: METER_LENGTH }
+      : { col: offset, row: TOP_ROW, cols: METER_LENGTH, rows: THICKNESS }
+  }
+
+  #writeTitle = () => {
+    if (!viewport.landscape) {
+      write(this.canvas, TITLE, 0, TOP_ROW, TEXT_STYLE)
+      return
+    }
+
+    TITLE.split("").forEach((letter, i) => {
+      write(this.canvas, letter, LEFT_COL, i * LETTER_STEP, TEXT_STYLE)
+    })
   }
 }
 
