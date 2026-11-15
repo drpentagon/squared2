@@ -1,190 +1,29 @@
-import { fetchLevel, fetchLevelIds } from "./api"
-import { gameMode } from "./game-mode"
-import { editMode, setOnCloseLevel } from "./edit-mode"
-import { origin } from "./grid"
-import { emptyLevelData, Level, LevelData } from "./level"
-import { DialogueLayer } from "./layers/dialogue-layer"
-import { DOT, GRID, TILE } from "./lib/constants"
-import { Point } from "./lib/point"
-import { Mode } from "./mode"
-import { openOverview, setOverviewHandlers } from "./overview-mode"
-import { statusPanel } from "./status-panel"
-import { pixelToTile } from "./tiles/tile"
-import { timer } from "./timer"
-import { gameState, gameStates, StateName } from "./game-state"
+import { gameStates } from "./game-state"
+import { listenForClicks } from "./input"
+import { dialogueLayer } from "./layers/dialogue-layer"
+import { levelSequence } from "./level-sequence"
+import { startLoop } from "./loop"
+import { editMode } from "./modes/edit-mode"
+import { gameMode } from "./modes/game-mode"
+import { enterMode } from "./modes/modes"
+import { overviewMode } from "./modes/overview-mode"
 
-let levelIds: number[] = []
-let currentLevelIndex: number | null = null
-let level: Level
-let lastTime = 0
-
-type LoadedLevel = { index: number; id: number; data: LevelData }
-
-const currentMode = (): Mode => (gameState.editing() ? editMode : gameMode)
-
-const dialogueLayer = new DialogueLayer()
-
-const loop = async (timestamp: number) => {
-  const dt = (timestamp - lastTime) / 1000
-  lastTime = timestamp
-
-  try {
-    if (gameState.running()) {
-      currentMode().update(dt)
-
-      if (gameState.playing()) {
-        timer.update(dt)
-
-        if (level.finished) {
-          const next = await fetchNextLevel()
-          await dialogueLayer.levelClear(
-            timer.elapsed,
-            level.bounces,
-            level.redirectsPlaced,
-            0,
-            next?.data.name ?? null,
-          )
-          if (next) installLevel(next)
-          else await showOverview()
-          lastTime = performance.now()
-        }
-      }
-
-      level.render()
-      timer.draw()
-      statusPanel.draw()
-    }
-  } finally {
-    requestAnimationFrame(loop)
-  }
-}
-
-const loadNextLevel = async () => {
-  const next = await fetchNextLevel()
-
-  if (!next) {
-    await showOverview()
-    return
-  }
-
-  installLevel(next)
-}
-
-const fetchNextLevel = async (): Promise<LoadedLevel | null> => {
-  const index = currentLevelIndex === null ? 0 : currentLevelIndex + 1
-  const id = levelIds[index]
-
-  if (id === undefined) return null
-
-  return { index, id, data: await fetchLevel(id) }
-}
-
-const installLevel = ({ index, id, data }: LoadedLevel) => {
-  currentLevelIndex = index
-  level?.destroy()
-  level = new Level(id, data)
-  gameMode.setLevel(level)
-  editMode.setLevel(level)
-  timer.start(data.duration, onTimeExpired)
-}
-
-const onTimeExpired = async () => {
-  if (level.finished) return
-
-  await dialogueLayer.lostSquare()
-  level.reset()
-  timer.start(level.data.duration, onTimeExpired)
-  lastTime = performance.now()
-}
-
-const loadLevel = async (id: number, index: number) =>
-  installLevel({ index, id, data: await fetchLevel(id) })
-
-const createNewLevel = () => {
-  level?.destroy()
-  level = new Level(null, emptyLevelData())
-  gameMode.setLevel(level)
-  editMode.setLevel(level)
-}
-
-setOnCloseLevel(() => showOverview())
-
-setOverviewHandlers({
-  editLevel: async (id, ids) => {
-    await loadFromOverview(id, ids)
-    enterState(gameStates.EDIT_LEVEL)
-  },
-
-  playLevel: async (id, ids) => {
-    await loadFromOverview(id, ids)
-    enterState(gameStates.GAME)
-  },
-
-  createLevel: () => {
-    createNewLevel()
-    enterState(gameStates.EDIT_LEVEL)
-  },
-})
-
-const loadFromOverview = async (id: number, ids: number[]) => {
-  levelIds = ids
-  await loadLevel(id, ids.indexOf(id))
-}
-
-const enterState = (state: StateName) => {
-  gameState.set(state)
-  level?.reset()
-  timer.start(level?.data.duration ?? 0, onTimeExpired)
-}
-
-const showOverview = async () => {
-  dialogueLayer.dismiss()
-  enterState(gameStates.EDIT_OVERVIEW)
-  await openOverview()
-}
+gameMode.setNavigate(enterMode)
+editMode.setNavigate(enterMode)
+overviewMode.setNavigate(enterMode)
 
 const start = async () => {
-  levelIds = await fetchLevelIds()
-  await loadNextLevel()
-  enterState(gameStates.GAME)
+  try {
+    const loaded = await levelSequence.loadFirst()
+    await enterMode(loaded ? gameStates.GAME : gameStates.EDIT_OVERVIEW)
+    dialogueLayer.title()
+  } catch (error) {
+    console.error(error)
+    dialogueLayer.noConnection()
+  }
 
-  dialogueLayer.title()
-  requestAnimationFrame(loop)
+  listenForClicks()
+  startLoop()
 }
 
 start()
-
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) lastTime = performance.now()
-})
-window.addEventListener("focus", () => {
-  lastTime = performance.now()
-})
-
-const OPEN_OVERVIEW_CLICKS = 3
-
-const VARIANT_BY_QUADRANT = [
-  [0, 1],
-  [3, 2],
-] as const
-
-document.addEventListener("click", (e) => {
-  const local: Point = { x: e.clientX - origin.x, y: e.clientY - origin.y }
-
-  if (local.x < 0 || local.x >= GRID.SIZE || local.y < 0 || local.y >= GRID.SIZE) {
-    if (e.detail === OPEN_OVERVIEW_CLICKS && gameState.playing()) showOverview()
-    return
-  }
-
-  const tilePos = pixelToTile(local)
-
-  const tileOrigin: Point = {
-    x: DOT.CC + tilePos.x * TILE.CC,
-    y: DOT.CC + tilePos.y * TILE.CC,
-  }
-  const col = local.x - tileOrigin.x >= TILE.SIZE / 2 ? 1 : 0
-  const row = local.y - tileOrigin.y >= TILE.SIZE / 2 ? 1 : 0
-  const variant = VARIANT_BY_QUADRANT[row][col]
-
-  currentMode().handleClick(tilePos, variant)
-})

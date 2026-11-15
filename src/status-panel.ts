@@ -1,5 +1,4 @@
 import { GraphicsLayer } from "./layers/graphics-layer"
-import { gameState } from "./game-state"
 import { BACKGROUND_DOT_STYLE } from "./lib/background-pattern"
 import { DOT } from "./lib/constants"
 import { dotAt, drawDotFrame } from "./lib/dot-frame"
@@ -23,8 +22,6 @@ class StatusPanel extends GraphicsLayer {
 
   draw = () => {
     this.canvas.clear()
-    if (!gameState.playing()) return
-
     this.canvas.fillDots(dotAt(0, TOP_ROW), DOT.GRID_SIZE, ROWS, BACKGROUND_DOT_STYLE)
 
     write(this.canvas, "squared", 0, TOP_ROW, TEXT_STYLE)

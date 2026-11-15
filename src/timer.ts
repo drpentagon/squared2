@@ -1,5 +1,4 @@
 import { GraphicsLayer } from "./layers/graphics-layer"
-import { gameState } from "./game-state"
 import { DOT } from "./lib/constants"
 import { dotAt, drawDotFrame } from "./lib/dot-frame"
 import { Style } from "./lib/style"
@@ -39,8 +38,6 @@ class Timer extends GraphicsLayer {
 
   draw = () => {
     this.canvas.clear()
-    if (!gameState.playing()) return
-
     drawDotFrame(this.canvas, 0, TOP_ROW, DOT.GRID_SIZE, ROWS)
     if (this.#remaining <= 0) return
 

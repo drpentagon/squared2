@@ -9,7 +9,7 @@ import { write, writeHeadline, writeHuge } from "../lib/text"
 const BACKDROP_STYLE = new Style("#051e06")
 const TEXT_STYLE = new Style("#ffffff")
 
-export class DialogueLayer extends GraphicsLayer {
+class DialogueLayer extends GraphicsLayer {
   private onClose: (() => void) | null = null
   private previousState: StateName = gameStates.GAME
 
@@ -23,8 +23,7 @@ export class DialogueLayer extends GraphicsLayer {
   update = (_dt: number) => {}
 
   show = (): Promise<void> => {
-    this.previousState = gameState.current
-    gameState.set(gameStates.DIALOGUE)
+    this.enterDialogue()
     this.canvas.el.style.pointerEvents = "auto"
     return new Promise((resolve) => {
       this.onClose = resolve
@@ -43,6 +42,11 @@ export class DialogueLayer extends GraphicsLayer {
     this.hide()
     this.onClose?.()
     this.onClose = null
+  }
+
+  private enterDialogue = () => {
+    this.previousState = gameState.current
+    gameState.set(gameStates.DIALOGUE)
   }
 
   private handleClick = (e: MouseEvent) => {
@@ -85,6 +89,14 @@ export class DialogueLayer extends GraphicsLayer {
     return this.show()
   }
 
+  noConnection = () => {
+    this.draw()
+    write(this.canvas, "no connection", 8, 15)
+    write(this.canvas, "start the server", 8, 22)
+    write(this.canvas, "and reload", 8, 29)
+    this.enterDialogue()
+  }
+
   lostSquare = (): Promise<void> => {
     this.draw()
     writeHeadline(this.canvas, "Lost square", 8, 15)
@@ -96,3 +108,5 @@ export class DialogueLayer extends GraphicsLayer {
     drawBackgroundPattern(this.canvas)
   }
 }
+
+export const dialogueLayer = new DialogueLayer()

@@ -22,8 +22,6 @@ class GameState {
     document.body.classList.add(state)
   }
 
-  running = () => this.playing() || this.editing()
-
   playing = () => this.#current === gameStates.GAME
 
   editing = () => this.#current === gameStates.EDIT_LEVEL
