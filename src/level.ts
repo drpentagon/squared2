@@ -1,6 +1,7 @@
 import { Ball } from "./ball"
 import { Canvas } from "./canvas"
 import { GameObjects } from "./game-objects"
+import { gameState } from "./game-state"
 import { GridObject } from "./grid-object"
 import { BackgroundGraphics } from "./layers/background-graphics"
 import { DynamicGraphics } from "./layers/dynamic-graphics"
@@ -160,9 +161,9 @@ export class Level {
     this.redirectsPlaced++
   }
 
-  render = (editing = false) => {
-    this.selectionGraphics.draw(editing ? this.markedTilePos : null)
-    this.dynamicGraphics.draw(editing)
+  render = () => {
+    this.selectionGraphics.draw(gameState.editing() ? this.markedTilePos : null)
+    this.dynamicGraphics.draw()
   }
 
   renderMiniature = (canvas: Canvas, pos: Point) => {

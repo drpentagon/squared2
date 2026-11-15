@@ -10,6 +10,6 @@ export abstract class GridObject {
   ) {}
 
   abstract readonly type: string
-  abstract draw(canvas: Canvas, pos?: Point, editing?: boolean): void
+  abstract draw(canvas: Canvas, pos?: Point): void
   abstract renderMiniature(canvas: Canvas, pos: Point): void
 }

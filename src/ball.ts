@@ -1,4 +1,5 @@
 import { Canvas } from "./canvas"
+import { gameState } from "./game-state"
 import { origin } from "./grid"
 import { GridObject } from "./grid-object"
 import { BALL, DOT, GRID, OPPOSITE_DIRECTION, TILE, directions, tileTypes } from "./lib/constants"
@@ -84,14 +85,10 @@ export class Ball extends GridObject {
     this.direction = OPPOSITE_DIRECTION[this.direction]
   }
 
-  draw(
-    canvas: Canvas,
-    pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y },
-    editing = false,
-  ) {
+  draw(canvas: Canvas, pos: Point = { x: origin.x + this.pos.x, y: origin.y + this.pos.y }) {
     canvas.drawSquare({ x: pos.x - BALL.RADIUS, y: pos.y - BALL.RADIUS }, BALL.SIZE, BALL_STYLE)
 
-    if (editing) {
+    if (gameState.editing()) {
       canvas.drawPolygon(
         pos,
         rotatePolygon(DIRECTION_MARKER, this.direction, { x: 0, y: 0 }),

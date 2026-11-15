@@ -1,4 +1,5 @@
 import { GraphicsLayer } from "./graphics-layer"
+import { gameState, gameStates, StateName } from "../game-state"
 import { origin } from "../grid"
 import { drawBackgroundPattern } from "../lib/background-pattern"
 import { GRID } from "../lib/constants"
@@ -9,8 +10,8 @@ const BACKDROP_STYLE = new Style("#051e06")
 const TEXT_STYLE = new Style("#ffffff")
 
 export class DialogueLayer extends GraphicsLayer {
-  private open: boolean = false
   private onClose: (() => void) | null = null
+  private previousState: StateName = gameStates.GAME
 
   constructor() {
     super(3)
@@ -21,12 +22,9 @@ export class DialogueLayer extends GraphicsLayer {
 
   update = (_dt: number) => {}
 
-  get isOpen() {
-    return this.open
-  }
-
   show = (): Promise<void> => {
-    this.open = true
+    this.previousState = gameState.current
+    gameState.set(gameStates.DIALOGUE)
     this.canvas.el.style.pointerEvents = "auto"
     return new Promise((resolve) => {
       this.onClose = resolve
@@ -34,13 +32,13 @@ export class DialogueLayer extends GraphicsLayer {
   }
 
   hide = () => {
-    this.open = false
+    gameState.set(this.previousState)
     this.canvas.el.style.pointerEvents = "none"
     this.clear()
   }
 
   dismiss = () => {
-    if (!this.open) return
+    if (!gameState.inDialogue()) return
 
     this.hide()
     this.onClose?.()
@@ -48,7 +46,7 @@ export class DialogueLayer extends GraphicsLayer {
   }
 
   private handleClick = (e: MouseEvent) => {
-    if (!this.open) return
+    if (!gameState.inDialogue()) return
     e.stopPropagation()
     this.dismiss()
   }

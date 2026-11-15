@@ -11,19 +11,16 @@ import { openOverview, setOverviewHandlers } from "./overview-mode"
 import { statusPanel } from "./status-panel"
 import { pixelToTile } from "./tiles/tile"
 import { timer } from "./timer"
-import { setViewState, ViewState } from "./view-state"
+import { gameState, gameStates, StateName } from "./game-state"
 
 let levelIds: number[] = []
 let currentLevelIndex: number | null = null
 let level: Level
 let lastTime = 0
-let viewState: ViewState = "game"
 
 type LoadedLevel = { index: number; id: number; data: LevelData }
 
-const editing = () => viewState === "edit-level"
-
-const currentMode = (): Mode => (editing() ? editMode : gameMode)
+const currentMode = (): Mode => (gameState.editing() ? editMode : gameMode)
 
 const dialogueLayer = new DialogueLayer()
 
@@ -32,14 +29,13 @@ const loop = async (timestamp: number) => {
   lastTime = timestamp
 
   try {
-    if (viewState !== "edit-overview" && !dialogueLayer.isOpen) {
+    if (gameState.running()) {
       currentMode().update(dt)
 
-      if (viewState === "game") {
+      if (gameState.playing()) {
         timer.update(dt)
 
         if (level.finished) {
-          timer.draw(false)
           const next = await fetchNextLevel()
           await dialogueLayer.levelClear(
             timer.elapsed,
@@ -54,9 +50,9 @@ const loop = async (timestamp: number) => {
         }
       }
 
-      level.render(editing())
-      timer.draw(viewState === "game")
-      statusPanel.draw(viewState === "game")
+      level.render()
+      timer.draw()
+      statusPanel.draw()
     }
   } finally {
     requestAnimationFrame(loop)
@@ -95,7 +91,6 @@ const installLevel = ({ index, id, data }: LoadedLevel) => {
 const onTimeExpired = async () => {
   if (level.finished) return
 
-  timer.draw(false)
   await dialogueLayer.lostSquare()
   level.reset()
   timer.start(level.data.duration, onTimeExpired)
@@ -117,17 +112,17 @@ setOnCloseLevel(() => showOverview())
 setOverviewHandlers({
   editLevel: async (id, ids) => {
     await loadFromOverview(id, ids)
-    enterState("edit-level")
+    enterState(gameStates.EDIT_LEVEL)
   },
 
   playLevel: async (id, ids) => {
     await loadFromOverview(id, ids)
-    enterState("game")
+    enterState(gameStates.GAME)
   },
 
   createLevel: () => {
     createNewLevel()
-    enterState("edit-level")
+    enterState(gameStates.EDIT_LEVEL)
   },
 })
 
@@ -136,23 +131,22 @@ const loadFromOverview = async (id: number, ids: number[]) => {
   await loadLevel(id, ids.indexOf(id))
 }
 
-const enterState = (state: ViewState) => {
-  viewState = state
-  setViewState(state)
+const enterState = (state: StateName) => {
+  gameState.set(state)
   level?.reset()
   timer.start(level?.data.duration ?? 0, onTimeExpired)
 }
 
 const showOverview = async () => {
   dialogueLayer.dismiss()
-  enterState("edit-overview")
+  enterState(gameStates.EDIT_OVERVIEW)
   await openOverview()
 }
 
 const start = async () => {
   levelIds = await fetchLevelIds()
   await loadNextLevel()
-  enterState("game")
+  enterState(gameStates.GAME)
 
   dialogueLayer.title()
   requestAnimationFrame(loop)
@@ -178,7 +172,7 @@ document.addEventListener("click", (e) => {
   const local: Point = { x: e.clientX - origin.x, y: e.clientY - origin.y }
 
   if (local.x < 0 || local.x >= GRID.SIZE || local.y < 0 || local.y >= GRID.SIZE) {
-    if (e.detail === OPEN_OVERVIEW_CLICKS && viewState === "game") showOverview()
+    if (e.detail === OPEN_OVERVIEW_CLICKS && gameState.playing()) showOverview()
     return
   }
 
