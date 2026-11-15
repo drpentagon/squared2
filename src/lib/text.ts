@@ -60,35 +60,54 @@ export const sanitizeForFont = (text: string): string =>
     .filter((ch) => SUPPORTED_CHARACTERS.has(ch))
     .join("")
 
-export const write = (canvas: Canvas, text: string, x: number, y: number, base: Point = origin) =>
-  writeText(canvas, text, x, y, DOT.CC * 4, DOT.SIZE, DOT.SPACING, base)
+export const write = (
+  canvas: Canvas,
+  text: string,
+  x: number,
+  y: number,
+  style: Style = TEXT_STYLE,
+  base: Point = origin,
+) => writeText(canvas, text, x, y, DOT.CC * 4, DOT.SIZE, DOT.SPACING, style, base)
 
 export const writeHeadline = (
   canvas: Canvas,
   text: string,
   x: number,
   y: number,
+  style: Style = TEXT_STYLE,
   base: Point = origin,
-) => writeText(canvas, text, x, y, TILE.CC, CELL_SIZE, DOT.SPACING, base)
+) => writeText(canvas, text, x, y, TILE.CC, CELL_SIZE, DOT.SPACING, style, base)
 
 export const writeHuge = (
   canvas: Canvas,
   text: string,
   x: number,
   y: number,
+  style: Style = TEXT_STYLE,
   base: Point = origin,
-) => writeText(canvas, text, x, y, TILE.CC * 4, TILE.SIZE, DOT.CC + DOT.SPACING, base)
+) => writeText(canvas, text, x, y, TILE.CC * 4, TILE.SIZE, DOT.CC + DOT.SPACING, style, base)
 
 export const writeMini = (
   canvas: Canvas,
   text: string,
   x: number,
   y: number,
+  style: Style = TEXT_STYLE,
   base: Point = origin,
-) => writeText(canvas, text, x, y, 8, 2, 0, base)
+) => writeText(canvas, text, x, y, 8, 2, 0, style, base)
 
 export const writeEnormous = (canvas: Canvas, letter: string) =>
-  writeText(canvas, letter, 15, 15, TILE.CC * 2 + 6 * DOT.CC, DOT.CC + DOT.SPACING, 0, origin)
+  writeText(
+    canvas,
+    letter,
+    15,
+    15,
+    TILE.CC * 2 + 6 * DOT.CC,
+    DOT.CC + DOT.SPACING,
+    0,
+    TEXT_STYLE,
+    origin,
+  )
 
 const writeText = (
   canvas: Canvas,
@@ -98,6 +117,7 @@ const writeText = (
   step: number,
   pixelSize: number,
   spacing: number,
+  style: Style,
   base: Point,
 ) => {
   const start: Point = { x: base.x + x * DOT.CC, y: base.y + y * DOT.CC }
@@ -111,6 +131,7 @@ const writeText = (
         ch,
         { x: start.x + i * step, y: start.y },
         pixelSize,
+        style,
         spacing,
       )
       if (drawn) i++
@@ -122,6 +143,7 @@ const writeLetter = (
   letter: string,
   pos: Point,
   pixelSize: number,
+  style: Style,
   spacing = 0,
 ): boolean => {
   const pattern = letters[letter]
@@ -135,7 +157,7 @@ const writeLetter = (
       canvas.drawSquare(
         { x: pos.x + col * (pixelSize + spacing), y: pos.y + row * (pixelSize + spacing) },
         pixelSize,
-        TEXT_STYLE,
+        style,
       )
     }
   }

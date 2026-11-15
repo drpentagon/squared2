@@ -1,9 +1,11 @@
-import { origin } from "./grid"
 import { GraphicsLayer } from "./layers/graphics-layer"
 import { DOT } from "./lib/constants"
+import { dotAt, drawDotFrame } from "./lib/dot-frame"
 import { Style } from "./lib/style"
 
-const ROW = DOT.GRID_SIZE + 1
+const ROWS = 3
+const TOP_ROW = DOT.GRID_SIZE + 1
+const INNER_COLS = DOT.GRID_SIZE - 2
 
 const LIT_STYLE = new Style("#ffffff")
 
@@ -36,10 +38,13 @@ class Timer extends GraphicsLayer {
 
   draw = (visible = false) => {
     this.canvas.clear()
-    if (!visible || this.#remaining <= 0) return
+    if (!visible) return
 
-    const lit = Math.ceil((this.#remaining / this.#duration) * DOT.GRID_SIZE)
-    this.canvas.fillDots({ x: origin.x, y: origin.y + ROW * DOT.CC }, lit, 1, LIT_STYLE)
+    drawDotFrame(this.canvas, 0, TOP_ROW, DOT.GRID_SIZE, ROWS)
+    if (this.#remaining <= 0) return
+
+    const lit = Math.ceil((this.#remaining / this.#duration) * INNER_COLS)
+    this.canvas.fillDots(dotAt(1, TOP_ROW + 1), lit, 1, LIT_STYLE)
   }
 }
 

@@ -4,7 +4,7 @@ import { DOT, TILE } from "./constants"
 import { Point } from "./point"
 import { Style } from "./style"
 
-const dotStyle = new Style("rgba(255, 255, 255, 0.10)")
+export const BACKGROUND_DOT_STYLE = new Style("rgba(255, 255, 255, 0.10)")
 const primaryStyle = new Style("rgba(255, 255, 255, 0.05)")
 const secondaryStyle = new Style("rgba(255, 255, 255, 0.10)")
 
@@ -20,7 +20,7 @@ const SECONDARY_PATTERN = [
 ]
 
 export const drawBackgroundPattern = (canvas: Canvas) => {
-  canvas.fillDots(origin, DOT.GRID_SIZE, DOT.GRID_SIZE, dotStyle)
+  canvas.fillDots(origin, DOT.GRID_SIZE, DOT.GRID_SIZE, BACKGROUND_DOT_STYLE)
 
   for (let y = 0; y < TILE.COUNT; y++) {
     for (let x = 0; x < TILE.COUNT; x++) {

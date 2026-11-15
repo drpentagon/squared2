@@ -8,6 +8,7 @@ import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Mode } from "./mode"
 import { openOverview, setOverviewHandlers } from "./overview-mode"
+import { statusPanel } from "./status-panel"
 import { pixelToTile } from "./tiles/tile"
 import { timer } from "./timer"
 import { setViewState, ViewState } from "./view-state"
@@ -55,6 +56,7 @@ const loop = async (timestamp: number) => {
 
       level.render(editing())
       timer.draw(viewState === "game")
+      statusPanel.draw(viewState === "game")
     }
   } finally {
     requestAnimationFrame(loop)
