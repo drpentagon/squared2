@@ -4,7 +4,7 @@ export class GraphicsLayer {
   protected canvas: Canvas
 
   constructor(layerLevel: number, modifier?: string) {
-    this.canvas = new Canvas(layerLevel, document.body, modifier)
+    this.canvas = new Canvas(layerLevel, { modifier, scaled: true })
   }
   update = (_dt: number) => {}
   draw = () => {}

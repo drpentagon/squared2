@@ -12,6 +12,10 @@ class LevelSequence {
     return this.#level!
   }
 
+  redraw = () => {
+    this.#level?.redraw()
+  }
+
   loadFirst = async () => {
     this.#ids = await fetchLevelIds()
 

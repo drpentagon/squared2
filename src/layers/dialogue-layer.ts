@@ -6,6 +6,7 @@ import { write, writeHeadline, writeHuge } from "../lib/text"
 
 class DialogueLayer extends GraphicsLayer {
   private onClose: (() => void) | null = null
+  private content: () => void = () => {}
   private previousState: StateName = gameStates.GAME
 
   constructor() {
@@ -50,13 +51,16 @@ class DialogueLayer extends GraphicsLayer {
     this.dismiss()
   }
 
-  title = (): Promise<void> => {
-    this.clear()
-    writeHuge(this.canvas, "squ", 8, 8)
-    writeHuge(this.canvas, "are", 8, 36)
-    writeHuge(this.canvas, "d", 8, 64)
-    return this.show()
+  redraw = () => {
+    if (gameState.inDialogue()) this.paint()
   }
+
+  title = (): Promise<void> =>
+    this.open(() => {
+      writeHuge(this.canvas, "squ", 8, 8)
+      writeHuge(this.canvas, "are", 8, 36)
+      writeHuge(this.canvas, "d", 8, 64)
+    })
 
   levelClear = (
     elapsedTime: number,
@@ -64,38 +68,50 @@ class DialogueLayer extends GraphicsLayer {
     redirects: number,
     score: number,
     nextLevelName: string | null,
-  ): Promise<void> => {
-    this.clear()
-    writeHeadline(this.canvas, "Level Clear", 8, 15)
-    write(this.canvas, "time", 8, 29)
-    write(this.canvas, `${Math.round(elapsedTime)}`, 50, 29)
-    write(this.canvas, "Bounces", 8, 36)
-    write(this.canvas, `${bounces}`, 50, 36)
-    write(this.canvas, "Redirects", 8, 43)
-    write(this.canvas, `${redirects}`, 50, 43)
-    write(this.canvas, "score", 8, 50)
-    write(this.canvas, `${score}`, 50, 50)
+  ): Promise<void> =>
+    this.open(() => {
+      writeHeadline(this.canvas, "Level Clear", 8, 15)
+      write(this.canvas, "time", 8, 29)
+      write(this.canvas, `${Math.round(elapsedTime)}`, 50, 29)
+      write(this.canvas, "Bounces", 8, 36)
+      write(this.canvas, `${bounces}`, 50, 36)
+      write(this.canvas, "Redirects", 8, 43)
+      write(this.canvas, `${redirects}`, 50, 43)
+      write(this.canvas, "score", 8, 50)
+      write(this.canvas, `${score}`, 50, 50)
 
-    if (nextLevelName) {
-      write(this.canvas, "next level:", 8, 64)
-      writeHeadline(this.canvas, nextLevelName, 8, 71)
-    }
+      if (nextLevelName) {
+        write(this.canvas, "next level:", 8, 64)
+        writeHeadline(this.canvas, nextLevelName, 8, 71)
+      }
+    })
 
-    return this.show()
-  }
+  lostSquare = (): Promise<void> =>
+    this.open(() => {
+      writeHeadline(this.canvas, "Lost square", 8, 15)
+    })
 
   noConnection = () => {
-    this.clear()
-    write(this.canvas, "no connection", 8, 15)
-    write(this.canvas, "start the server", 8, 22)
-    write(this.canvas, "and reload", 8, 29)
+    this.content = () => {
+      write(this.canvas, "no connection", 8, 15)
+      write(this.canvas, "start the server", 8, 22)
+      write(this.canvas, "and reload", 8, 29)
+    }
+
+    this.paint()
     this.enterDialogue()
   }
 
-  lostSquare = (): Promise<void> => {
-    this.clear()
-    writeHeadline(this.canvas, "Lost square", 8, 15)
+  private open = (content: () => void): Promise<void> => {
+    this.content = content
+    this.paint()
+
     return this.show()
+  }
+
+  private paint = () => {
+    this.clear()
+    this.content()
   }
 }
 

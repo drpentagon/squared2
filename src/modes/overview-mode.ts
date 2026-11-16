@@ -32,6 +32,10 @@ class OverviewMode implements Mode {
     levelOverview.open(this.#levels, this.#handleOverviewClick)
   }
 
+  redraw = () => {
+    levelOverview.redraw()
+  }
+
   update = () => {}
 
   render = () => {}

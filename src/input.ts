@@ -1,5 +1,5 @@
 import { gameState, gameStates } from "./game-state"
-import { origin } from "./grid"
+import { origin, viewport } from "./grid"
 import { DOT, GRID, TILE } from "./lib/constants"
 import { Point } from "./lib/point"
 import { currentMode, enterMode } from "./modes/modes"
@@ -17,7 +17,10 @@ export const listenForClicks = () => {
 }
 
 const handleClick = (e: MouseEvent) => {
-  const local: Point = { x: e.clientX - origin.x, y: e.clientY - origin.y }
+  const local: Point = {
+    x: e.clientX / viewport.scale - origin.x,
+    y: e.clientY / viewport.scale - origin.y,
+  }
 
   if (local.x < 0 || local.x >= GRID.SIZE || local.y < 0 || local.y >= GRID.SIZE) {
     if (e.detail === OPEN_OVERVIEW_CLICKS && gameState.playing()) {

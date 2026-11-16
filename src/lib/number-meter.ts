@@ -6,6 +6,7 @@ const LIT_STYLE = new Style("rgba(255, 255, 255, 0.5)")
 
 export const drawNumberMeter = (canvas: Canvas, meters: DotRect[], value: number) => {
   const digits = digitsOf(value, meters.length)
+  if (!vertical(meters[0])) digits.reverse()
 
   meters.forEach((meter, index) => {
     drawDotFrame(canvas, meter)
@@ -23,7 +24,12 @@ const digitsOf = (value: number, count: number) =>
     .split("")
     .map(Number)
 
-const litDots = ({ col, row, cols, rows }: DotRect, digit: number): DotRect =>
-  rows > cols
+const vertical = ({ cols, rows }: DotRect) => rows > cols
+
+const litDots = (meter: DotRect, digit: number): DotRect => {
+  const { col, row, cols, rows } = meter
+
+  return vertical(meter)
     ? { col: col + 1, row: row + rows - 1 - digit, cols: 1, rows: digit }
-    : { col: col + cols - 1 - digit, row: row + 1, cols: digit, rows: 1 }
+    : { col: col + 1, row: row + 1, cols: digit, rows: 1 }
+}

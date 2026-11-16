@@ -20,7 +20,7 @@ export class ToolsPanel {
     container.className = "canvas-panel panel--edit_level"
     document.body.appendChild(container)
 
-    this.canvas = new Canvas(0, container)
+    this.canvas = new Canvas(0, { container })
     this.canvas.el.addEventListener("click", this.handleClick)
 
     this.tools = [
@@ -79,7 +79,7 @@ export class ToolsPanel {
   }
 
   render = () => {
-    this.canvas.resize()
+    this.canvas.sync()
     this.canvas.clear()
 
     this.tools.forEach((tool, index) => {

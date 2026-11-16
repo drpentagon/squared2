@@ -70,6 +70,10 @@ export class LevelOverview extends GraphicsLayer {
     this.clear()
   }
 
+  redraw = () => {
+    if (this.visible) this.draw()
+  }
+
   setLevels = (levels: LevelEntry[]) => {
     this.levels = levels
     if (this.visible) this.draw()

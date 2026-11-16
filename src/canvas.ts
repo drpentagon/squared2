@@ -1,19 +1,34 @@
+import { viewport } from "./grid"
 import { DOT } from "./lib/constants"
 import { Point } from "./lib/point"
 import { Style } from "./lib/style"
+
+type CanvasOptions = { container?: HTMLElement; modifier?: string; scaled?: boolean }
+
+const canvases = new Set<Canvas>()
+
+export const syncCanvases = () => canvases.forEach((canvas) => canvas.sync())
 
 export class Canvas {
   el: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
 
-  constructor(layerLevel: number, container: HTMLElement = document.body, modifier = "") {
+  #scaled: boolean
+  #clip: { origin: Point; width: number; height: number } | null = null
+
+  constructor(
+    layerLevel: number,
+    { container = document.body, modifier = "", scaled = false }: CanvasOptions = {},
+  ) {
     this.el = document.createElement("canvas")
     this.el.className = modifier ? `canvas-layer canvas-layer--${modifier}` : "canvas-layer"
     this.el.style.zIndex = String(layerLevel)
     container.appendChild(this.el)
     this.ctx = this.el.getContext("2d")!
-    this.ctx.imageSmoothingEnabled = false
-    this.resize()
+
+    this.#scaled = scaled
+    canvases.add(this)
+    this.sync()
   }
 
   get width() {
@@ -24,24 +39,33 @@ export class Canvas {
     return this.ctx.canvas.height
   }
 
-  resize = () => {
+  sync = () => {
     const { width, height } = this.el.getBoundingClientRect()
     this.el.width = width
     this.el.height = height
+
+    const scale = this.#scaled ? viewport.scale : 1
+    this.ctx.setTransform(scale, 0, 0, scale, 0, 0)
+    this.ctx.imageSmoothingEnabled = false
+
+    if (this.#clip) this.#applyClip()
   }
 
   clear = () => {
+    this.ctx.save()
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0)
     this.ctx.clearRect(0, 0, this.width, this.height)
+    this.ctx.restore()
   }
 
   remove = () => {
+    canvases.delete(this)
     this.el.remove()
   }
 
-  setClip = (origin: Point, width: number, height: number) => {
-    this.ctx.beginPath()
-    this.ctx.rect(origin.x, origin.y, width, height)
-    this.ctx.clip()
+  setClip = (clipOrigin: Point, width: number, height: number) => {
+    this.#clip = { origin: clipOrigin, width, height }
+    this.#applyClip()
   }
 
   fillDots = (origin: Point, cols: number, rows: number, style = new Style()) => {
@@ -92,5 +116,13 @@ export class Canvas {
 
   moveTo = (origin: Point, offset: Point = { x: 0, y: 0 }) => {
     this.ctx.moveTo(origin.x + offset.x, origin.y + offset.y)
+  }
+
+  #applyClip = () => {
+    const { origin, width, height } = this.#clip!
+
+    this.ctx.beginPath()
+    this.ctx.rect(origin.x, origin.y, width, height)
+    this.ctx.clip()
   }
 }

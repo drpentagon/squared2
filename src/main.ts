@@ -1,4 +1,6 @@
+import { syncCanvases } from "./canvas"
 import { gameStates } from "./game-state"
+import { updateLayout } from "./grid"
 import { listenForClicks } from "./input"
 import { dialogueLayer } from "./layers/dialogue-layer"
 import { levelSequence } from "./level-sequence"
@@ -12,6 +14,15 @@ gameMode.setNavigate(enterMode)
 editMode.setNavigate(enterMode)
 overviewMode.setNavigate(enterMode)
 
+const relayout = () => {
+  updateLayout()
+  syncCanvases()
+
+  levelSequence.redraw()
+  overviewMode.redraw()
+  dialogueLayer.redraw()
+}
+
 const start = async () => {
   try {
     const loaded = await levelSequence.loadFirst()
@@ -23,6 +34,7 @@ const start = async () => {
   }
 
   listenForClicks()
+  window.addEventListener("resize", relayout)
   startLoop()
 }
 

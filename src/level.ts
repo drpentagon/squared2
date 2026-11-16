@@ -95,6 +95,10 @@ export class Level {
     this.bounces = 0
     this.redirectsPlaced = 0
 
+    this.redraw()
+  }
+
+  redraw = () => {
     this.backgroundGraphics.clear()
     this.backgroundGraphics.draw()
     this.redrawStatic()
