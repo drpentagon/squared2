@@ -1,13 +1,8 @@
 import { GraphicsLayer } from "./graphics-layer"
 import { gameState, gameStates, StateName } from "../game-state"
 import { origin } from "../grid"
-import { drawBackgroundPattern } from "../lib/background-pattern"
 import { GRID } from "../lib/constants"
-import { Style } from "../lib/style"
 import { write, writeHeadline, writeHuge } from "../lib/text"
-
-const BACKDROP_STYLE = new Style("#051e06")
-const TEXT_STYLE = new Style("#ffffff")
 
 class DialogueLayer extends GraphicsLayer {
   private onClose: (() => void) | null = null
@@ -56,7 +51,7 @@ class DialogueLayer extends GraphicsLayer {
   }
 
   title = (): Promise<void> => {
-    this.draw()
+    this.clear()
     writeHuge(this.canvas, "squ", 8, 8)
     writeHuge(this.canvas, "are", 8, 36)
     writeHuge(this.canvas, "d", 8, 64)
@@ -70,7 +65,7 @@ class DialogueLayer extends GraphicsLayer {
     score: number,
     nextLevelName: string | null,
   ): Promise<void> => {
-    this.draw()
+    this.clear()
     writeHeadline(this.canvas, "Level Clear", 8, 15)
     write(this.canvas, "time", 8, 29)
     write(this.canvas, `${Math.round(elapsedTime)}`, 50, 29)
@@ -90,7 +85,7 @@ class DialogueLayer extends GraphicsLayer {
   }
 
   noConnection = () => {
-    this.draw()
+    this.clear()
     write(this.canvas, "no connection", 8, 15)
     write(this.canvas, "start the server", 8, 22)
     write(this.canvas, "and reload", 8, 29)
@@ -98,14 +93,9 @@ class DialogueLayer extends GraphicsLayer {
   }
 
   lostSquare = (): Promise<void> => {
-    this.draw()
+    this.clear()
     writeHeadline(this.canvas, "Lost square", 8, 15)
     return this.show()
-  }
-
-  draw = () => {
-    this.canvas.drawSquare(origin, GRID.SIZE, BACKDROP_STYLE)
-    drawBackgroundPattern(this.canvas)
   }
 }
 

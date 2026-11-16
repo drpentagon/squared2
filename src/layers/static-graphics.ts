@@ -6,7 +6,7 @@ export class StaticGraphics extends GraphicsLayer {
   private tiles: PositionMap<Tile>
 
   constructor(tiles: PositionMap<Tile>) {
-    super(1)
+    super(1, "board")
     this.tiles = tiles
   }
 

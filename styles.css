@@ -60,6 +60,9 @@ body {
   border-radius: calc(var(--unit) * 6);
   z-index: 3;
 }
+body.dialogue .canvas-layer--board {
+  visibility: hidden;
+}
 body:not(.game):not(.dialogue) .canvas-layer--timer,
 body:not(.game):not(.dialogue) .canvas-layer--status {
   visibility: hidden;

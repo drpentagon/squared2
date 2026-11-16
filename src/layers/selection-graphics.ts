@@ -8,7 +8,7 @@ const MARKER_SIZE = TILE.SIZE + 2 * DOT.CC
 
 export class SelectionGraphics extends GraphicsLayer {
   constructor() {
-    super(0)
+    super(0, "board")
   }
 
   update = (_dt: number) => {}

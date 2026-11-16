@@ -1,24 +1,22 @@
 import { viewport } from "./grid"
 import { GraphicsLayer } from "./layers/graphics-layer"
+import { levelSequence } from "./level-sequence"
 import { BACKGROUND_DOT_STYLE } from "./lib/background-pattern"
 import { DOT } from "./lib/constants"
-import { DotRect, drawDotFrame, fillDotRect } from "./lib/dot-frame"
-import { Style } from "./lib/style"
-import { write } from "./lib/text"
+import { DotRect, fillDotRect } from "./lib/dot-frame"
+import { drawNumberMeter } from "./lib/number-meter"
 
 const THICKNESS = 3
 const TOP_ROW = -(THICKNESS + 1)
 const LEFT_COL = -(THICKNESS + 1)
 
-const TITLE = "squared"
-const LETTER_STEP = 4
+const METER_LENGTH = 11
+const METER_STEP = METER_LENGTH + 1
 
-const METER_COUNT = 3
-const METER_LENGTH = 12
-const METER_GAP = 1
-const METERS_OFFSET = DOT.GRID_SIZE - (METER_COUNT * METER_LENGTH + (METER_COUNT - 1) * METER_GAP)
+type Counter = { digits: number; atStart: boolean }
 
-const TEXT_STYLE = new Style("rgba(255, 255, 255, 0.5)")
+const REDIRECTS: Counter = { digits: 3, atStart: true }
+const BOUNCES: Counter = { digits: 4, atStart: false }
 
 class StatusPanel extends GraphicsLayer {
   constructor() {
@@ -26,14 +24,13 @@ class StatusPanel extends GraphicsLayer {
   }
 
   draw = () => {
+    const level = levelSequence.current
+
     this.canvas.clear()
     fillDotRect(this.canvas, this.#strip(), BACKGROUND_DOT_STYLE)
 
-    this.#writeTitle()
-
-    for (let i = 0; i < METER_COUNT; i++) {
-      drawDotFrame(this.canvas, this.#meter(i))
-    }
+    drawNumberMeter(this.canvas, this.#meters(REDIRECTS), level.redirectsPlaced)
+    drawNumberMeter(this.canvas, this.#meters(BOUNCES), level.bounces)
   }
 
   #strip = (): DotRect =>
@@ -41,24 +38,16 @@ class StatusPanel extends GraphicsLayer {
       ? { col: LEFT_COL, row: 0, cols: THICKNESS, rows: DOT.GRID_SIZE }
       : { col: 0, row: TOP_ROW, cols: DOT.GRID_SIZE, rows: THICKNESS }
 
-  #meter = (index: number): DotRect => {
-    const offset = METERS_OFFSET + index * (METER_LENGTH + METER_GAP)
+  #meters = ({ digits, atStart }: Counter): DotRect[] => {
+    const base = atStart ? 0 : DOT.GRID_SIZE - (digits * METER_STEP - 1)
 
-    return viewport.landscape
-      ? { col: LEFT_COL, row: offset, cols: THICKNESS, rows: METER_LENGTH }
-      : { col: offset, row: TOP_ROW, cols: METER_LENGTH, rows: THICKNESS }
+    return Array.from({ length: digits }, (_, index) => this.#meter(base + index * METER_STEP))
   }
 
-  #writeTitle = () => {
-    if (!viewport.landscape) {
-      write(this.canvas, TITLE, 0, TOP_ROW, TEXT_STYLE)
-      return
-    }
-
-    TITLE.split("").forEach((letter, i) => {
-      write(this.canvas, letter, LEFT_COL, i * LETTER_STEP, TEXT_STYLE)
-    })
-  }
+  #meter = (along: number): DotRect =>
+    viewport.landscape
+      ? { col: LEFT_COL, row: along, cols: THICKNESS, rows: METER_LENGTH }
+      : { col: along, row: TOP_ROW, cols: METER_LENGTH, rows: THICKNESS }
 }
 
 export const statusPanel = new StatusPanel()

@@ -1,5 +1,6 @@
 import { viewport } from "./grid"
 import { GraphicsLayer } from "./layers/graphics-layer"
+import { BACKGROUND_DOT_STYLE } from "./lib/background-pattern"
 import { DOT } from "./lib/constants"
 import { DotRect, drawDotFrame, fillDotRect } from "./lib/dot-frame"
 import { Style } from "./lib/style"
@@ -39,8 +40,11 @@ class Timer extends GraphicsLayer {
   }
 
   draw = () => {
+    const frame = this.#frame()
+
     this.canvas.clear()
-    drawDotFrame(this.canvas, this.#frame())
+    fillDotRect(this.canvas, frame, BACKGROUND_DOT_STYLE)
+    drawDotFrame(this.canvas, frame)
 
     if (this.#remaining <= 0) return
 

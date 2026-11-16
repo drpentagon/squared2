@@ -10,7 +10,7 @@ export class DynamicGraphics extends GraphicsLayer {
   private balls: Ball[]
 
   constructor(tiles: PositionMap<Tile>, balls: Ball[]) {
-    super(2)
+    super(2, "board")
     this.canvas.setClip(origin, GRID.SIZE, GRID.SIZE)
 
     this.tiles = tiles
