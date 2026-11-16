@@ -3,7 +3,7 @@ import { GraphicsLayer } from "./layers/graphics-layer"
 import { levelSequence } from "./level-sequence"
 import { BACKGROUND_DOT_STYLE } from "./lib/background-pattern"
 import { DOT } from "./lib/constants"
-import { DotRect, fillDotRect } from "./lib/dot-frame"
+import { DotRect, FRAME_STYLE, fillDotRect } from "./lib/dot-frame"
 import { drawNumberMeter } from "./lib/number-meter"
 
 const THICKNESS = 3
@@ -18,6 +18,10 @@ type Counter = { digits: number; atStart: boolean }
 const REDIRECTS: Counter = { digits: 3, atStart: true }
 const BOUNCES: Counter = { digits: 4, atStart: false }
 
+const DIVIDER_LENGTH = 8
+
+const counterLength = (digits: number) => digits * METER_STEP - 1
+
 class StatusPanel extends GraphicsLayer {
   constructor() {
     super(1, "status")
@@ -30,6 +34,7 @@ class StatusPanel extends GraphicsLayer {
     fillDotRect(this.canvas, this.#strip(), BACKGROUND_DOT_STYLE)
 
     drawNumberMeter(this.canvas, this.#meters(REDIRECTS), level.redirectsPlaced)
+    fillDotRect(this.canvas, this.#divider(), FRAME_STYLE)
     drawNumberMeter(this.canvas, this.#meters(BOUNCES), level.bounces)
   }
 
@@ -39,15 +44,24 @@ class StatusPanel extends GraphicsLayer {
       : { col: 0, row: TOP_ROW, cols: DOT.GRID_SIZE, rows: THICKNESS }
 
   #meters = ({ digits, atStart }: Counter): DotRect[] => {
-    const base = atStart ? 0 : DOT.GRID_SIZE - (digits * METER_STEP - 1)
+    const base = atStart ? 0 : DOT.GRID_SIZE - counterLength(digits)
 
-    return Array.from({ length: digits }, (_, index) => this.#meter(base + index * METER_STEP))
+    return Array.from({ length: digits }, (_, index) =>
+      this.#slot(base + index * METER_STEP, METER_LENGTH),
+    )
   }
 
-  #meter = (along: number): DotRect =>
+  #divider = (): DotRect => {
+    const start = counterLength(REDIRECTS.digits)
+    const free = DOT.GRID_SIZE - counterLength(BOUNCES.digits) - start
+
+    return this.#slot(start + Math.floor((free - DIVIDER_LENGTH) / 2), DIVIDER_LENGTH)
+  }
+
+  #slot = (along: number, length: number): DotRect =>
     viewport.landscape
-      ? { col: LEFT_COL, row: along, cols: THICKNESS, rows: METER_LENGTH }
-      : { col: along, row: TOP_ROW, cols: METER_LENGTH, rows: THICKNESS }
+      ? { col: LEFT_COL, row: along, cols: THICKNESS, rows: length }
+      : { col: along, row: TOP_ROW, cols: length, rows: THICKNESS }
 }
 
 export const statusPanel = new StatusPanel()
