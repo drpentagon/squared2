@@ -25,6 +25,11 @@ class GameMode implements Mode {
     level.update(dt)
     timer.update(dt)
 
+    if (level.lost) {
+      await this.#loseSquare()
+      return
+    }
+
     if (!level.finished) return
 
     const next = await levelSequence.fetchNext()
@@ -59,6 +64,10 @@ class GameMode implements Mode {
   #onTimeExpired = async () => {
     if (levelSequence.current.finished) return
 
+    await this.#loseSquare()
+  }
+
+  #loseSquare = async () => {
     await dialogueLayer.lostSquare()
     this.enter()
     clock.resync()

@@ -28,6 +28,7 @@ const DIRECTION_VECTOR: Record<string, Point> = {
 }
 
 export class Ball extends GridObject {
+  lost = false
   velocity: number
   directionVector: Point
   inNewTile: boolean

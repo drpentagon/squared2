@@ -12,6 +12,7 @@ import { equals, Point } from "./lib/point"
 import { FragileRedirector } from "./tiles/fragile-redirector"
 import { Goal } from "./tiles/goal"
 import { Redirector } from "./tiles/redirector"
+import { Burner } from "./tiles/burner"
 import { Wall } from "./tiles/wall"
 
 export type WallData = Point
@@ -31,6 +32,7 @@ export type LevelData = {
   permanentRedirects: RedirectorData[]
   goals: GoalData[]
   balls: BallData[]
+  burners: WallData[]
 }
 
 export type LevelEntry = { id: number; data: LevelData }
@@ -52,6 +54,7 @@ export const emptyLevelData = (): LevelData => {
     permanentRedirects: [],
     goals: [],
     balls: [],
+    burners: [],
   }
 }
 
@@ -60,6 +63,7 @@ export class Level {
   data: LevelData
   gameObjects: GameObjects
   finished: boolean
+  lost: boolean
   bounces: number
   redirectsPlaced: number
   markedTilePos: Point | null
@@ -74,6 +78,7 @@ export class Level {
     this.data = data
     this.gameObjects = new GameObjects()
     this.finished = false
+    this.lost = false
     this.bounces = 0
     this.redirectsPlaced = 0
     this.markedTilePos = null
@@ -92,6 +97,8 @@ export class Level {
     loadGameObjects(this.gameObjects, this.data)
 
     this.markedTilePos = null
+    this.finished = false
+    this.lost = false
     this.bounces = 0
     this.redirectsPlaced = 0
 
@@ -114,6 +121,7 @@ export class Level {
 
     this.purge()
     this.finished = this.gameObjects.balls.length === 0
+    this.lost = this.gameObjects.balls.some((ball) => ball.lost)
     this.dynamicGraphics.update(dt)
   }
 
@@ -184,9 +192,12 @@ export class Level {
   serialize = (): LevelData => {
     const wallPositions: Point[] = []
     const permanentRedirects: RedirectorData[] = []
+    const burners: WallData[] = []
     this.gameObjects.staticTiles.forEach((tile) => {
       if (tile.type === tileTypes.WALL) {
         wallPositions.push({ x: tile.tilePos.x, y: tile.tilePos.y })
+      } else if (tile.type === tileTypes.BURNER) {
+        burners.push({ x: tile.tilePos.x, y: tile.tilePos.y })
       } else if (tile.type === tileTypes.REDIRECTOR) {
         const redirector = tile as Redirector
         permanentRedirects.push({
@@ -236,6 +247,7 @@ export class Level {
       permanentRedirects,
       goals,
       balls,
+      burners,
     }
   }
 }
@@ -247,6 +259,7 @@ export const loadGameObjects = (gameObjects: GameObjects, data: LevelData) => {
   gameObjects.staticTiles.addArray(
     data.permanentRedirects.map((t) => new Redirector(t, DIRECTIONS[t.variant])),
   )
+  gameObjects.staticTiles.addArray((data.burners ?? []).map((t) => new Burner(t)))
 
   gameObjects.dynamicTiles.clear()
   gameObjects.dynamicTiles.addArray(

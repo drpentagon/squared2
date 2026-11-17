@@ -1,4 +1,5 @@
 import { BallTool } from "./ball-tool"
+import { BurnerTool } from "./burner-tool"
 import { FragileRedirectorTool } from "./fragile-redirector-tool"
 import { GoalTool } from "./goal-tool"
 import { RedirectorTool } from "./redirector-tool"
@@ -29,6 +30,7 @@ export class ToolsPanel {
       new FragileRedirectorTool(this.canvas),
       new BallTool(this.canvas),
       new GoalTool(this.canvas),
+      new BurnerTool(this.canvas),
     ]
   }
 

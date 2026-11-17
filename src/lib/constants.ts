@@ -68,4 +68,5 @@ export const tileTypes = {
   FRAGILE_REDIRECTOR: "FRAGILE_REDIRECTOR",
   GOAL: "GOAL",
   BALL: "BALL",
+  BURNER: "BURNER",
 }
