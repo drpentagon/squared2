@@ -1,6 +1,6 @@
 import { LevelData, LevelEntry } from "./level"
 
-const API_BASE = "http://localhost:3001"
+const API_BASE = location.hostname === "localhost" ? "http://localhost:3001" : ""
 
 export const fetchAllLevels = async (): Promise<LevelEntry[]> => {
   const ids = await fetchLevelIds()

@@ -1,9 +1,12 @@
 import Database from "better-sqlite3"
 import { mkdirSync } from "node:fs"
-import { dirname } from "node:path"
+import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
-const dbPath = fileURLToPath(new URL("../data/squared2.db", import.meta.url))
+const dbPath = process.env.DATA_DIR
+  ? join(process.env.DATA_DIR, "squared2.db")
+  : fileURLToPath(new URL("../data/squared2.db", import.meta.url))
+
 mkdirSync(dirname(dbPath), { recursive: true })
 
 export const db = new Database(dbPath)
