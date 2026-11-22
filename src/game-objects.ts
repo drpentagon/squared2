@@ -30,11 +30,11 @@ export class GameObjects {
         break
       case tileTypes.WALL:
       case tileTypes.REDIRECTOR:
-      case tileTypes.BURNER:
         this.staticTiles.set(object as Tile)
         break
       case tileTypes.GOAL:
       case tileTypes.FRAGILE_REDIRECTOR:
+      case tileTypes.BURNER:
         this.dynamicTiles.set(object as Tile)
         break
     }

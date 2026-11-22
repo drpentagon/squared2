@@ -196,8 +196,6 @@ export class Level {
     this.gameObjects.staticTiles.forEach((tile) => {
       if (tile.type === tileTypes.WALL) {
         wallPositions.push({ x: tile.tilePos.x, y: tile.tilePos.y })
-      } else if (tile.type === tileTypes.BURNER) {
-        burners.push({ x: tile.tilePos.x, y: tile.tilePos.y })
       } else if (tile.type === tileTypes.REDIRECTOR) {
         const redirector = tile as Redirector
         permanentRedirects.push({
@@ -218,6 +216,8 @@ export class Level {
           y: tile.tilePos.y,
           variant: DIRECTIONS.indexOf(redirector.direction),
         })
+      } else if (tile.type === tileTypes.BURNER) {
+        burners.push({ x: tile.tilePos.x, y: tile.tilePos.y })
       } else if (tile.type === tileTypes.GOAL) {
         const goal = tile as Goal
         goals.push({
@@ -259,7 +259,6 @@ export const loadGameObjects = (gameObjects: GameObjects, data: LevelData) => {
   gameObjects.staticTiles.addArray(
     data.permanentRedirects.map((t) => new Redirector(t, DIRECTIONS[t.variant])),
   )
-  gameObjects.staticTiles.addArray((data.burners ?? []).map((t) => new Burner(t)))
 
   gameObjects.dynamicTiles.clear()
   gameObjects.dynamicTiles.addArray(
@@ -268,6 +267,7 @@ export const loadGameObjects = (gameObjects: GameObjects, data: LevelData) => {
   gameObjects.dynamicTiles.addArray(
     data.goals.map((t) => new Goal(t, DIRECTIONS[t.direction], t.rotates)),
   )
+  gameObjects.dynamicTiles.addArray((data.burners ?? []).map((t) => new Burner(t)))
 
   gameObjects.balls.splice(
     0,
